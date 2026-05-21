@@ -448,13 +448,7 @@ input[type="date"] {
   onblur="if(!this.value)this.type='text'">
     </div>
 
-    <div class="filter-item">
-      <span>➡️</span>
-      <input type="text" 
-  placeholder="Data do" id="historyDateTo" onchange="renderHistoryList()"
-        onfocus="this.type='date'"
-  onblur="if(!this.value)this.type='text'">
-    </div>
+   
 
 <div class="filter-item">
   <span>📍</span>
@@ -462,7 +456,13 @@ input[type="date"] {
     <option value="">Wszystkie strefy</option>
   </select>
 </div>
-
+ <div class="filter-item">
+      <span>➡️</span>
+      <input type="text" 
+  placeholder="Data do" id="historyDateTo" onchange="renderHistoryList()"
+        onfocus="this.type='date'"
+  onblur="if(!this.value)this.type='text'">
+    </div>
     <div class="filter-item">
       <span>🔎</span>
       <input type="text" id="historyTerminalFilter" placeholder="Nr parkomatu" oninput="renderHistoryList()">
