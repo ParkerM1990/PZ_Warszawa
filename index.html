@@ -287,7 +287,12 @@ select,input{
           onclick="setActiveNav(this);showSection('historiaSection')">
     📜 <span>Historia</span>
   </button>
-
+<button class="nav-btn"
+        title="Urządzenia"
+        onclick="setActiveNav(this);showSection('devicesSection')">
+  🖥️ <span>Urządzenia</span>
+</button>
+    
 </div>
 <div class="main">
 
@@ -372,7 +377,25 @@ select,input{
 </div>
 
 </div>
+<!-- URZĄDZENIA -->
+<div id="devicesSection" class="section">
 
+  <div class="filter-bar mobile">
+
+    <div class="filter-item" style="grid-column:1 / -1;">
+      <span>🔎</span>
+      <input
+        type="text"
+        id="deviceSearch"
+        placeholder="Szukaj numeru lub adresu..."
+        oninput="renderDevicesList()">
+    </div>
+
+  </div>
+
+  <div id="devicesList"></div>
+
+</div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <!-- ✅ JS zostaje praktycznie bez zmian -->
@@ -683,12 +706,77 @@ if (!allParkomaty[key]) return;
 
   document.getElementById("historiaList").innerHTML=html;
 }
+/* ===== URZĄDZENIA ===== */
+function renderDevicesList(){
 
+  const search = document
+    .getElementById("deviceSearch")
+    .value
+    .trim()
+    .toLowerCase();
+
+  let html = "";
+
+  Object.values(allParkomaty)
+    .sort((a,b)=>a.id.localeCompare(b.id))
+    .forEach(p=>{
+
+      const text = `
+        ${p.id}
+        ${p.location}
+      `.toLowerCase();
+
+      if(search && !text.includes(search)) return;
+
+      const key = makeKey(p.id, p.structure);
+
+      const alarms = activeEvents[key]?.length || 0;
+
+      html += `
+        <div class="terminal-box">
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+          ">
+
+            <div>
+              <b>Parkomat ${p.id}</b><br>
+              ${p.location}<br>
+
+              <small style="color:#9ca3af;">
+                Strefa: ${p.node || "-"}
+              </small>
+            </div>
+
+            <div style="
+              min-width:50px;
+              text-align:center;
+              padding:6px 10px;
+              border-radius:10px;
+              background:${alarms ? '#dc2626' : '#16a34a'};
+              color:white;
+              font-weight:bold;
+            ">
+              ${alarms}
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    });
+
+  document.getElementById("devicesList").innerHTML = html;
+}
 /* ===== MASTER ===== */
 function renderAll(){
   renderMarkers();
   renderActiveList();
   renderHistoryList();
+  renderDevicesList();
 }
 
 /* ===== INIT ===== */
