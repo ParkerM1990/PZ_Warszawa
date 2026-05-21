@@ -316,6 +316,12 @@ input[type="date"] {
   top: 0;
   z-index: 1000;
 }
+  
+.event-name{
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 #mapSection{  position:absolute;  inset:0;  overflow:hidden;}
 </style>
 </head>
@@ -868,7 +874,10 @@ if(node && p.node !== node) return;
   html+=`
     <div class="terminal-box">
       <b>Parkomat ${r[0]}</b><br>
-      ${r[5]} (${r[6]||""})<br>
+      
+<div class="event-name">
+  ${r[5]} (${r[6]||""})
+</div>
       Od: ${r[3]}<br>
       Do: ${r[8]||""}
     </div>
