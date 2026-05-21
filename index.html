@@ -275,7 +275,27 @@ select,input{
 #historiaSection .filter-bar{
   top: 0;
 }
+/* ✅ FIX DATY NA TELEFONIE */
+input[type="date"] {
+  color: white;
+  background: #020617;
+  border: none;
+}
 
+/* ✅ NAJWAŻNIEJSZE – tekst w polach */
+input[type="date"]::-webkit-datetime-edit {
+  color: white;
+}
+
+/* ✅ ikona kalendarza */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* ✅ wspomaga dark mode */
+input {
+  color-scheme: dark;
+}
 </style>
 </head>
 
