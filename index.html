@@ -701,40 +701,71 @@ function populateEventFilter(){
 
 /* ===== AWARIE ===== */
 function renderActiveList(){
+
   const node = document.getElementById("activeNodeFilter").value;
-  const from=document.getElementById("activeDateFrom").value;
-  const to=document.getElementById("activeDateTo").value;
-  const terminal=document.getElementById("activeTerminalFilter").value.trim();
-  const event=document.getElementById("activeEventFilter").value;
+  const from = document.getElementById("activeDateFrom").value;
+  const to = document.getElementById("activeDateTo").value;
+  const terminal = document.getElementById("activeTerminalFilter").value.trim();
+  const event = document.getElementById("activeEventFilter").value;
 
-  let html="";
+  let html = "";
 
-  Object.keys(activeEvents).forEach(key => {  const p = allParkomaty[key];  if(!p) return;
+  Object.keys(activeEvents).forEach(key => {
+
+    const p = allParkomaty[key];
+    if(!p) return;
+
     const id = p.id;
-    const filtered=activeEvents[key].filter(e=>{
-      const d = new Date(e.date.replace(" ", "T"));
 
-      if(from && d<new Date(from)) return false;
-      if(to && d>new Date(to)) return false;
+    const filtered = activeEvents[key].filter(e => {
+
+      // ✅ bezpieczne parsowanie daty
+      const raw = e.date;
+      if(!raw) return false;
+
+      const d = new Date(raw.replace(" ", "T"));
+
+      // ✅ filtr OD
+      if(from && d < new Date(from)) return false;
+
+      // ✅ filtr DO (cały dzień!)
+      if(to){
+        const toDate = new Date(to);
+        toDate.setHours(23,59,59,999);
+        if(d > toDate) return false;
+      }
+
+      // ✅ filtr po numerze
       if(terminal && !id.includes(terminal)) return false;
-      if(event && e.name!==event) return false;
+
+      // ✅ filtr po typie zdarzenia
+      if(event && e.name !== event) return false;
+
+      // ✅ filtr po strefie
       if(node && p.node !== node) return false;
 
       return true;
     });
 
-    if(filtered.length===0) return;
+    if(filtered.length === 0) return;
 
-    html+=`<div class="terminal-box"><b>Parkomat ${id}</b><br>${p.location}<br><br>`;
+    html += `
+      <div class="terminal-box">
+        <b>Parkomat ${id}</b><br>
+        ${p.location}<br><br>
+    `;
 
-    filtered.forEach(e=>{
-      html+=`• ${e.name}<br><small>${e.date}</small><br>`;
+    filtered.forEach(e => {
+      html += `
+        • ${e.name}<br>
+        <small>${e.date}</small><br>
+      `;
     });
 
-    html+=`</div>`;
+    html += `</div>`;
   });
 
-  document.getElementById("awarieList").innerHTML=html;
+  document.getElementById("awarieList").innerHTML = html;
 }
 
 /* ===== HISTORIA ===== */
