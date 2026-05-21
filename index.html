@@ -712,7 +712,7 @@ function renderActiveList(){
   Object.keys(activeEvents).forEach(key => {  const p = allParkomaty[key];  if(!p) return;
     const id = p.id;
     const filtered=activeEvents[key].filter(e=>{
-      const d=new Date(e.date);
+      const d = new Date(e.date.replace(" ", "T"));
 
       if(from && d<new Date(from)) return false;
       if(to && d>new Date(to)) return false;
