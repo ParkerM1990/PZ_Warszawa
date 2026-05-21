@@ -265,6 +265,16 @@ select,input{
 #devicesSection{
   padding-top: 0;
 }
+  
+#awarieSection,
+#historiaSection{
+  padding-top: 0;
+}
+
+#awarieSection .filter-bar,
+#historiaSection .filter-bar{
+  top: 0;
+}
 
 </style>
 </head>
@@ -344,6 +354,13 @@ select,input{
       <input type="date" id="activeDateFrom" onchange="renderActiveList()">
     </div>
 
+<div class="filter-item">
+  <span>📍</span>
+  <select id="activeNodeFilter" onchange="renderActiveList()">
+    <option value="">Wszystkie strefy</option>
+  </select>
+</div>
+
     <div class="filter-item">
       <span>➡️</span>
       <input type="date" id="activeDateTo" onchange="renderActiveList()">
@@ -379,6 +396,13 @@ select,input{
       <input type="date" id="historyDateTo" onchange="renderHistoryList()">
     </div>
 
+<div class="filter-item">
+  <span>📍</span>
+  <select id="historyNodeFilter" onchange="renderHistoryList()">
+    <option value="">Wszystkie strefy</option>
+  </select>
+</div>
+
     <div class="filter-item">
       <span>🔎</span>
       <input type="text" id="historyTerminalFilter" placeholder="Nr parkomatu" oninput="renderHistoryList()">
@@ -399,6 +423,13 @@ select,input{
 <div id="devicesSection" class="section">
 
   <div class="filter-bar mobile">
+
+<div class="filter-item">
+  <span>📍</span>
+  <select id="deviceNodeFilter" onchange="renderDevicesList()">
+    <option value="">Wszystkie strefy</option>
+  </select>
+</div>
 
     <div class="filter-item" style="grid-column:1 / -1;">
       <span>🔎</span>
@@ -457,33 +488,56 @@ function parseCSV(text){
 
 /* ===== LOAD PARKOMATY ===== */
 async function loadParkomaty(){
-  const rows=parseCSV(await (await fetch(PARKOMATY_URL)).text()).slice(1);
 
-  const nodeSet=new Set();
+  const rows = parseCSV(await (await fetch(PARKOMATY_URL)).text()).slice(1);
 
-  rows.forEach(r=>{
-    
-const id = r[0]?.trim(); 
-const lng = parseFloat(r[2]);
-const lat = parseFloat(r[3]);
-const structure = r[5]?.trim();
-const node = r[4];
-if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
-const key = makeKey(id, structure);
-allParkomaty[key] = {
-  id,
-  structure,
-  lat,
-  lng,
-  location: r[1],
-  node
-};
+  const nodeSet = new Set();
+
+  rows.forEach(r => {
+
+    const id = r[0]?.trim(); 
+    const lng = parseFloat(r[2]);
+    const lat = parseFloat(r[3]);
+    const structure = r[5]?.trim();
+    const node = r[4];
+
+    if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
+
+    const key = makeKey(id, structure);
+
+    allParkomaty[key] = {
+      id,
+      structure,
+      lat,
+      lng,
+      location: r[1],
+      node
+    };
+
     nodeSet.add(node);
   });
 
-  document.getElementById("nodeFilter").innerHTML=
-    `<option value="">Wszystkie strefy</option>`+
-    [...nodeSet].sort().map(n=>`<option>${n}</option>`).join('');
+  // ✅ wspólna lista stref
+  const nodes = [...nodeSet].sort();
+
+  const options =
+    `<option value="">Wszystkie strefy</option>` +
+    nodes.map(n => `<option value="${n}">${n}</option>`).join('');
+
+  // ✅ MAPA
+  document.getElementById("nodeFilter").innerHTML = options;
+
+  // ✅ AWARIE
+  const activeNode = document.getElementById("activeNodeFilter");
+  if(activeNode) activeNode.innerHTML = options;
+
+  // ✅ HISTORIA
+  const historyNode = document.getElementById("historyNodeFilter");
+  if(historyNode) historyNode.innerHTML = options;
+
+  // ✅ URZĄDZENIA
+  const deviceNode = document.getElementById("deviceNodeFilter");
+  if(deviceNode) deviceNode.innerHTML = options;
 }
 
 /* ===== LOAD ACTIVE ===== */
@@ -647,7 +701,7 @@ function populateEventFilter(){
 
 /* ===== AWARIE ===== */
 function renderActiveList(){
-
+  const node = document.getElementById("activeNodeFilter").value;
   const from=document.getElementById("activeDateFrom").value;
   const to=document.getElementById("activeDateTo").value;
   const terminal=document.getElementById("activeTerminalFilter").value.trim();
@@ -664,6 +718,7 @@ function renderActiveList(){
       if(to && d>new Date(to)) return false;
       if(terminal && !id.includes(terminal)) return false;
       if(event && e.name!==event) return false;
+      if(node && p.node !== node) return false;
 
       return true;
     });
@@ -684,7 +739,7 @@ function renderActiveList(){
 
 /* ===== HISTORIA ===== */
 function renderHistoryList(){
-
+  const node = document.getElementById("historyNodeFilter").value;
   const from=document.getElementById("historyDateFrom").value;
   const to=document.getElementById("historyDateTo").value;
   const terminal=document.getElementById("historyTerminalFilter").value.trim();
@@ -701,7 +756,12 @@ historyEvents.forEach(r=>{
   
 const key = makeKey(r[0], r[1]); // ✅ r[1] = structure
 
-if (!allParkomaty[key]) return;
+
+const p = allParkomaty[key];
+if (!p) return;
+
+if(node && p.node !== node) return;
+
 
 
   const d=new Date(r[3]);
@@ -726,7 +786,7 @@ if (!allParkomaty[key]) return;
 }
 /* ===== URZĄDZENIA ===== */
 function renderDevicesList(){
-
+  const node = document.getElementById("deviceNodeFilter").value;
   const search = document
     .getElementById("deviceSearch")
     .value
@@ -745,7 +805,7 @@ function renderDevicesList(){
       `.toLowerCase();
 
       if(search && !text.includes(search)) return;
-
+      if(node && p.node !== node) return;
       const key = makeKey(p.id, p.structure);
 
       const alarms = activeEvents[key]?.length || 0;
