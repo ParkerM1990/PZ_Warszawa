@@ -691,7 +691,7 @@ function populateEventFilter(){
   const set=new Set();
 
   historyEvents.forEach(r=>{
-    if(r[4]) set.add(r[4]);
+    if(r[5]) set.add(r[5]);
   });
 
   document.getElementById("historyEventFilter").innerHTML=
@@ -800,7 +800,7 @@ if(node && p.node !== node) return;
   if(from && d<new Date(from)) return;
   if(to && d>new Date(to)) return;
   if(terminal && !r[0].includes(terminal)) return;
-  if(event && r[4]!==event) return;
+  if(event && r[5]!==event) return;
 
   html+=`
     <div class="terminal-box">
