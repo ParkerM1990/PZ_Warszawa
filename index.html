@@ -282,7 +282,7 @@ select,input{
     <button class="filter-toggle" onclick="toggleFilters()">
       ⚙️
     </button>
-    <div id="alarmCounter">0</div>
+    <div id="alarmCounter" onclick="showStats()" style="cursor:pointer;">0
   </div>
 </header>
 <!-- SIDEBAR -->
@@ -789,6 +789,29 @@ function renderDevicesList(){
 
   document.getElementById("devicesList").innerHTML = html;
 }
+  /* ===== STATYSTYKI ===== */
+function showStats(){
+
+  const totalDevices = Object.keys(allParkomaty).length;
+
+  const devicesWithAlarms = Object.keys(activeEvents).length;
+
+  let totalAlarms = 0;
+  Object.values(activeEvents).forEach(arr=>{
+    totalAlarms += arr.length;
+  });
+
+  alert(
+`📊 STATYSTYKI
+
+🖥️ Urządzenia: ${totalDevices}
+
+⚠️ Parkomaty z awarią: ${devicesWithAlarms}
+
+🔥 Wszystkie awarie: ${totalAlarms}`
+  );
+}
+``
 /* ===== MASTER ===== */
 function renderAll(){
   renderMarkers();
