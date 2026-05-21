@@ -137,18 +137,17 @@ header{
 
 .section{
   position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
+  inset:0;
 
   display:none;
   overflow:auto;
 
-  padding:16px;
-  padding-bottom: calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 20px);
-
   box-sizing:border-box;
+
+  padding:16px;
+  padding-top: calc(var(--header-h) + 16px);
+  padding-left: calc(var(--sidebar-w) + 16px);
+  padding-bottom: calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 20px);
 }
 
 .section.active{
@@ -198,8 +197,11 @@ header{
 
 #map{
   position:absolute;
-  inset:0;
   z-index:0;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
 }
 
 /* ✅ NOWY MOBILNY PANEL FILTRÓW */
