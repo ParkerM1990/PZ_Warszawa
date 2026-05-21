@@ -396,6 +396,12 @@ input[type="date"] {
 
   <div class="filter-bar mobile">
 
+ <div class="filter-item">
+  <span>📍</span>
+  <select id="activeNodeFilter" onchange="renderActiveList()">
+    <option value="">Wszystkie strefy</option>
+  </select>
+</div>
     
 <div class="filter-item">
   <span>📅</span>
@@ -409,16 +415,10 @@ input[type="date"] {
 </div>
 
 
-<div class="filter-item">
-  <span>📍</span>
-  <select id="activeNodeFilter" onchange="renderActiveList()">
-    <option value="">Wszystkie strefy</option>
-  </select>
-</div>
+
 
     <div class="filter-item">
-      <span>➡️</span>
-      
+      <span>➡️</span>   
 <input 
   type="text" 
   placeholder="Data do"
@@ -426,7 +426,6 @@ input[type="date"] {
   onchange="renderActiveList()"
   onfocus="this.type='date'"
   onblur="if(!this.value)this.type='text'">
-
     </div>
 
     <div class="filter-item">
@@ -448,7 +447,13 @@ input[type="date"] {
 <div id="historiaSection" class="section">
 
   <div class="filter-bar mobile">
-
+<div class="filter-item">
+  <span>📍</span>
+  <select id="historyNodeFilter" onchange="renderHistoryList()">
+    <option value="">Wszystkie strefy</option>
+  </select>
+</div>
+    
     <div class="filter-item">
       <span>📅</span>
       <input type="text" 
@@ -456,15 +461,7 @@ input[type="date"] {
         id="historyDateFrom" onchange="renderHistoryList()"onfocus="this.type='date'"
   onblur="if(!this.value)this.type='text'">
     </div>
-
-   
-
-<div class="filter-item">
-  <span>📍</span>
-  <select id="historyNodeFilter" onchange="renderHistoryList()">
-    <option value="">Wszystkie strefy</option>
-  </select>
-</div>
+    
  <div class="filter-item">
       <span>➡️</span>
       <input type="text" 
@@ -472,6 +469,7 @@ input[type="date"] {
         onfocus="this.type='date'"
   onblur="if(!this.value)this.type='text'">
     </div>
+    
     <div class="filter-item">
       <span>🔎</span>
       <input type="text" id="historyTerminalFilter" placeholder="Nr parkomatu" oninput="renderHistoryList()">
