@@ -235,10 +235,19 @@ header{
   margin-right:6px;
 }
 
-.filter-item input,
-.filter-item select{
+.filter-item input{
   flex:1;
   background:transparent;
+  border:none;
+  color:white;
+  font-size:14px;
+  outline:none;
+}
+
+/* ✅ SELECT musi mieć tło */
+.filter-item select{
+  flex:1;
+  background:#020617;   /* 🔥 KLUCZOWE */
   border:none;
   color:white;
   font-size:14px;
@@ -303,6 +312,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 input[type="date"] {
   color-scheme: dark;
 }
+  /* ✅ FIX białego dropdowna na desktopie */
+  select {  background-color: #020617;  color: white;}
 </style>
 </head>
 
