@@ -202,7 +202,7 @@ header{
 /* ✅ NOWY MOBILNY PANEL FILTRÓW */
 .filter-bar.mobile{
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr))
   gap:8px;
   padding:10px;
   background:#020617;
