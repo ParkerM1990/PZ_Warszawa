@@ -387,10 +387,18 @@ input[type="date"] {
 
   <div class="filter-bar mobile">
 
-    <div class="filter-item">
-      <span>📅</span>
-      <input type="date" id="activeDateFrom" onchange="renderActiveList()">
-    </div>
+    
+<div class="filter-item">
+  <span>📅</span>
+  <input 
+    type="text" 
+    placeholder="Data od"
+    id="activeDateFrom"
+    onchange="renderActiveList()"
+    onfocus="this.type='date'"
+    onblur="if(!this.value)this.type='text'">
+</div>
+
 
 <div class="filter-item">
   <span>📍</span>
@@ -401,7 +409,15 @@ input[type="date"] {
 
     <div class="filter-item">
       <span>➡️</span>
-      <input type="date" id="activeDateTo" onchange="renderActiveList()">
+      
+<input 
+  type="text" 
+  placeholder="Data do"
+  id="activeDateTo"
+  onchange="renderActiveList()"
+  onfocus="this.type='date'"
+  onblur="if(!this.value)this.type='text'">
+
     </div>
 
     <div class="filter-item">
