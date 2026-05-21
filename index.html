@@ -138,15 +138,10 @@ header{
 .section{
   position:absolute;
   inset:0;
-
   display:none;
   overflow:auto;
-
   box-sizing:border-box;
-
-  padding:16px;
-  padding-top: calc(var(--header-h) + 16px);
-  
+  padding:16px;  
   padding-bottom: calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 20px);
 }
 
@@ -314,6 +309,14 @@ input[type="date"] {
 }
   /* ✅ FIX białego dropdowna na desktopie */
   select {  background-color: #020617;  color: white;}
+  
+#awarieSection .filter-bar,
+#historiaSection .filter-bar{
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 </style>
 </head>
 
