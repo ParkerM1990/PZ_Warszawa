@@ -15,7 +15,11 @@ body{
   background:#0b1220;
   color:#e5e7eb;
 }
-
+:root{
+  --header-h: 60px;
+  --sidebar-w: 72px;
+  --bottom-bar: 70px;
+}
 
 header{
   height:60px;
@@ -95,7 +99,7 @@ header{
 
   .main{
   left:0 !important;
-  bottom:70px;
+  bottom:var(--bottom-bar);
 }
 
   .nav-btn{
@@ -124,8 +128,8 @@ header{
 
 .main{
   position:fixed;
-  top:60px;
-  left:72px;
+  top:var(--header-h);
+  left:var(--sidebar-w);
   right:0;
   bottom:0;
   overflow:hidden;
@@ -133,11 +137,17 @@ header{
 
 .section{
   position:absolute;
-  inset:0;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+
   display:none;
   overflow:auto;
-  padding-bottom:20px;
-  transition:0.2s ease;
+
+  padding:16px;
+  padding-bottom: calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 20px);
+
   box-sizing:border-box;
 }
 
