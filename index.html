@@ -275,25 +275,32 @@ select,input{
 #historiaSection .filter-bar{
   top: 0;
 }
-/* ✅ FIX DATY NA TELEFONIE */
+/* ✅ pełne wymuszenie stylu date */
 input[type="date"] {
-  color: white;
-  background: #020617;
-  border: none;
+  color: #ffffff !important;
+  background: #020617 !important;
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  padding: 3px 6px;
 }
 
-/* ✅ NAJWAŻNIEJSZE – tekst w polach */
-input[type="date"]::-webkit-datetime-edit {
-  color: white;
+/* ✅ tekst w środku */
+input[type="date"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+  color: #ffffff !important;
 }
 
 /* ✅ ikona kalendarza */
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
+  opacity: 1;
 }
 
-/* ✅ wspomaga dark mode */
-input {
+/* ✅ VERY IMPORTANT – mobile fix */
+input[type="date"] {
   color-scheme: dark;
 }
 </style>
