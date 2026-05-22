@@ -920,40 +920,58 @@ function renderDevicesList(){
       const alarms = activeEvents[key]?.length || 0;
 
       html += `
-        <div class="terminal-box">
+  <div class="terminal-box">
 
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:10px;
-          ">
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    ">
 
-            <div>
-              <b>Parkomat ${p.id}</b><br>
-              ${p.location}<br>
+      <div>
+        <b>Parkomat ${p.id}</b><br>
+        ${p.location}<br>
 
-              <small style="color:#9ca3af;">
-                Strefa: ${p.node || "-"}
-              </small>
-            </div>
+        <small style="color:#9ca3af;">
+          Strefa: ${p.node || "-"}
+        </small>
+      </div>
 
-            <div style="
-              min-width:50px;
-              text-align:center;
-              padding:6px 10px;
-              border-radius:10px;
-              background:${alarms ? '#dc2626' : '#16a34a'};
-              color:white;
-              font-weight:bold;
-            ">
-              ${alarms}
-            </div>
+      <div style="
+        min-width:50px;
+        text-align:center;
+        padding:6px 10px;
+        border-radius:10px;
+        background:${alarms ? '#dc2626' : '#16a34a'};
+        color:white;
+        font-weight:bold;
+      ">
+        ${alarms}
+      </div>
 
-          </div>
+    </div>
 
-        </div>
-      `;
+    <!-- ✅ NOWY PRZYCISK -->
+    <div style="margin-top:10px;">
+      <a 
+        href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+        target="_blank"
+        style="
+          display:inline-block;
+          background:#16a34a;
+          color:white;
+          padding:6px 10px;
+          border-radius:8px;
+          text-decoration:none;
+          font-size:14px;
+        ">
+        🧭 Nawiguj
+      </a>
+    </div>
+
+  </div>
+`;
     });
 
   document.getElementById("devicesList").innerHTML = html;
