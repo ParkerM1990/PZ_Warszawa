@@ -674,8 +674,14 @@ Object.keys(activeEvents).forEach(key => {
 
   let popup = `<b>Parkomat ${p.id}</b><br>${p.location}<br><br>`;
 
-  activeEvents[key].forEach(e=>{
-    popup+=`• ${e.name}<br><small>${e.date}</small><br>`;
+  
+
+activeEvents[key].forEach(e=>{
+  popup+=`
+    • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
+    <small>${e.date}</small><br>
+  `;
+
   });
 
   popup+=`
@@ -822,11 +828,13 @@ function renderActiveList(){
         ${p.location}<br><br>
     `;
 
-    filtered.forEach(e => {
-      html += `
-        • ${e.name}<br>
-        <small>${e.date}</small><br>
-      `;
+    
+filtered.forEach(e => {
+  html += `
+    • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
+    <small>${e.date}</small><br>
+  `;
+
     });
 
     html += `</div>`;
@@ -874,7 +882,7 @@ if(node && p.node !== node) return;
       <b>Parkomat ${r[0]}</b><br>
       
 <div class="event-name">
-  ${r[5]} (${r[6]||""})
+  ${r[5]} (${r[7]||""})
 </div>
       Od: ${r[3]}<br>
       Do: ${r[8]||""}
