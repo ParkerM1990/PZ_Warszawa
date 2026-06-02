@@ -858,13 +858,13 @@ async function submitService(){
 
   try{
 
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+    
+await fetch(SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",   // ✅ KLUCZOWE
+  body: JSON.stringify(payload)
+});
+
 
     // ✅ różne komunikaty
     if(currentService.key){
