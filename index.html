@@ -514,6 +514,56 @@ input[type="date"] {
 </div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+<!-- ✅ MODAL SERWIS -->
+<div id="serviceModal" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:5000;
+">
+
+  <div style="
+    background:#020617;
+    padding:16px;
+    border-radius:12px;
+    width:90%;
+    max-width:400px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  ">
+
+    <h3>🔧 Zamknij awarię</h3>
+
+    <select id="techSelect"></select>
+
+    <div id="actionsBox" style="max-height:150px;overflow:auto;"></div>
+
+    <button onclick="submitService()" style="
+      background:#16a34a;
+      color:white;
+      padding:10px;
+      border:none;
+      border-radius:8px;
+    ">
+      ✅ Zapisz
+    </button>
+
+    <button onclick="closeModal()" style="
+      background:#374151;
+      color:white;
+      padding:8px;
+      border:none;
+      border-radius:8px;
+    ">
+      Anuluj
+    </button>
+
+  </div>
+</div>
 <!-- ✅ JS zostaje praktycznie bez zmian -->
 <script>
 
@@ -530,6 +580,14 @@ function toggleFilters(){
 const PARKOMATY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
 const ACTIVE_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=0&single=true&output=csv";
 const HISTORY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1220391858&single=true&output=csv";
+
+const ACTIONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1441340771&single=true&output=csv";
+
+const USERS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=2025072242&single=true&output=csv";
+
+let serviceActions = [];
+let technicians = [];
+let currentService = null;
 
 /* ===== MAPA ===== */
 let map = L.map('map').setView([52.23218280963405, 21.007884183479632],12);
@@ -550,6 +608,21 @@ function parseCSV(text){
     rows.push(line.split(",").map(v=>v.replace(/^"|"$/g,"")));
   }
   return rows;
+}
+
+
+async function loadServiceActions(){
+  const rows = parseCSV(await (await fetch(ACTIONS_URL)).text()).slice(1);
+  serviceActions = rows.map(r => r[0]?.trim()).filter(Boolean);
+}
+
+async function loadTechnicians(){
+  const rows = parseCSV(await (await fetch(USERS_URL)).text()).slice(1);
+
+  technicians = rows.map(r => ({
+    name: r[0]?.trim(),
+    city: r[1]?.trim()
+  })).filter(t => t.name);
 }
 
 
@@ -655,6 +728,93 @@ function setActiveNav(btn){
 
   btn.classList.add("active");
 }
+
+function openServiceModal(key, event){
+
+  currentService = {key, event};
+
+  const techSelect = document.getElementById("techSelect");
+
+  techSelect.innerHTML = technicians
+    .map(t => `<option value="${t.name}">${t.name} (${t.city})</option>`)
+    .join('');
+
+  const box = document.getElementById("actionsBox");
+
+  box.innerHTML = serviceActions.map(a => `
+    <label style="display:flex;gap:6px;">
+      <input type="checkbox" value="${a}">
+      ${a}
+    </label>
+  `).join('');
+
+  document.getElementById("serviceModal").style.display = "flex";
+}
+
+
+function closeModal(){
+  document.getElementById("serviceModal").style.display = "none";
+}
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRoNHMfvANKbxLBFU7a8xmAAaL5s9mHdE774Yxcbriqof4PT6NNw/exec";
+
+async function submitService(){
+
+  const user = document.getElementById("techSelect").value;
+
+  const checked = document.querySelectorAll("#actionsBox input:checked");
+  const actions = [...checked].map(el => el.value);
+
+  if(!user){
+    alert("❌ Wybierz pracownika");
+    return;
+  }
+
+  if(actions.length === 0){
+    alert("❌ Wybierz czynności");
+    return;
+  }
+
+  const {key, event} = currentService;
+  const p = allParkomaty[key];
+
+  const now = new Date().toISOString().slice(0,19).replace("T"," ");
+
+  const payload = {
+    id: p.id,
+    structure: p.structure,
+    location: p.location,
+    eventName: event.name,
+    startDate: event.date,
+    endDate: now,
+    user: user,
+    actions: actions
+  };
+
+  try{
+
+    await fetch(SCRIPT_URL, {
+      method:"POST",
+      body: JSON.stringify(payload)
+    });
+
+    alert("✅ Awaria zamknięta");
+
+    // ✅ usuń z aktywnych
+    activeEvents[key] = activeEvents[key].filter(e => e !== event);
+
+    if(activeEvents[key].length === 0){
+      delete activeEvents[key];
+    }
+
+    closeModal();
+    renderAll();
+
+  }catch(e){
+    alert("❌ Błąd zapisu");
+    console.error(e);
+  }
+}
+
 /* ===== MAP + AUTO CENTER ===== */
 function renderMarkers(){
 
@@ -833,12 +993,26 @@ filtered.forEach(e => {
   html += `
     • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
     <small>${e.date}</small><br>
+
+    <button onclick="openServiceModal('${key}', ${JSON.stringify(e).replace(/"/g,'&quot;')})"
+      style="
+        margin-top:6px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        padding:5px 8px;
+        border-radius:6px;
+      ">
+      🔧 Usuń awarię
+    </button>
+
+    <br><br>
   `;
+});
 
-    });
-
-    html += `</div>`;
-  });
+// ✅ ZAMKNIĘCIE BOXA
+html += `</div>`;
+});
 
   document.getElementById("awarieList").innerHTML = html;
 }
@@ -998,7 +1172,7 @@ function showStats(){
 🔥 Wszystkie awarie: ${totalAlarms}`
   );
 }
-``
+
 /* ===== MASTER ===== */
 function renderAll(){
   renderMarkers();
@@ -1012,6 +1186,9 @@ async function init(){
   await loadParkomaty();
   await loadActive();
   await loadHistory();
+  await loadServiceActions();
+  await loadTechnicians();
+
 
   populateActiveEventFilter();
   populateEventFilter();
