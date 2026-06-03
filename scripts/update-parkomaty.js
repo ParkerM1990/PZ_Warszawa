@@ -36,6 +36,7 @@ function parseCSV(text) {
       location: r[1]?.trim(),
       lng: parseFloat(r[2]),
       lat: parseFloat(r[3]),
+      node: r[4]?.trim(),
       structure: r[5]?.trim()
     }));
 }
