@@ -1166,7 +1166,7 @@ function renderDevicesList(){
   let html = "";
 
   Object.values(allParkomaty)
-    .sort((a,b)=>a.id.localeCompare(b.id))
+    .sort((a,b)=>Number(a.id) - Number(b.id))
     .forEach(p=>{
 
       const text = `
