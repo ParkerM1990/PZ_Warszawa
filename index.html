@@ -645,9 +645,23 @@ function parseCSV(text){
 }
 
 
+let actionDict = {}; // ✅ dodaj nad funkcją (globalnie)
+
 async function loadServiceActions(){
   const rows = parseCSV(await (await fetch(ACTIONS_URL)).text()).slice(1);
-  serviceActions = rows.map(r => r[0]?.trim()).filter(Boolean);
+
+  serviceActions = [];
+  actionDict = {};
+
+  rows.forEach(r => {
+    const name = r[0]?.trim();        // nazwa akcji
+    const type = r[1]?.trim().toLowerCase(); // typ: hardware/software
+
+    if(name){
+      serviceActions.push(name);      // ✅ lista checkboxów
+      actionDict[name] = type;        // ✅ mapa typów
+    }
+  });
 }
 
 async function loadTechnicians(){
@@ -1258,11 +1272,27 @@ function renderDevicesList(){
     const end = r[5];
     const user = r[6];
     
-const actionsHtml = r
-  .slice(7)
-  .filter(a => a && a.trim() !== "")
-  .map(a => `• ${a.trim()}`)
-  .join("<br>");
+const grouped = {
+  hardware: [],
+  software: [],
+  serwis: [],
+  inne: []
+};
+
+r.slice(7).forEach(a => {
+  if(!a || !a.trim()) return;
+
+  const clean = a.trim();
+
+  // ✅ pobieramy typ z Twojego słownika ACTIONS_URL
+  const type = actionDict[clean] || "inne";
+
+  if(grouped[type]){
+    grouped[type].push(clean);
+  }else{
+    grouped.inne.push(clean);
+  }
+});
 
 
     html += `
@@ -1273,7 +1303,27 @@ const actionsHtml = r
 
         ⚠️ ${event}<br>
         👤 ${user}<br>
-        🔧<br>${actionsHtml}<br>
+        🔧<br>
+
+${grouped.hardware.length ? `
+<b>💻 Hardware</b><br>
+${grouped.hardware.map(a => `• ${a}`).join("<br>")}<br><br>
+` : ""}
+
+${grouped.software.length ? `
+<b>⚙️ Software</b><br>
+${grouped.software.map(a => `• ${a}`).join("<br>")}<br><br>
+` : ""}
+
+${grouped.serwis.length ? `
+<b>🔧 Serwis</b><br>
+${grouped.serwis.map(a => `• ${a}`).join("<br>")}<br><br>
+` : ""}
+
+${grouped.inne.length ? `
+<b>📦 Inne</b><br>
+${grouped.inne.map(a => `• ${a}`).join("<br>")}
+` : ""}
 
         <small>
           ⏱ ${start} → ${end}
