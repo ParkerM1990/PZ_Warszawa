@@ -202,7 +202,7 @@ header{
 /* ✅ NOWY MOBILNY PANEL FILTRÓW */
 .filter-bar.mobile{
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr))
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap:8px;
   padding:10px;
   background:#020617;
@@ -522,7 +522,8 @@ input[type="date"] {
 
 <div class="filter-item">
   <span>📅</span>
-  <input type="month" id="statsMonth" onchange="renderInterStats()">
+<input type="date" id="statsFrom" onchange="renderInterStats()">
+<input type="date" id="statsTo" onchange="renderInterStats()">
 </div>
 
   <div class="filter-item">
@@ -1421,28 +1422,30 @@ document.getElementById("interwencjeList").innerHTML = `
 }
   function renderInterStats(){
 
-  const selectedMonth = document.getElementById("statsMonth")?.value || "";
+  
+const from = document.getElementById("statsFrom")?.value;
+const to = document.getElementById("statsTo")?.value;
+
 
   const statsUsers = {};
   const statsParts = {};
 
   interwencje.forEach(r => {
 
-    const start = r[4];
-    if(!start) return;
+   
+const start = r[4];
+if(!start) return;
 
-    const d = new Date(start.replace(" ", "T"));
+const d = new Date(start.replace(" ", "T"));
 
-    // ✅ filtr miesiąca
-    if(selectedMonth){
-      const [year, month] = selectedMonth.split("-");
-      if(
-        d.getFullYear() != year ||
-        (d.getMonth() + 1) != Number(month)
-      ){
-        return;
-      }
-    }
+if(from && d < new Date(from)) return;
+
+if(to){
+  const toDate = new Date(to);
+  toDate.setHours(23,59,59,999);
+  if(d > toDate) return;
+}
+
 
     const user = r[6] || "Nieznany";
 
@@ -1488,7 +1491,14 @@ document.getElementById("interwencjeList").innerHTML = `
 
   let html = `<div style="padding:10px;">`;
 
-  html += `<h3>📊 Statystyki ${selectedMonth || "(wszystko)"}</h3>`;
+  
+let label = "(wszystko)";
+if(from || to){
+  label = `${from || "..."} → ${to || "..."}`;
+}
+
+html += `<h3>📊 Statystyki ${label}</h3>`;
+
 
   html += `<h3>👷 Pracownicy</h3>`;
 
