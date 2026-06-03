@@ -1284,12 +1284,12 @@ function renderDevicesList(){
 /* ===== Interwencje ===== */
   function renderInterwencje(){
 
-const terminalFilter = document.getElementById("interTerminalFilter")?.value.trim() || "";
+const terminalFilter = document.getElementById("interTerminalFilter")?.value.toLowerCase().trim() || "";
 const userFilter = document.getElementById("interUserFilter")?.value.toLowerCase() || "";
 const typeFilter = document.getElementById("interTypeFilter")?.value || "";
 
   let html = "";
-
+  let count = 0;   // ✅ licznik
   interwencje.forEach(r => {
 
     const id = r[0];        // ID parkomatu
@@ -1303,7 +1303,7 @@ const typeFilter = document.getElementById("interTypeFilter")?.value || "";
 
 
 // ✅ filtr po ID
-if(terminalFilter && !id.includes(terminalFilter)) return;
+if(terminalFilter && !id.toLowerCase().includes(terminalFilter)) return;
 
 // ✅ filtr po pracowniku
 if(userFilter && !user.includes(userFilter)) return;
@@ -1323,11 +1323,11 @@ r.slice(7).forEach(a => {
 
   // ✅ pobieramy typ z Twojego słownika ACTIONS_URL
   
-const type = actionDict[clean]
-  || actionDict[clean.trim()]
-  || actionDict[clean.toLowerCase()]
-  || "inne";
 
+const key = clean.trim();
+const type = actionDict[key]
+  || actionDict[key.toLowerCase()]
+  || "inne";
 
   if(grouped[type]){
     grouped[type].push(clean);
@@ -1337,7 +1337,8 @@ const type = actionDict[clean]
 });
 // ✅ filtr po typie
     if(typeFilter){  const hasType = grouped[typeFilter] && grouped[typeFilter].length > 0;  if(!hasType) return;}
-
+// ✅ 🔥 LICZNIK – TUTAJ
+    count++;
     html += `
       <div class="terminal-box">
 
@@ -1376,7 +1377,21 @@ ${grouped.inne.map(a => `• ${a}`).join("<br>")}
     `;
   });
 
-  document.getElementById("interwencjeList").innerHTML = html;
+  if(!html){
+  html = `
+    <div style="text-align:center;margin-top:40px;color:#9ca3af;">
+      ⚠️ Brak wyników
+    </div>
+  `;
+}
+
+document.getElementById("interwencjeList").innerHTML = `
+  <div style="margin:10px;color:#9ca3af;">
+    🔎 Znaleziono: ${count}
+  </div>
+  ${html}
+`;
+
 }
   /* ===== STATYSTYKI ===== */
 function showStats(){
