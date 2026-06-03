@@ -36,7 +36,7 @@ function parseCSV(text) {
       location: r[1]?.trim(),
       lng: parseFloat(r[2]),
       lat: parseFloat(r[3]),
-      TerminalStructureName: r[5]?.trim()
+      structure: r[5]?.trim()
     }));
 }
 
