@@ -1,14 +1,9 @@
-const https = require("https");
 const fs = require("fs");
 
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
 
 function clean(v) {
-  return String(v || "")
-    .replace(/\r/g, "")
-    .replace(/^"|"$/g, "")
-    .trim();
+  return String(v || "").replace(/\r/g, "").replace(/^"|"$/g, "").trim();
 }
 
 function toNumber(v) {
@@ -18,58 +13,35 @@ function toNumber(v) {
 
 console.log("🚀 START");
 
-https
-  .get(CSV_URL, (res) => {
-    console.log("📡 STATUS HTTP:", res.statusCode);
+const res = await fetch(CSV_URL, { redirect: "follow" });
+const data = await res.text();
 
-    if (res.statusCode !== 200) {
-      console.error("❌ Błąd pobierania CSV");
-      return;
-    }
+console.log("📦 SIZE:", data.length);
 
-    let data = "";
+if (!data.includes(",")) {
+  console.error("❌ To nie CSV");
+  console.log(data.slice(0, 300));
+  process.exit(1);
+}
 
-    res.on("data", (chunk) => (data += chunk));
+const lines = data
+  .replace(/^\uFEFF/, "")
+  .split(/\r?\n/)
+  .filter(l => l.trim());
 
-    res.on("end", () => {
-      console.log("📦 Długość danych:", data.length);
+const result = lines
+  .slice(1)
+  .map(l => l.split(",").map(clean))
+  .map(r => ({
+    id: r[0],
+    location: r[1],
+    lng: toNumber(r[2]),
+    lat: toNumber(r[3]),
+    node: r[4],
+    structure: r[5] || ""
+  }))
+  .filter(r => r.id && r.lat !== null && r.lng !== null);
 
-      // 🔴 jeśli Google zwróci HTML zamiast CSV
-      if (!data.includes(",")) {
-        console.error("❌ TO NIE JEST CSV!");
-        console.log(data.slice(0, 300));
-        return;
-      }
+fs.writeFileSync("parkomaty.json", JSON.stringify(result, null, 2));
 
-      const lines = data
-        .replace(/^\uFEFF/, "")
-        .split(/\r?\n/)
-        .filter((l) => l.trim());
-
-      console.log("📄 Linie:", lines.length);
-
-      const result = lines
-        .slice(1)
-        .map((line) => line.split(",").map(clean))
-        .map((r) => ({
-          id: r[0],
-          location: r[1],
-          lng: toNumber(r[2]),
-          lat: toNumber(r[3]),
-          node: r[4],
-          structure: r[5] || "",
-        }))
-        .filter((r) => r.id && r.lat !== null && r.lng !== null);
-
-      console.log("📊 Parkomaty:", result.length);
-
-      const outputPath = __dirname + "/parkomaty.json";
-
-      fs.writeFileSync(outputPath, JSON.stringify(result, null, 2), "utf8");
-
-      console.log("✅ ZAPISANO:", outputPath);
-    });
-  })
-  .on("error", (err) => {
-    console.error("❌ Błąd sieci:", err);
-  });
+console.log("✅ ZAPISANO:", result.length);
