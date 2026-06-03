@@ -598,6 +598,17 @@ function toggleFilters(){
   panel.classList.toggle("open");
 }
 
+function getNavLink(lat, lng){
+
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if(isIOS){
+    return `maps://?daddr=${lat},${lng}`; // ✅ Apple Maps (pewne)
+  }
+
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+}
+
 /* ===== SHEETS ===== */
 /* =====const PARKOMATY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";===== */
 const ACTIVE_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=0&single=true&output=csv";
@@ -922,7 +933,7 @@ activeEvents[key].forEach(e=>{
 
   popup+=`
     <br>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+    <a href="${getNavLink(p.lat,p.lng)}"
        target="_blank"
        style="background:#16a34a;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">
        🧭 Nawiguj
@@ -1205,7 +1216,7 @@ function renderDevicesList(){
     <!-- ✅ NOWY PRZYCISK -->
     <div style="margin-top:10px;">
       <a 
-        href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+        href="${getNavLink(p.lat,p.lng)}
         target="_blank"
         style="
           display:inline-block;
