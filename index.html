@@ -606,7 +606,7 @@ function getNavLink(lat, lng){
     return `maps://?daddr=${lat},${lng}`; // ✅ Apple Maps (pewne)
   }
 
-  return `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`; // ✅ stabilne na PC
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`; // ✅ stabilne na PC
 }
 
 /* ===== SHEETS ===== */
