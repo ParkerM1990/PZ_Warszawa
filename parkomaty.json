@@ -4,6 +4,7 @@
     "location": "6. Kolejowa 49A i 47B",
     "lng": 20.982474503497,
     "lat": 52.227391311135,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -11,6 +12,7 @@
     "location": "5. Kolejowa 49A i 47B",
     "lng": 20.983720421791,
     "lat": 52.22765648492,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -18,6 +20,7 @@
     "location": "4. Kolejowa 45 i 45A",
     "lng": 20.981562552431,
     "lat": 52.227072581292,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -25,6 +28,7 @@
     "location": "3. Kolejowa 43A i 45B",
     "lng": 20.979829845408,
     "lat": 52.226739062563,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -32,6 +36,7 @@
     "location": "2. Kolejowa 43A i 45B",
     "lng": 20.981090483645,
     "lat": 52.227085724836,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -39,6 +44,7 @@
     "location": "1. Kolejowa 43",
     "lng": 20.97987812517,
     "lat": 52.226568194855,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -46,6 +52,7 @@
     "location": "3. Aleja Krakowska 102",
     "lng": 20.94535946846,
     "lat": 52.174657091486,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -53,6 +60,7 @@
     "location": "2. Aleja Krakowska 102",
     "lng": 20.944393873215,
     "lat": 52.174693278878,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -60,6 +68,7 @@
     "location": "1. Aleja Krakowska 102",
     "lng": 20.944824335554,
     "lat": 52.174139932101,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -67,6 +76,7 @@
     "location": "2. CH Dekada Żyrardów",
     "lng": 20.441287904978,
     "lat": 52.054333637701,
+    "node": "Żyrardów",
     "structure": "POL_Lodz2"
   },
   {
@@ -74,6 +84,7 @@
     "location": "1. CH Dekada Żyrardów",
     "lng": 20.441184639931,
     "lat": 52.054449915151,
+    "node": "Żyrardów",
     "structure": "POL_Lodz2"
   },
   {
@@ -81,6 +92,7 @@
     "location": "2. ME Ostrobramska",
     "lng": 21.101256161928,
     "lat": 52.233936108691,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -88,6 +100,7 @@
     "location": "1. ME Ostrobramska",
     "lng": 21.101710796356,
     "lat": 52.233950071547,
+    "node": "Warszawa",
     "structure": "POL_Lodz2"
   },
   {
@@ -95,6 +108,7 @@
     "location": "ul. Wołoska 24",
     "lng": 21.004021038693,
     "lat": 52.185732179509,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -102,6 +116,7 @@
     "location": "ul. Wołoska 24",
     "lng": 21.0037555,
     "lat": 52.185508530682,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -109,6 +124,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.982710989791,
     "lat": 52.190810200026,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -116,6 +132,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.984221022403,
     "lat": 52.190320000923,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -123,6 +140,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.984361838376,
     "lat": 52.189378627568,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -130,6 +148,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.984381954943,
     "lat": 52.188664979288,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -137,6 +156,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.981693040406,
     "lat": 52.188885323528,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -144,6 +164,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.981458347117,
     "lat": 52.189293121926,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   },
   {
@@ -151,6 +172,7 @@
     "location": "Żwirki i Wigury 18",
     "lng": 20.981945168053,
     "lat": 52.190782047627,
+    "node": "Warszawa",
     "structure": "POL_eVend2"
   }
 ]
