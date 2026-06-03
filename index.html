@@ -1257,19 +1257,27 @@ function renderAll(){
   renderDevicesList();
 }
 
-/* ===== INIT ===== */
+/* ===== INIT (FAST) ===== */
 async function init(){
+
+  // 🔥 1. tylko najważniejsze rzeczy na start
   await loadParkomaty();
   await loadActive();
-  await loadHistory();
-  await loadServiceActions();
-  await loadTechnicians();
 
-
+  // ✅ pokaz mapę OD RAZU
   populateActiveEventFilter();
-  populateEventFilter();
+  renderMarkers();
+  renderActiveList();
 
-  renderAll();
+  // 🚀 2. reszta ładuje się w tle (bez czekania)
+  loadHistory().then(() => {
+    populateEventFilter();
+    renderHistoryList();
+  });
+
+  loadServiceActions();
+  loadTechnicians();
+
 }
 
 init();
