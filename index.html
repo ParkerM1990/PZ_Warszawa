@@ -657,11 +657,11 @@ async function loadParkomaty(){
 
   rows.forEach(r => {
 
-    const id = r[0]?.trim(); 
-    const lng = parseFloat(r[2]);
-    const lat = parseFloat(r[3]);
-    const structure = r[5]?.trim();
-    const node = r[4];
+    const id = r.id?.trim();
+    const lat = parseFloat(r.lat);
+    const lng = parseFloat(r.lng);
+    const structure = r.structure?.trim();
+    const node = r.node;
 
     if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
 
@@ -672,36 +672,25 @@ async function loadParkomaty(){
       structure,
       lat,
       lng,
-      location: r[1],
+      location: r.location,
       node
     };
 
     nodeSet.add(node);
   });
 
-  // ✅ wspólna lista stref
   const nodes = [...nodeSet].sort();
 
   const options =
     `<option value="">Wszystkie strefy</option>` +
     nodes.map(n => `<option value="${n}">${n}</option>`).join('');
 
-  // ✅ MAPA
   document.getElementById("nodeFilter").innerHTML = options;
 
-  // ✅ AWARIE
-  const activeNode = document.getElementById("activeNodeFilter");
-  if(activeNode) activeNode.innerHTML = options;
-
-  // ✅ HISTORIA
-  const historyNode = document.getElementById("historyNodeFilter");
-  if(historyNode) historyNode.innerHTML = options;
-
-  // ✅ URZĄDZENIA
-  const deviceNode = document.getElementById("deviceNodeFilter");
-  if(deviceNode) deviceNode.innerHTML = options;
+  document.getElementById("activeNodeFilter").innerHTML = options;
+  document.getElementById("historyNodeFilter").innerHTML = options;
+  document.getElementById("deviceNodeFilter").innerHTML = options;
 }
-
 /* ===== LOAD ACTIVE ===== */
 async function loadActive(){
   const rows=parseCSV(await (await fetch(ACTIVE_URL)).text()).slice(1);
