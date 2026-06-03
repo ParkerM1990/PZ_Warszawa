@@ -1260,16 +1260,16 @@ function renderAll(){
 /* ===== INIT (FAST) ===== */
 async function init(){
 
-  // 🔥 1. tylko najważniejsze rzeczy na start
+  // ✅ NAJWAŻNIEJSZE NA START
   await loadParkomaty();
   await loadActive();
 
-  // ✅ pokaz mapę OD RAZU
+  // ✅ szybki widok
   populateActiveEventFilter();
   renderMarkers();
   renderActiveList();
 
-  // 🚀 2. reszta ładuje się w tle (bez czekania)
+  // ✅ NIE BLOKUJ UI ↓↓↓
   loadHistory().then(() => {
     populateEventFilter();
     renderHistoryList();
@@ -1278,9 +1278,13 @@ async function init(){
   loadServiceActions();
   loadTechnicians();
 
+  setTimeout(() => {
+    renderDevicesList();
+  }, 100);
 }
 
 init();
+
 
 // zamykanie po wyborze
 
