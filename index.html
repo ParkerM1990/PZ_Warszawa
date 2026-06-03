@@ -660,8 +660,8 @@ async function loadParkomaty(){
     const id = r.id?.trim();
     const lat = parseFloat(r.lat);
     const lng = parseFloat(r.lng);
-    const structure = r.structure?.trim();
-    const node = r.node;
+    const structure = (r.structure || "").replace(/\r/g, "").trim();
+    const node = (r.node || "").replace(/\r/g, "").trim();
 
     if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
 
