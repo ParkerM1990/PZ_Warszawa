@@ -651,7 +651,7 @@ async function loadTechnicians(){
 /* ===== LOAD PARKOMATY ===== */
 async function loadParkomaty(){
 
-  const rows = parseCSV(await (await fetch(PARKOMATY_URL)).text()).slice(1);
+  const rows = await (await fetch("parkomaty.json")).json();
 
   const nodeSet = new Set();
 
