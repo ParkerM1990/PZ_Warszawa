@@ -553,6 +553,28 @@ input[type="date"] {
   ">
     ➕ Dodaj interwencję
   </button>
+  <button onclick="renderInterStats()" style="
+  background:#1d4ed8;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  margin:10px;
+">
+  📊 Statystyki
+</button>
+
+<button onclick="renderInterwencje()" style="
+  background:#374151;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  margin:10px;
+">
+  📋 Lista
+</button>
+
 <div id="interwencjeList"></div>
 </div>
 </div>
@@ -1391,8 +1413,94 @@ document.getElementById("interwencjeList").innerHTML = `
   </div>
   ${html}
 `;
-
 }
+  function renderInterStats(){
+
+  const statsUsers = {};
+  const statsParts = {};
+
+  interwencje.forEach(r => {
+
+    const user = r[6] || "Nieznany";
+
+    if(!statsUsers[user]){
+      statsUsers[user] = {
+        total: 0,
+        hardware: 0,
+        software: 0,
+        serwis: 0
+      };
+    }
+
+    const grouped = {
+      hardware: [],
+      software: [],
+      serwis: []
+    };
+
+    r.slice(7).forEach(a => {
+      if(!a || !a.trim()) return;
+
+      const clean = a.trim();
+
+      const type = actionDict[clean]
+        || actionDict[clean.toLowerCase()]
+        || "inne";
+
+      if(grouped[type]){
+        grouped[type].push(clean);
+      }
+
+      // ✅ liczenie podzespołów
+      statsParts[clean] = (statsParts[clean] || 0) + 1;
+    });
+
+    statsUsers[user].total++;
+
+    if(grouped.hardware.length) statsUsers[user].hardware++;
+    if(grouped.software.length) statsUsers[user].software++;
+    if(grouped.serwis.length) statsUsers[user].serwis++;
+
+  });
+
+  // ✅ RENDER
+
+  let html = `<div style="padding:10px;">`;
+
+  html += `<h3>👷 Pracownicy</h3>`;
+
+  Object.entries(statsUsers)
+    .sort((a,b) => b[1].total - a[1].total)
+    .forEach(([user, s]) => {
+
+      html += `
+        <div class="terminal-box">
+          <b>${user}</b><br>
+          🔎 ${s.total}<br>
+          💻 ${s.hardware} | ⚙️ ${s.software} | 🔧 ${s.serwis}
+        </div>
+      `;
+    });
+
+  html += `<h3>🔩 Podzespoły</h3>`;
+
+  Object.entries(statsParts)
+    .sort((a,b) => b[1] - a[1])
+    .forEach(([part, count]) => {
+
+      html += `
+        <div class="terminal-box">
+          ${part}<br>
+          🧮 ${count} szt.
+        </div>
+      `;
+    });
+
+  html += `</div>`;
+
+  document.getElementById("interwencjeList").innerHTML = html;
+}
+
   /* ===== STATYSTYKI ===== */
 function showStats(){
 
