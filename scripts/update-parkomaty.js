@@ -1,47 +1,58 @@
-const fs = require("fs");
+import fs from "fs";
+import https from "https";
 
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
-
-function clean(v) {
-  return String(v || "").replace(/\r/g, "").replace(/^"|"$/g, "").trim();
-}
-
-function toNumber(v) {
-  const n = parseFloat(v);
-  return isNaN(n) ? null : n;
-}
+const CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
 
 console.log("🚀 START");
 
-const res = await fetch(CSV_URL, { redirect: "follow" });
-const data = await res.text();
+function fetch(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, res => {
+        // 🔥 OBSŁUGA REDIRECT (307 / 301 / 302)
+        if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
+          return fetch(res.headers.location).then(resolve).catch(reject);
+        }
 
-console.log("📦 SIZE:", data.length);
+        if (res.statusCode !== 200) {
+          return reject(new Error("HTTP " + res.statusCode));
+        }
 
-if (!data.includes(",")) {
-  console.error("❌ To nie CSV");
-  console.log(data.slice(0, 300));
-  process.exit(1);
+        let data = "";
+        res.on("data", chunk => (data += chunk));
+        res.on("end", () => resolve(data));
+      })
+      .on("error", reject);
+  });
 }
 
-const lines = data
-  .replace(/^\uFEFF/, "")
-  .split(/\r?\n/)
-  .filter(l => l.trim());
+function parseCSV(text) {
+  return text
+    .replace(/^\uFEFF/, "")
+    .split("\n")
+    .slice(1)
+    .map(line => line.split(","))
+    .filter(r => r[0])
+    .map(r => ({
+      id: r[0]?.trim(),
+      location: r[1]?.trim(),
+      lng: parseFloat(r[2]),
+      lat: parseFloat(r[3]),
+      node: r[4]?.trim()
+    }));
+}
 
-const result = lines
-  .slice(1)
-  .map(l => l.split(",").map(clean))
-  .map(r => ({
-    id: r[0],
-    location: r[1],
-    lng: toNumber(r[2]),
-    lat: toNumber(r[3]),
-    node: r[4],
-    structure: r[5] || ""
-  }))
-  .filter(r => r.id && r.lat !== null && r.lng !== null);
+(async () => {
+  try {
+    const csv = await fetch(CSV_URL);
 
-fs.writeFileSync("parkomaty.json", JSON.stringify(result, null, 2));
+    const result = parseCSV(csv);
 
-console.log("✅ ZAPISANO:", result.length);
+    fs.writeFileSync("parkomaty.json", JSON.stringify(result, null, 2));
+
+    console.log("✅ Zaktualizowano parkomaty.json:", result.length, "rekordów");
+  } catch (e) {
+    console.error("❌ Błąd:", e.message);
+  }
+})();
