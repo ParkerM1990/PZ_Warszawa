@@ -1,7 +1,8 @@
 const https = require("https");
 const fs = require("fs");
 
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
+const CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
 
 function clean(v) {
   return String(v || "")
@@ -10,60 +11,65 @@ function clean(v) {
     .trim();
 }
 
-https.get(CSV_URL, res => {
+function toNumber(v) {
+  const n = parseFloat(v);
+  return isNaN(n) ? null : n;
+}
 
-  let data = "";
+console.log("🚀 START");
 
-  res.on("data", chunk => data += chunk);
+https
+  .get(CSV_URL, (res) => {
+    console.log("📡 STATUS HTTP:", res.statusCode);
 
-  res.on("end", () => {
-
-    // ❗ zabezpieczenie: sprawdź czy to CSV
-    if (!data.includes(",")) {
-      console.error("❌ To nie wygląda jak CSV:");
-      console.log(data.slice(0, 200));
+    if (res.statusCode !== 200) {
+      console.error("❌ Błąd pobierania CSV");
       return;
     }
 
-    const lines = data
-      .replace(/^\uFEFF/, "")
-      .split(/\r?\n/)
-      .filter(l => l.trim());
+    let data = "";
 
-    const result = lines
-      .slice(1)
-      .map(line => {
+    res.on("data", (chunk) => (data += chunk));
 
-        // ❗ lepsze niż split (obsługa cudzysłowów)
-        const cols = line
-          .split(",")
-          .map(clean);
+    res.on("end", () => {
+      console.log("📦 Długość danych:", data.length);
 
-        return {
-          id: cols[0],
-          location: cols[1],
-          lng: parseFloat(cols[2]),
-          lat: parseFloat(cols[3]),
-          node: cols[4],
-          structure: cols[5] || ""
-        };
-      })
-      .filter(r =>
-        r.id &&
-        !isNaN(r.lat) &&
-        !isNaN(r.lng)
-      );
+      // 🔴 jeśli Google zwróci HTML zamiast CSV
+      if (!data.includes(",")) {
+        console.error("❌ TO NIE JEST CSV!");
+        console.log(data.slice(0, 300));
+        return;
+      }
 
-    fs.writeFileSync(
-      "parkomaty.json",
-      JSON.stringify(result, null, 2),
-      "utf8"
-    );
+      const lines = data
+        .replace(/^\uFEFF/, "")
+        .split(/\r?\n/)
+        .filter((l) => l.trim());
 
-    console.log("✅ Zaktualizowano:", result.length, "rekordów");
+      console.log("📄 Linie:", lines.length);
 
+      const result = lines
+        .slice(1)
+        .map((line) => line.split(",").map(clean))
+        .map((r) => ({
+          id: r[0],
+          location: r[1],
+          lng: toNumber(r[2]),
+          lat: toNumber(r[3]),
+          node: r[4],
+          structure: r[5] || "",
+        }))
+        .filter((r) => r.id && r.lat !== null && r.lng !== null);
+
+      console.log("📊 Parkomaty:", result.length);
+
+      const outputPath = __dirname + "/parkomaty.json";
+
+      fs.writeFileSync(outputPath, JSON.stringify(result, null, 2), "utf8");
+
+      console.log("✅ ZAPISANO:", outputPath);
+    });
+  })
+  .on("error", (err) => {
+    console.error("❌ Błąd sieci:", err);
   });
-
-}).on("error", err => {
-  console.error("❌ Błąd pobierania:", err);
-});
