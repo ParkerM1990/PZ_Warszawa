@@ -373,7 +373,7 @@ input[type="date"] {
   onclick="setActiveNav(this);showSection('interwencjeSection')">
   🧰 <span>Interwencje</span>
 </button>
-    
+  
 </div>
 <div class="main">
 
@@ -529,7 +529,7 @@ input[type="date"] {
   ">
     ➕ Dodaj interwencję
   </button>
-
+<div id="interwencjeList"></div>
 </div>
 </div>
 
@@ -617,9 +617,10 @@ const HISTORY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo
 const ACTIONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1441340771&single=true&output=csv";
 
 const USERS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=2025072242&single=true&output=csv";
-
+const INTERWENCJE_URL ="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1460522074&single=true&output=csv";
 let serviceActions = [];
 let technicians = [];
+let interwencje = [];
 let currentService = null;
 
 /* ===== MAPA ===== */
@@ -657,7 +658,11 @@ async function loadTechnicians(){
     city: r[1]?.trim()
   })).filter(t => t.name);
 }
+async function loadInterwencje(){
+  const rows = parseCSV(await (await fetch(INTERWENCJE_URL)).text()).slice(1);
 
+  interwencje = rows;
+}
 
 /* ===== LOAD PARKOMATY ===== */
 async function loadParkomaty(){
@@ -886,6 +891,7 @@ await fetch(SCRIPT_URL, {
 
     // ✅ odśwież UI
     renderAll();
+    loadInterwencje().then(renderInterwencje);
 
     // ✅ opcjonalnie powrót na mapę
     
@@ -1237,6 +1243,42 @@ function renderDevicesList(){
 
   document.getElementById("devicesList").innerHTML = html;
 }
+/* ===== Interwencje ===== */
+  function renderInterwencje(){
+
+  let html = "";
+
+  interwencje.forEach(r => {
+
+    const id = r[0];        // ID parkomatu
+    const structure = r[1]; // struktura
+    const location = r[2];  // adres
+    const event = r[3];     // nazwa zdarzenia
+    const start = r[4];
+    const end = r[5];
+    const user = r[6];
+    const actions = r[7];
+
+    html += `
+      <div class="terminal-box">
+
+        <b>Parkomat ${id}</b><br>
+        ${location}<br><br>
+
+        ⚠️ ${event}<br>
+        👤 ${user}<br>
+        🔧 ${actions}<br>
+
+        <small>
+          ⏱ ${start} → ${end}
+        </small>
+
+      </div>
+    `;
+  });
+
+  document.getElementById("interwencjeList").innerHTML = html;
+}
   /* ===== STATYSTYKI ===== */
 function showStats(){
 
@@ -1288,7 +1330,8 @@ async function init(){
 
   loadServiceActions();
   loadTechnicians();
-
+await loadInterwencje();
+  renderInterwencje();
   setTimeout(() => {
     renderDevicesList();
   }, 100);
