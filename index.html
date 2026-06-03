@@ -518,7 +518,31 @@ input[type="date"] {
   <div id="devicesList"></div>
 </div>
 <div id="interwencjeSection" class="section">
+<div class="filter-bar mobile">
 
+  <div class="filter-item">
+    <span>🔎</span>
+    <input type="text" id="interTerminalFilter" placeholder="Nr parkomatu"
+           oninput="renderInterwencje()">
+  </div>
+
+  <div class="filter-item">
+    <span>👤</span>
+    <input type="text" id="interUserFilter" placeholder="Pracownik"
+           oninput="renderInterwencje()">
+  </div>
+
+  <div class="filter-item">
+    <span>⚙️</span>
+    <select id="interTypeFilter" onchange="renderInterwencje()">
+      <option value="">Wszystkie typy</option>
+      <option value="hardware">Hardware</option>
+      <option value="software">Software</option>
+      <option value="serwis">Serwis</option>
+    </select>
+  </div>
+
+</div>
   <button onclick="openManualServiceModal()" style="
     background:#7c3aed;
     color:white;
@@ -1260,6 +1284,10 @@ function renderDevicesList(){
 /* ===== Interwencje ===== */
   function renderInterwencje(){
 
+const terminalFilter = document.getElementById("interTerminalFilter")?.value.trim() || "";
+const userFilter = document.getElementById("interUserFilter")?.value.toLowerCase() || "";
+const typeFilter = document.getElementById("interTypeFilter")?.value || "";
+
   let html = "";
 
   interwencje.forEach(r => {
@@ -1270,7 +1298,16 @@ function renderDevicesList(){
     const event = r[3];     // nazwa zdarzenia
     const start = r[4];
     const end = r[5];
-    const user = r[6];
+    const userRaw = r[6] || "";
+    const user = userRaw.toLowerCase();
+
+
+// ✅ filtr po ID
+if(terminalFilter && !id.includes(terminalFilter)) return;
+
+// ✅ filtr po pracowniku
+if(userFilter && !user.includes(userFilter)) return;
+
     
 const grouped = {
   hardware: [],
@@ -1285,7 +1322,12 @@ r.slice(7).forEach(a => {
   const clean = a.trim();
 
   // ✅ pobieramy typ z Twojego słownika ACTIONS_URL
-  const type = actionDict[clean] || "inne";
+  
+const type = actionDict[clean]
+  || actionDict[clean.trim()]
+  || actionDict[clean.toLowerCase()]
+  || "inne";
+
 
   if(grouped[type]){
     grouped[type].push(clean);
@@ -1293,7 +1335,8 @@ r.slice(7).forEach(a => {
     grouped.inne.push(clean);
   }
 });
-
+// ✅ filtr po typie
+    if(typeFilter){  const hasType = grouped[typeFilter] && grouped[typeFilter].length > 0;  if(!hasType) return;}
 
     html += `
       <div class="terminal-box">
@@ -1302,7 +1345,7 @@ r.slice(7).forEach(a => {
         ${location}<br><br>
 
         ⚠️ ${event}<br>
-        👤 ${user}<br>
+        👤 ${userRaw}<br>
         🔧<br>
 
 ${grouped.hardware.length ? `
