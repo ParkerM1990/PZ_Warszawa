@@ -1,34 +1,35 @@
-name: Aktualizacja parkomatów
+const https = require('https');
+const fs = require('fs');
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-  workflow_dispatch:
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
 
-permissions:
-  contents: write
+https.get(CSV_URL, res => {
 
-jobs:
-  update:
-    runs-on: ubuntu-latest
+  let data = '';
 
-    steps:
-      - uses: actions/checkout@v5
+  res.on('data', chunk => data += chunk);
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
+  res.on('end', () => {
 
-      - run: node scripts/update-parkomaty.js
+    const lines = data.split('\n').slice(1);
 
-      - name: Commit
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+    const result = lines
+      .map(line => line.split(','))
+      .filter(r => r.length > 4 && r[0])
+      .map(r => ({
+        id: r[0],
+        location: r[1],
+        lng: parseFloat(r[2]),
+        lat: parseFloat(r[3]),
+        node: r[4]
+      }));
 
-          git add parkomaty.json
+    fs.writeFileSync('parkomaty.json', JSON.stringify(result, null, 2));
 
-          git diff --staged --quiet || (
-            git commit -m "Aktualizacja parkomatów"
-            git push
-          )
+    console.log("✅ Zaktualizowano parkomaty.json");
+
+  });
+
+}).on('error', err => {
+  console.error("❌ Błąd pobierania:", err);
+});
