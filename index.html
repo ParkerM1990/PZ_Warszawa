@@ -1257,7 +1257,13 @@ function renderDevicesList(){
     const start = r[4];
     const end = r[5];
     const user = r[6];
-    const actions = r[7];
+    
+const actionsHtml = r
+  .slice(7)
+  .filter(a => a && a.trim() !== "")
+  .map(a => `• ${a.trim()}`)
+  .join("<br>");
+
 
     html += `
       <div class="terminal-box">
@@ -1267,7 +1273,7 @@ function renderDevicesList(){
 
         ⚠️ ${event}<br>
         👤 ${user}<br>
-        🔧 ${actions}<br>
+        🔧<br>${actionsHtml}<br>
 
         <small>
           ⏱ ${start} → ${end}
