@@ -1,42 +1,35 @@
-const fs = require("fs");
+const https = require('https');
+const fs = require('fs');
 
-function clean(v) {
-  return String(v || "")
-    .replace(/\r/g, "")
-    .trim();
-}
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";
 
-function toNumber(v) {
-  const n = parseFloat(v);
-  return isNaN(n) ? null : n;
-}
+https.get(CSV_URL, res => {
 
-const csv = fs.readFileSync("parkomaty.csv", "utf8");
+  let data = '';
 
-// dzielenie na linie
-const lines = csv
-  .replace(/^\uFEFF/, "")
-  .split(/\r?\n/)
-  .filter(l => l.trim().length > 0);
+  res.on('data', chunk => data += chunk);
 
-// jeśli masz nagłówek:
-const data = lines.slice(1);
+  res.on('end', () => {
 
-const result = data.map(line => {
-  const cols = line.split(",");
+    const lines = data.split('\n').slice(1);
 
-  return {
-    id: clean(cols[0]),
-    location: clean(cols[1]),
-    lng: toNumber(cols[2]),
-    lat: toNumber(cols[3]),
-    node: clean(cols[4]),
-    structure: clean(cols[5])
-  };
-}).filter(r =>
-  r.id && r.lat !== null && r.lng !== null
-);
+    const result = lines
+      .map(line => line.split(','))
+      .filter(r => r.length > 4 && r[0])
+      .map(r => ({
+        id: r[0],
+        location: r[1],
+        lng: parseFloat(r[2]),
+        lat: parseFloat(r[3]),
+        node: r[4]
+      }));
 
-fs.writeFileSync("parkomaty.json", JSON.stringify(result, null, 2), "utf8");
+    fs.writeFileSync('parkomaty.json', JSON.stringify(result, null, 2));
 
-console.log("OK → wygenerowano:", result.length, "rekordów");
+    console.log("✅ Zaktualizowano parkomaty.json");
+
+  });
+
+}).on('error', err => {
+  console.error("❌ Błąd pobierania:", err);
+});
