@@ -915,7 +915,9 @@ async function createUser(){
     
 await fetch(SCRIPT_URL, {
   method: "POST",
-  mode: "no-cors",  // ✅ TO ROZWIĄZUJE PROBLEM
+  headers: {
+    "Content-Type": "application/json"
+  },
   body: JSON.stringify(payload)
 });
 
