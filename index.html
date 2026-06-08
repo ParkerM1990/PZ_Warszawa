@@ -762,20 +762,56 @@ async function logout(){
 function renderAdminPanel(){
 
   const structBox = document.getElementById("structuresBox");
-  const nodeBox = document.getElementById("nodesBox");
 
-  structBox.innerHTML = availableStructures.map(s => `
-    <label style="display:block;">
-      <input type="checkbox" value="${s}"> ${s}
-    </label>
-  `).join("");
+  // ✅ budujemy mapę: structure -> nodes
+  const map = {};
 
-  nodeBox.innerHTML = availableNodes.map(n => `
-    <label style="display:block;">
-      <input type="checkbox" value="${n}"> ${n}
-    </label>
-  `).join("");
+  Object.values(allParkomaty).forEach(p => {
+
+    if(!map[p.structure]){
+      map[p.structure] = new Set();
+    }
+
+    if(p.node){
+      map[p.structure].add(p.node);
+    }
+  });
+
+  // ✅ budowanie HTML
+  structBox.innerHTML = Object.keys(map).sort().map(struct => {
+
+    const nodes = [...map[struct]].sort();
+
+    return `
+      <div style="
+        border:1px solid #1f2937;
+        border-radius:10px;
+        padding:10px;
+        margin-bottom:8px;
+      ">
+
+        <label style="font-weight:bold;">
+          <input type="checkbox" value="${struct}" class="structCheck">
+          ${struct}
+        </label>
+
+        <div style="margin-left:15px;margin-top:6px;display:grid;gap:4px;">
+          ${nodes.map(n => `
+            <label>
+              <input type="checkbox" value="${n}" class="nodeCheck" data-struct="${struct}">
+              ${n}
+            </label>
+          `).join("")}
+        </div>
+
+      </div>
+    `;
+  }).join("");
+
+  // ❌ nie używamy już nodesBox
+  document.getElementById("nodesBox").innerHTML = "";
 }
+
 
 function makeKey(id, structure) {
   return `${id}|${(structure || "").trim().toUpperCase()}`;
