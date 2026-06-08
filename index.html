@@ -434,6 +434,12 @@ Zaloguj
   🧰 <span>Interwencje</span>
 </button>
   
+<button class="nav-btn"
+  title="Admin"
+  onclick="setActiveNav(this);showSection('adminPanel')">
+  👤 <span>Admin</span>
+</button>
+
 </div>
 <div class="main">
 
@@ -549,6 +555,8 @@ Zaloguj
   </div>
 
   <div id="historiaList"></div>
+
+  
 </div>
 
 
@@ -642,6 +650,15 @@ Zaloguj
 </button>
 
 <div id="interwencjeList"></div>
+</div>
+  <div id="adminPanel" class="section">
+  <h2>👤 Panel admina</h2>
+
+  <h3>Struktury</h3>
+  <div id="structuresBox" style="display:grid; gap:6px;"></div>
+
+  <h3>Miasta</h3>
+  <div id="nodesBox" style="display:grid; gap:6px;"></div
 </div>
 </div>
 
@@ -741,6 +758,23 @@ async function logout(){
 
   // wyczyść usera z headera
   document.getElementById("userBadge").innerText = "";
+}
+function renderAdminPanel(){
+
+  const structBox = document.getElementById("structuresBox");
+  const nodeBox = document.getElementById("nodesBox");
+
+  structBox.innerHTML = availableStructures.map(s => `
+    <label style="display:block;">
+      <input type="checkbox" value="${s}"> ${s}
+    </label>
+  `).join("");
+
+  nodeBox.innerHTML = availableNodes.map(n => `
+    <label style="display:block;">
+      <input type="checkbox" value="${n}"> ${n}
+    </label>
+  `).join("");
 }
 
 function makeKey(id, structure) {
@@ -1710,6 +1744,7 @@ await loadInterwencje();
     renderDevicesList();
   }, 100);
   checkAuth();
+  renderAdminPanel();
 }
 
 init();
