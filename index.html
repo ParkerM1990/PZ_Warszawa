@@ -987,8 +987,6 @@ function closeModal(){
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRoNHMfvANKbxLBFU7a8xmAAaL5s9mHdE774Yxcbriqof4PT6NNw/exec";
 
 async function submitService(){
-
-  const user = document.getElementById("techSelect").value;
 const { data: userData } = await supabaseClient.auth.getUser();
 const user = userData.user.email;
 
