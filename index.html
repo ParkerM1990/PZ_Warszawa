@@ -915,12 +915,9 @@ async function createUser(){
     
 await fetch(SCRIPT_URL, {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: new URLSearchParams({
-  data: JSON.stringify(payload)
-})
+  mode: "no-cors",
+  body: JSON.stringify(payload)
+});
 
 
     alert("✅ Użytkownik utworzony");
