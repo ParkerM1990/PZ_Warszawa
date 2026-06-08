@@ -875,6 +875,26 @@ async function loadParkomaty(){
   document.getElementById("historyNodeFilter").innerHTML = options;
   document.getElementById("deviceNodeFilter").innerHTML = options;
 }
+  let availableStructures = [];
+let availableNodes = [];
+
+function buildStructuresAndNodes(){
+
+  const structuresSet = new Set();
+  const nodesSet = new Set();
+
+  Object.values(allParkomaty).forEach(p => {
+    if(p.structure) structuresSet.add(p.structure);
+    if(p.node) nodesSet.add(p.node);
+  });
+
+  availableStructures = [...structuresSet].sort();
+  availableNodes = [...nodesSet].sort();
+
+  console.log("✅ STRUKTURY:", availableStructures);
+  console.log("✅ MIASTA:", availableNodes);
+}
+
 /* ===== LOAD ACTIVE ===== */
 async function loadActive(){
   const rows=parseCSV(await (await fetch(ACTIVE_URL)).text()).slice(1);
@@ -1668,6 +1688,7 @@ async function init(){
 
   // ✅ NAJWAŻNIEJSZE NA START
   await loadParkomaty();
+  buildStructuresAndNodes();
   await loadActive();
 
   // ✅ szybki widok
