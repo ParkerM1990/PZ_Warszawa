@@ -373,11 +373,34 @@ Zaloguj
   </div>
 
   <div class="header-right">
-    <button class="filter-toggle" onclick="toggleFilters()">
-      ⚙️
-    </button>
-    <div id="alarmCounter" onclick="showStats()" style="cursor:pointer;">0
+  <button class="filter-toggle" onclick="toggleFilters()">
+    ⚙️
+  </button>
+
+  <div id="alarmCounter" onclick="showStats()" style="cursor:pointer;">
+    0
   </div>
+
+  <div id="userBadge" style="
+    margin-left:10px;
+    background:#1f2937;
+    padding:4px 10px;
+    border-radius:10px;
+    font-size:13px;
+  "></div>
+
+  <button onclick="logout()" style="
+    margin-left:8px;
+    background:#374151;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+  ">
+    🔓
+  </button>
+</div>
 </header>
 <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
@@ -649,7 +672,7 @@ Zaloguj
     <h3>🔧 Interwencja Serwisowa</h3>
     <select id="deviceSelect"></select>
 
-    <select id="techSelect"></select>
+    <select id="techSelect" style="display:none;"></select>
 
     <div id="actionsBox" style="max-height:150px;overflow:auto;"></div>
 
@@ -957,14 +980,11 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRo
 async function submitService(){
 
   const user = document.getElementById("techSelect").value;
+const { data: userData } = await supabaseClient.auth.getUser();
+const user = userData.user.email;
 
   const checked = document.querySelectorAll("#actionsBox input:checked");
   const actions = [...checked].map(el => el.value);
-
-  if(!user){
-    alert("❌ Wybierz pracownika");
-    return;
-  }
 
   if(actions.length === 0){
     alert("❌ Wybierz czynności");
