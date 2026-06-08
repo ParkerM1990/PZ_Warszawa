@@ -653,7 +653,20 @@ Zaloguj
 </div>
   <div id="adminPanel" class="section">
   <h2>👤 Panel admina</h2>
+    
+  <input id="newFirstName" placeholder="Imię" style="
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:8px;
+  width:100%;
+">
 
+<input id="newLastName" placeholder="Nazwisko" style="
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:8px;
+  width:100%;
+">
   <input id="newEmail" placeholder="Email" style="
     padding:8px;
     border-radius:8px;
@@ -867,25 +880,35 @@ function renderAdminPanel(){
 
 function generateUserData(){
 
+  const firstName = document.getElementById("newFirstName").value;
+  const lastName = document.getElementById("newLastName").value;
   const email = document.getElementById("newEmail").value;
   const password = document.getElementById("newPassword").value;
   const role = document.getElementById("newRole").value;
 
-  // ✅ struktury (z checkboxów)
+  // ✅ struktury
   const selectedStructures = [
     ...document.querySelectorAll(".structCheck:checked")
   ].map(el => el.value);
 
-  // ✅ miasta (z checkboxów pod strukturą)
+  // ✅ miasta
   const selectedNodes = [
     ...document.querySelectorAll(".nodeCheck:checked")
   ].map(el => el.value);
+
+  // ✅ walidacja (lekka)
+  if(!email || !password || !firstName){
+    alert("❌ Uzupełnij dane");
+    return;
+  }
 
   const result = {
     email,
     password,
     user_metadata: {
       role: role,
+      firstName: firstName,
+      lastName: lastName,
       structures: selectedStructures,
       nodes: selectedNodes
     }
@@ -1163,7 +1186,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRo
 
 async function submitService(){
 const { data: userData } = await supabaseClient.auth.getUser();
-const user = userData.user.email;
+
+const meta = userData.user.user_metadata;
+
+const fullName =
+  (meta?.firstName || "") + " " + (meta?.lastName || "");
+
+const user = fullName.trim() || userData.user.email;
 
   const checked = document.querySelectorAll("#actionsBox input:checked");
   const actions = [...checked].map(el => el.value);
