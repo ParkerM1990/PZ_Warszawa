@@ -728,7 +728,16 @@ async function checkAuth(){
     document.getElementById("authBox").style.display = "none";
   }
 }
+async function logout(){
 
+  await supabaseClient.auth.signOut();
+
+  // pokaż login
+  document.getElementById("authBox").style.display = "flex";
+
+  // wyczyść usera z headera
+  document.getElementById("userBadge").innerText = "";
+}
 
 function makeKey(id, structure) {
   return `${id}|${(structure || "").trim().toUpperCase()}`;
