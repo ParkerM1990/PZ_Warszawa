@@ -912,11 +912,13 @@ async function createUser(){
 
   try{
 
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    
+await fetch(SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",  // ✅ TO ROZWIĄZUJE PROBLEM
+  body: JSON.stringify(payload)
+});
+
 
     alert("✅ Użytkownik utworzony");
 
