@@ -708,7 +708,7 @@ async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
@@ -719,6 +719,10 @@ async function login(){
   }
 
   document.getElementById("authBox").style.display = "none";
+
+  // ✅ DODANE — ustaw usera w headerze
+  const user = data.user.email;
+  document.getElementById("userBadge").innerText = "👤 " + user;
 }
 async function checkAuth(){
 
