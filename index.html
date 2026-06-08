@@ -654,8 +654,53 @@ Zaloguj
   <div id="adminPanel" class="section">
   <h2>👤 Panel admina</h2>
 
-  <h3>Struktury</h3>
+  <input id="newEmail" placeholder="Email" style="
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:8px;
+    width:100%;
+  ">
+
+  <input id="newPassword" type="password" placeholder="Hasło" style="
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:8px;
+    width:100%;
+  ">
+
+  <select id="newRole" style="
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:10px;
+    width:100%;
+  ">
+    <option value="serwis">Serwis</option>
+    <option value="admin">Admin</option>
+  </select>
+
+  <h3>Struktury / Miasta</h3>
   <div id="structuresBox" style="display:grid; gap:6px;"></div>
+
+  <button onclick="generateUserData()" style="
+    margin-top:12px;
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    width:100%;
+  ">
+    ✅ Generuj dane
+  </button>
+
+  <pre id="outputJson" style="
+    margin-top:10px;
+    background:#111827;
+    padding:10px;
+    border-radius:8px;
+    font-size:12px;
+    overflow:auto;
+  "></pre>
 
 </div>
 </div>
@@ -805,9 +850,6 @@ function renderAdminPanel(){
       </div>
     `;
   }).join("");
-
-  // ❌ nie używamy już nodesBox
-  document.getElementById("nodesBox").innerHTML = "";
 }
   document.addEventListener("change", (e) => {
 
@@ -823,7 +865,35 @@ function renderAdminPanel(){
   }
 });
 
+function generateUserData(){
 
+  const email = document.getElementById("newEmail").value;
+  const password = document.getElementById("newPassword").value;
+  const role = document.getElementById("newRole").value;
+
+  // ✅ struktury (z checkboxów)
+  const selectedStructures = [
+    ...document.querySelectorAll(".structCheck:checked")
+  ].map(el => el.value);
+
+  // ✅ miasta (z checkboxów pod strukturą)
+  const selectedNodes = [
+    ...document.querySelectorAll(".nodeCheck:checked")
+  ].map(el => el.value);
+
+  const result = {
+    email,
+    password,
+    user_metadata: {
+      role: role,
+      structures: selectedStructures,
+      nodes: selectedNodes
+    }
+  };
+
+  document.getElementById("outputJson").innerText =
+    JSON.stringify(result, null, 2);
+}
 function makeKey(id, structure) {
   return `${id}|${(structure || "").trim().toUpperCase()}`;
 }
