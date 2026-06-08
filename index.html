@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitoring Parkomatów</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
@@ -327,7 +328,43 @@ input[type="date"] {
 </head>
 
 <body>
+<div id="authBox" style="
+position:fixed;
+inset:0;
+background:#020617;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
 
+<div style="
+background:#0b1220;
+padding:20px;
+border-radius:12px;
+width:300px;
+display:flex;
+flex-direction:column;
+gap:10px;
+">
+
+<h3>🔐 Logowanie</h3>
+
+<input id="email" placeholder="Email" style="padding:8px;border-radius:8px;">
+<input id="password" type="password" placeholder="Hasło" style="padding:8px;border-radius:8px;">
+
+<button onclick="login()" style="
+background:#1d4ed8;
+color:white;
+padding:10px;
+border:none;
+border-radius:8px;
+">
+Zaloguj
+</button>
+
+</div>
+</div>
 
 <header>
 
@@ -640,6 +677,35 @@ input[type="date"] {
 </div>
 <!-- ✅ JS zostaje praktycznie bez zmian -->
 <script>
+const SUPABASE_URL = "https://tiplqkdmgahdeoseahsd.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpcGxxa2RtZ2FoZGVvc2VhaHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MjgyOTIsImV4cCI6MjA5NjUwNDI5Mn0.40_rGmSdhBW2SKGG8wgrGq4--n9qT578StHVzsSD_8w";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+async function login(){
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    alert("❌ Błędne dane");
+    return;
+  }
+
+  document.getElementById("authBox").style.display = "none";
+}
+async function checkAuth(){
+
+  const { data } = await supabaseClient.auth.getSession();
+
+  if(data.session){
+    document.getElementById("authBox").style.display = "none";
+  }
+}
+
 
 function makeKey(id, structure) {
   return `${id}|${(structure || "").trim().toUpperCase()}`;
@@ -1591,6 +1657,7 @@ await loadInterwencje();
   setTimeout(() => {
     renderDevicesList();
   }, 100);
+  checkAuth();
 }
 
 init();
