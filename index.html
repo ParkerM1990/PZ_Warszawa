@@ -915,9 +915,6 @@ async function createUser(){
     
 await fetch(SCRIPT_URL,{
   method:"POST",
-  headers:{
-    "Content-Type":"application/json"
-  },
   body: JSON.stringify(payload)
 });
 
@@ -1243,9 +1240,6 @@ const user = fullName.trim() || userData.user.email;
     
 await fetch(SCRIPT_URL,{
   method:"POST",
-  headers:{
-    "Content-Type":"application/json"
-  },
   body: JSON.stringify(payload)
 });
 
