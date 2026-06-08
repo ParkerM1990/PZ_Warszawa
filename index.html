@@ -694,7 +694,7 @@ Zaloguj
   <h3>Struktury / Miasta</h3>
   <div id="structuresBox" style="display:grid; gap:6px;"></div>
 
-  <button onclick="generateUserData()" style="
+  <button onclick="createUser()" style="
     margin-top:12px;
     background:#16a34a;
     color:white;
@@ -878,7 +878,7 @@ function renderAdminPanel(){
   }
 });
 
-function generateUserData(){
+async function createUser(){
 
   const firstName = document.getElementById("newFirstName").value;
   const lastName = document.getElementById("newLastName").value;
@@ -886,37 +886,47 @@ function generateUserData(){
   const password = document.getElementById("newPassword").value;
   const role = document.getElementById("newRole").value;
 
-  // ✅ struktury
-  const selectedStructures = [
+  const structures = [
     ...document.querySelectorAll(".structCheck:checked")
   ].map(el => el.value);
 
-  // ✅ miasta
-  const selectedNodes = [
+  const nodes = [
     ...document.querySelectorAll(".nodeCheck:checked")
   ].map(el => el.value);
 
-  // ✅ walidacja (lekka)
   if(!email || !password || !firstName){
     alert("❌ Uzupełnij dane");
     return;
   }
 
-  const result = {
+  const payload = {
+    type: "createUser",
     email,
     password,
-    user_metadata: {
-      role: role,
-      firstName: firstName,
-      lastName: lastName,
-      structures: selectedStructures,
-      nodes: selectedNodes
-    }
+    firstName,
+    lastName,
+    role,
+    structures,
+    nodes
   };
 
-  document.getElementById("outputJson").innerText =
-    JSON.stringify(result, null, 2);
+  try{
+
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    alert("✅ Użytkownik utworzony");
+
+  }catch(e){
+    console.error(e);
+    alert("❌ Błąd");
+  }
 }
+
+  
 function makeKey(id, structure) {
   return `${id}|${(structure || "").trim().toUpperCase()}`;
 }
