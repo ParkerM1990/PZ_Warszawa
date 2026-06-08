@@ -811,6 +811,19 @@ function renderAdminPanel(){
   // ❌ nie używamy już nodesBox
   document.getElementById("nodesBox").innerHTML = "";
 }
+  document.addEventListener("change", (e) => {
+
+  // ✅ klik na strukturę
+  if(e.target.classList.contains("structCheck")){
+
+    const struct = e.target.value;
+    const checked = e.target.checked;
+
+    document
+      .querySelectorAll(`.nodeCheck[data-struct="${struct}"]`)
+      .forEach(cb => cb.checked = checked);
+  }
+});
 
 
 function makeKey(id, structure) {
