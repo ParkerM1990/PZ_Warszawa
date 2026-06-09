@@ -948,7 +948,7 @@ function getNavLink(lat, lng){
 }
 
 /* ===== SHEETS ===== */
-/* =====const PARKOMATY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSQJ3BLePGBFMy3ocUqFgtjP4Axb2gpuQO5N7WhFCeW_j5C7_Fm3NOKid__opIUmdDY_jEKJhUwXQnx/pub?gid=0&single=true&output=csv";===== */
+const PARKOMATY_URL="parkomaty.json
 const ACTIVE_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=0&single=true&output=csv";
 const HISTORY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1220391858&single=true&output=csv";
 
@@ -1001,17 +1001,25 @@ async function loadTechnicians(){
 /* ===== LOAD PARKOMATY ===== */
 async function loadParkomaty(){
 
-  const rows = parseCSV(await (await fetch(PARKOMATY_URL)).text()).slice(1);
+  const res = await fetch("parkomaty.json");
+
+  if(!res.ok){
+    alert("❌ Nie można wczytać parkomaty.json");
+    return;
+  }
+
+  const data = await res.json();
 
   const nodeSet = new Set();
+  allParkomaty = {};
 
-  rows.forEach(r => {
+  data.forEach(p => {
 
-    const id = r[0]?.trim(); 
-    const lng = parseFloat(r[2]);
-    const lat = parseFloat(r[3]);
-    const structure = r[5]?.trim();
-    const node = r[4];
+    const id = p.id?.toString().trim();
+    const lat = parseFloat(p.lat);
+    const lng = parseFloat(p.lng);
+    const structure = p.structure?.trim();
+    const node = p.node;
 
     if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
 
@@ -1022,32 +1030,27 @@ async function loadParkomaty(){
       structure,
       lat,
       lng,
-      location: r[1],
+      location: p.location || "",
       node
     };
 
-    nodeSet.add(node);
+    if(node) nodeSet.add(node);
   });
 
-  // ✅ wspólna lista stref
   const nodes = [...nodeSet].sort();
 
   const options =
     `<option value="">Wszystkie strefy</option>` +
     nodes.map(n => `<option value="${n}">${n}</option>`).join('');
 
-  // ✅ MAPA
   document.getElementById("nodeFilter").innerHTML = options;
 
-  // ✅ AWARIE
   const activeNode = document.getElementById("activeNodeFilter");
   if(activeNode) activeNode.innerHTML = options;
 
-  // ✅ HISTORIA
   const historyNode = document.getElementById("historyNodeFilter");
   if(historyNode) historyNode.innerHTML = options;
 
-  // ✅ URZĄDZENIA
   const deviceNode = document.getElementById("deviceNodeFilter");
   if(deviceNode) deviceNode.innerHTML = options;
 }
