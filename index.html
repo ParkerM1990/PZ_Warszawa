@@ -1155,21 +1155,41 @@ async function loadHistory(){
 /* ===== UI ===== */
 function showSection(id){
 
-  // 🔒 BLOKADA ADMINA
-  if(id === "adminPanel"){
+  let finalId = id;
 
+  // 🔒 blokada admina
+  if(id === "adminPanel"){
     if(!window.currentUser || window.currentUser.role !== "admin"){
       console.warn("Brak dostępu do admina");
-
-      // ✅ wróć np. do mapy
-      id = "mapSection";
+      finalId = "mapSection";
     }
   }
 
+  // ✅ zmiana sekcji
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  document.getElementById(finalId).classList.add("active");
 
-  if(id==="mapSection"){
+  // ✅ poprawka aktywnego przycisku
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+
+  const btnMap = {
+    mapSection: "🗺️",
+    awarieSection: "⚠️",
+    historiaSection: "📜",
+    devicesSection: "🖥️",
+    interwencjeSection: "🧰",
+    adminPanel: "👤"
+  };
+
+  const targetBtn = [...document.querySelectorAll(".nav-btn")]
+    .find(b => b.innerText.includes(btnMap[finalId]));
+
+  if(targetBtn){
+    targetBtn.classList.add("active");
+  }
+
+  // ✅ mapa refresh
+  if(finalId==="mapSection"){
     setTimeout(()=>map.invalidateSize(),200);
   }
 }
