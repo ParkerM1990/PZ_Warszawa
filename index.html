@@ -1925,20 +1925,6 @@ async function init(){
 checkAuth();
 // zamykanie po wyborze
 
-setTimeout(()=>{
-  const nodeFilter = document.getElementById("nodeFilter");
-
-  if(nodeFilter){
-    nodeFilter.addEventListener("change", ()=>{
-      
-const panel = document.getElementById("mapFilterPanel");
-if(panel){
-  panel.classList.remove("open");
-}
-
-    });
-  }
-}, 0);
 function applyUserRole(profile){
 
   if(!profile){
@@ -1967,9 +1953,14 @@ function applyUserRole(profile){
 }
 
 
+let isRefreshing = false;
+
 async function refreshApp(){
 
-  const btn = document.querySelector('[onclick="refreshApp()"]');
+  if(isRefreshing) return; // ✅ blokada
+  isRefreshing = true;
+
+  const btn = document.getElementById("refreshBtn");
   if(btn) btn.innerText = "⏳";
 
   await loadParkomaty();
@@ -1980,6 +1971,8 @@ async function refreshApp(){
   renderAll();
 
   if(btn) btn.innerText = "🔄";
+
+  isRefreshing = false;
 }
 
 
