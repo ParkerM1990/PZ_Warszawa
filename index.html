@@ -1167,7 +1167,7 @@ async function loadHistory(){
 async function loadInterwencje(){
 
   const { data, error } = await supabaseClient
-    .from("interwencje")
+    .from("interwencje2")
     .select("*")
     .order("start_date", { ascending: false });
 
@@ -1341,7 +1341,7 @@ async function submitService(){
 
     
 const { error } = await supabaseClient
-  .from("interwencje")   // 👈 nazwa Twojej tabeli
+  .from("interwencje2")   // 👈 nazwa Twojej tabeli
   .insert([{
     device_id: p.id,
     structure: p.structure,
