@@ -1723,14 +1723,11 @@ function applyUserRole(profile){
 
   console.log("ROLE:", profile.role);
 
-  const adminPanel = document.getElementById("adminPanel");
   const adminBtn = document.getElementById("adminBtn");
 
   if(profile.role === "admin"){
-    adminPanel.style.display = "block";
-    adminBtn.style.display = "flex";   // ✅ pokaż przycisk
+    adminBtn.style.display = "flex";   // ✅ tylko przycisk
   }else{
-    adminPanel.style.display = "none";
     adminBtn.style.display = "none";   // ✅ ukryj przycisk
   }
 }
