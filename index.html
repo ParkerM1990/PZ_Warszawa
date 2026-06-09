@@ -1154,9 +1154,24 @@ async function loadHistory(){
 
 /* ===== UI ===== */
 function showSection(id){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+
+  // 🔒 BLOKADA ADMINA
+  if(id === "adminPanel"){
+
+    if(!window.currentUser || window.currentUser.role !== "admin"){
+      console.warn("Brak dostępu do admina");
+
+      // ✅ wróć np. do mapy
+      id = "mapSection";
+    }
+  }
+
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  if(id==="mapSection") setTimeout(()=>map.invalidateSize(),200);
+
+  if(id==="mapSection"){
+    setTimeout(()=>map.invalidateSize(),200);
+  }
 }
 function setActiveNav(btn){
 
