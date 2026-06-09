@@ -825,6 +825,10 @@ document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
 
   // ✅ 4. ŁADUJ DANE
   await init();
+  
+// ✅ RESET widoku
+showSection('mapSection');
+
 }
 async function checkAuth(){
 
@@ -852,6 +856,9 @@ async function checkAuth(){
 
     applyUserRole(profile);
     await init();
+    
+// ✅ RESET widoku
+showSection('mapSection');
 
   }else{
     document.getElementById("authBox").style.display = "flex";
@@ -863,11 +870,12 @@ async function logout(){
 
   await supabaseClient.auth.signOut();
 
-  // pokaż login
   document.getElementById("authBox").style.display = "flex";
-
-  // wyczyść usera z headera
   document.getElementById("userBadge").innerText = "";
+
+  window.currentUser = null; // ✅ dodatkowe bezpieczeństwo
+
+  showSection('mapSection');
 }
 function renderAdminPanel(){
 
