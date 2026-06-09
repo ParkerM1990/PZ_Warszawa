@@ -1556,7 +1556,7 @@ function renderActiveList(){
   const node = document.getElementById("activeNodeFilter").value;
   const from = document.getElementById("activeDateFrom").value;
   const to = document.getElementById("activeDateTo").value;
-  const terminal = document.getElementById("activeTerminalFilter").value.trim();
+  const terminal = (document.getElementById("activeTerminalFilter").value || "").toLowerCase();
   const event = document.getElementById("activeEventFilter").value;
 
   let html = "";
@@ -1574,10 +1574,25 @@ function renderActiveList(){
       const raw = e.date;
       if(!raw) return false;
 
-      const d = new Date(raw.replace(" ", "T"));
+      
 
-      // ✅ filtr OD
-      if(from && d < new Date(from)) return false;
+const rawDate = (raw || "").replace(" ", "T");
+const d = new Date(rawDate);
+
+// ✅ blokada śmieciowych dat
+if(!raw || isNaN(d) || raw.length < 10) return false;
+
+
+
+      
+// ✅ filtr OD (początek dnia)
+if(from){
+  const fromDate = new Date(from);
+  fromDate.setHours(0,0,0,0);
+
+  if(d < fromDate) return false;
+}
+
 
       // ✅ filtr DO (cały dzień!)
       if(to){
@@ -1587,7 +1602,7 @@ function renderActiveList(){
       }
 
       // ✅ filtr po numerze
-      if(terminal && !id.includes(terminal)) return false;
+      if(terminal && !id.toLowerCase().includes(terminal)) return false;
 
       // ✅ filtr po typie zdarzenia
       if(event && e.name !== event) return false;
@@ -1640,7 +1655,7 @@ function renderHistoryList(){
   const node = document.getElementById("historyNodeFilter").value;
   const from=document.getElementById("historyDateFrom").value;
   const to=document.getElementById("historyDateTo").value;
-  const terminal=document.getElementById("historyTerminalFilter").value.trim();
+  const terminal = (document.getElementById("historyTerminalFilter").value || "").toLowerCase()
   const event=document.getElementById("historyEventFilter").value;
 
   let html="";
@@ -1662,11 +1677,24 @@ if(node && p.node !== node) return;
 
 
 
-  const d=new Date(r[3]);
+  
+const raw = r[3];
+
+const rawDate = (raw || "").replace(" ", "T");
+const d = new Date(rawDate);
+
+if(!raw || isNaN(d) || raw.length < 10) return;
+
 
   if(from && d<new Date(from)) return;
-  if(to && d>new Date(to)) return;
-  if(terminal && !r[0].includes(terminal)) return;
+  
+if(to){
+  const toDate = new Date(to);
+  toDate.setHours(23,59,59,999);
+  if(d > toDate) return;
+}
+
+  if(terminal && !r[0].toLowerCase().includes(terminal)) return;
   if(event && r[5]!==event) return;
 
   html+=`
@@ -1792,7 +1820,7 @@ function renderDevicesList(){
 
 function renderInterwencje(){
 
-  const terminal = document.getElementById("interTerminalFilter").value.toLowerCase();
+  const terminal = (document.getElementById("interTerminalFilter").value || "").toLowerCase()
   
 const userInput = document
   .getElementById("interUserFilter")
