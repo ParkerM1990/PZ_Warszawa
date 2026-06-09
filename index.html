@@ -1050,6 +1050,24 @@ let allParkomaty={};
 let activeEvents={};
 let historyEvents=[];
 const RED_CODES = ["16384","16385","16386","16900"];
+  
+function hasAccessToParkomat(p){
+
+  // ✅ admin widzi wszystko
+  if(window.currentUser?.role === "admin") return true;
+
+  const userStructures = window.currentUser?.structures || [];
+  const userNodes = window.currentUser?.nodes || [];
+
+  // ✅ brak przypisanych struktur = brak dostępu
+  if(userStructures.length && !userStructures.includes(p.structure)) return false;
+
+  // ✅ brak przypisanych stref = brak dostępu
+  if(userNodes.length && p.node && !userNodes.includes(p.node)) return false;
+
+  return true;
+}
+
 /* ===== CSV ===== */
 function parseCSV(text){
   const rows=[];
@@ -1250,10 +1268,12 @@ function openServiceModal(key, event){
 
   const techSelect = document.getElementById("techSelect");
 
-  techSelect.innerHTML = technicians
-  .filter(t => t.role === "serwis") // ✅ tylko serwis
+  
+techSelect.innerHTML = technicians
+  .filter(t => t.role === "serwis")
   .map(t => `<option value="${t.name}">${t.name}</option>`)
   .join('');
+
 
   const box = document.getElementById("actionsBox");
 
@@ -1279,19 +1299,25 @@ function openManualServiceModal(){
   // ✅ lista parkomatów
   const deviceSelect = document.getElementById("deviceSelect");
 
-  deviceSelect.innerHTML = Object.values(allParkomaty)
-    .sort((a,b)=>a.id.localeCompare(b.id))
-    .map(p => `<option value="${makeKey(p.id,p.structure)}">
+  
+deviceSelect.innerHTML = Object.values(allParkomaty)
+  .filter(p => hasAccessToParkomat(p))
+  .sort((a,b)=>a.id.localeCompare(b.id))
+  .map(p => `
+    <option value="${makeKey(p.id,p.structure)}">
       ${p.id} - ${p.location}
-    </option>`)
-    .join('');
+    </option>
+  `)
+  .join('');
 
   // ✅ technicy
   const techSelect = document.getElementById("techSelect");
 
-  techSelect.innerHTML = technicians
-    .map(t => `<option value="${t.name}">${t.name} (${t.city})</option>`)
-    .join('');
+  
+techSelect.innerHTML = technicians
+  .map(t => `<option value="${t.name}">${t.name}</option>`)
+  .join('');
+
 
   // ✅ czynności
   const box = document.getElementById("actionsBox");
@@ -1337,50 +1363,48 @@ async function submitService(){
 
   const p = allParkomaty[key];
 
-  const now = new Date().toISOString().slice(0,19).replace("T"," ");
+  if(!p){
+    alert("❌ Nie znaleziono parkomatu");
+    return;
+  }
 
-  const payload = {
-    id: p.id,
-    structure: p.structure,
-    location: p.location,
-    eventName: event.name,
-    startDate: event.date,
-    endDate: now,
-    user: user,
-    actions: actions
-  };
+  // ✅ 🔥 KLUCZ – SPRAWDZENIE UPRAWNIEŃ
+  if(!hasAccessToParkomat(p)){
+    alert("❌ Brak uprawnień do tego parkomatu");
+    return;
+  }
+
+  const now = new Date().toISOString().slice(0,19).replace("T"," ");
 
   try{
 
-    
-const { error } = await supabaseClient
-  .from("interwencje2")   // 👈 nazwa Twojej tabeli
-  .insert([{
-    device_id: p.id,
-    structure: p.structure,
-    location: p.location,
-    event_name: event.name,
-    start_date: event.date,
-    end_date: now,
-    user_email: user,
-    actions: actions
-  }]);
+    const { error } = await supabaseClient
+      .from("interwencje2")
+      .insert([{
+        device_id: p.id,
+        structure: p.structure,
+        location: p.location,
+        event_name: event.name,
+        start_date: event.date,
+        end_date: now,
+        user_email: user,
+        actions: actions
+      }]);
 
-if(error){
-  console.error(error);
-  alert("❌ Błąd zapisu do Supabase");
-  return;
-}
+    if(error){
+      console.error(error);
+      alert("❌ Błąd zapisu do Supabase");
+      return;
+    }
 
-
-    // ✅ różne komunikaty
+    // ✅ komunikat
     if(currentService.key){
       alert("✅ Awaria zamknięta");
     }else{
       alert("✅ Interwencja zapisana");
     }
 
-    // ✅ usuwamy TYLKO jeśli to awaria
+    // ✅ usuwamy tylko jeśli to awaria
     if(currentService.key){
       activeEvents[key] = activeEvents[key].filter(e => e !== event);
 
@@ -1391,20 +1415,17 @@ if(error){
 
     closeModal();
 
-    // ✅ odśwież UI
+    // ✅ refresh
     renderAll();
 
-    // ✅ opcjonalnie powrót na mapę
-    
-if(currentService.key){
-  showSection('mapSection');
-}else{
-  showSection('interwencjeSection');
-}
+    if(currentService.key){
+      showSection('mapSection');
+    }else{
+      showSection('interwencjeSection');
+    }
 
-await loadInterwencje();
-renderInterwencje();
-
+    await loadInterwencje();
+    renderInterwencje();
 
   }catch(e){
     alert("❌ Błąd zapisu");
@@ -1426,7 +1447,7 @@ Object.keys(activeEvents).forEach(key => {
 
   const p = allParkomaty[key];
   if(!p) return;
-
+  if(!hasAccessToParkomat(p)) return;
   if(node && p.node!==node) return;
 
   let popup = `<b>Parkomat ${p.id}</b><br>${p.location}<br><br>`;
@@ -1544,7 +1565,7 @@ function renderActiveList(){
 
     const p = allParkomaty[key];
     if(!p) return;
-
+    if(!hasAccessToParkomat(p)) return;
     const id = p.id;
 
     const filtered = activeEvents[key].filter(e => {
@@ -1636,7 +1657,7 @@ const key = makeKey(r[0], r[1]); // ✅ r[1] = structure
 
 const p = allParkomaty[key];
 if (!p) return;
-
+if(!hasAccessToParkomat(p)) return;
 if(node && p.node !== node) return;
 
 
@@ -1675,20 +1696,25 @@ function renderDevicesList(){
 
   let html = "";
 
-  Object.values(allParkomaty)
-    .sort((a,b)=>a.id.localeCompare(b.id))
-    .forEach(p=>{
+ Object.values(allParkomaty)
+  .sort((a,b)=>a.id.localeCompare(b.id))
+  .forEach(p=>{
 
-      const text = `
-        ${p.id}
-        ${p.location}
-      `.toLowerCase();
+    // ✅ 🔥 NAJWAŻNIEJSZE – filtr uprawnień
+    if(!hasAccessToParkomat(p)) return;
 
-      if(search && !text.includes(search)) return;
-      if(node && p.node !== node) return;
-      const key = makeKey(p.id, p.structure);
+    const text = `
+      ${p.id}
+      ${p.location}
+    `.toLowerCase();
 
-      const alarms = activeEvents[key]?.length || 0;
+    if(search && !text.includes(search)) return;
+    if(node && p.node !== node) return;
+
+    const key = makeKey(p.id, p.structure);
+
+    const alarms = activeEvents[key]?.length || 0;
+
 
       html += `
   <div class="terminal-box">
@@ -1777,45 +1803,54 @@ const userInput = document
 
   interwencje.forEach(i => {
 
-    const isAdmin = window.currentUser?.role === "admin";
+  const isAdmin = window.currentUser?.role === "admin";
 
-    // ✅ SERWIS widzi tylko swoje interwencje
-    
-if(!isAdmin){
+  // ✅ znajdź parkomat
+  const key = makeKey(i.device_id, i.structure);
+  const p = allParkomaty[key];
 
-  const fullName =
-    (window.currentUser?.first_name || "") + " " +
-    (window.currentUser?.last_name || "");
+  // ✅ 🔥 NAJPIERW: sprawdź czy parkomat istnieje
+  if(!p) return;
 
-  if(i.user_email !== fullName.trim()) return;
-}
+  // ✅ 🔥 POTEM: sprawdź uprawnienia
+  if(!hasAccessToParkomat(p)) return;
 
+  // ✅ SERWIS widzi tylko swoje interwencje
+  if(!isAdmin){
 
-    // ✅ filtr po numerze parkomatu
-    if(terminal && !(i.device_id || "").toLowerCase().includes(terminal)) return;
+    const fullName =
+      (window.currentUser?.first_name || "") + " " +
+      (window.currentUser?.last_name || "");
 
-    // ✅ filtr po użytkowniku TYLKO dla admina
-    if(isAdmin && userInput && i.user_email !== userInput) return;
+    if(i.user_email !== fullName.trim()) return;
+  }
 
-    html += `
-      <div class="terminal-box">
+  // ✅ filtr po numerze parkomatu
+  if(terminal && !(i.device_id || "").toLowerCase().includes(terminal)) return;
 
-        <b>Parkomat ${i.device_id}</b><br>
-        ${i.location}<br><br>
+  // ✅ filtr po userze (admin)
+  if(isAdmin && userInput && i.user_email !== userInput) return;
 
-        <b>${i.event_name}</b><br>
+  html += `
+    <div class="terminal-box">
 
-        <small>
-          Od: ${i.start_date}<br>
-          Do: ${i.end_date}
-        </small><br><br>
+      <b>Parkomat ${i.device_id}</b><br>
+      ${i.location}<br><br>
 
-        👤 ${i.user_email}<br>
-        🔧 ${Array.isArray(i.actions) ? i.actions.join(", ") : (i.actions || "")}
+      <b>${i.event_name}</b><br>
 
-      </div>
-    `;
-  });
+      <small>
+        Od: ${i.start_date}<br>
+        Do: ${i.end_date}
+      </small><br><br>
+
+      👤 ${i.user_email}<br>
+      🔧 ${Array.isArray(i.actions) ? i.actions.join(", ") : (i.actions || "")}
+
+    </div>
+  `;
+});
+
 
   document.getElementById("interwencjeList").innerHTML = html;
 }
