@@ -800,20 +800,23 @@ async function login(){
   }
 
   // ✅ UI
-  document.getElementById("authBox").style.display = "none";
-  const fullName = profile.first_name
+document.getElementById("authBox").style.display = "none";
+
+// ✅ 2. pobierz profil NAJPIERW
+const { data: profile } = await supabaseClient
+  .from("users")
+  .select("*")
+  .eq("id", data.user.id)
+  .single();
+
+window.currentUser = profile;
+
+// ✅ DOPIERO TERAZ używamy profile
+const fullName = profile?.first_name
   ? profile.first_name + " " + (profile.last_name || "")
   : data.user.email;
 
 document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
-
-  // ✅ 2. POBIERZ PROFIL
-  const { data: profile } = await supabaseClient
-    .from("users")
-    .select("*")
-    .eq("id", data.user.id)
-    .single();
-    window.currentUser = profile;
   // ✅ 3. ZASTOSUJ ROLĘ
   applyUserRole(profile);
 
@@ -828,21 +831,25 @@ async function checkAuth(){
 
     document.getElementById("authBox").style.display = "none";
 
-   const fullName = profile.first_name
-  ? profile.first_name + " " + (profile.last_name || "")
-  : data.session.user.email;
-
-document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
-
+    // ✅ NAJPIERW pobierz profil
     const { data: profile } = await supabaseClient
       .from("users")
       .select("*")
       .eq("id", data.session.user.id)
       .single();
-window.currentUser = profile;
-    applyUserRole(profile);
 
+    window.currentUser = profile;
+
+    // ✅ dopiero teraz używaj profile
+    const fullName = profile?.first_name
+      ? profile.first_name + " " + (profile.last_name || "")
+      : data.session.user.email;
+
+    document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
+
+    applyUserRole(profile);
     await init();
+
   }else{
     document.getElementById("authBox").style.display = "flex";
   }
@@ -1157,7 +1164,21 @@ activeEvents[key].push({
 async function loadHistory(){
   historyEvents=parseCSV(await (await fetch(HISTORY_URL)).text()).slice(1);
 }
+async function loadInterwencje(){
 
+  const { data, error } = await supabaseClient
+    .from("interwencje")
+    .select("*")
+    .order("start_date", { ascending: false });
+
+  if(error){
+    console.error("BŁĄD INTERWENCJI:", error);
+    return;
+  }
+
+  interwencje = data;
+}
+  
 /* ===== UI ===== */
 function showSection(id){
 
@@ -1198,6 +1219,9 @@ function showSection(id){
   if(finalId==="mapSection"){
     setTimeout(()=>map.invalidateSize(),200);
   }
+  if(finalId === "interwencjeSection"){
+  renderInterwencje();
+}
 }
 function setActiveNav(btn){
 
@@ -1316,11 +1340,24 @@ async function submitService(){
   try{
 
     
-await fetch(SCRIPT_URL, {
-  method: "POST",
-  mode: "no-cors",   // ✅ KLUCZOWE
-  body: JSON.stringify(payload)
-});
+const { error } = await supabaseClient
+  .from("interwencje")   // 👈 nazwa Twojej tabeli
+  .insert([{
+    device_id: p.id,
+    structure: p.structure,
+    location: p.location,
+    event_name: event.name,
+    start_date: event.date,
+    end_date: now,
+    user_email: user,
+    actions: actions.join(", ")
+  }]);
+
+if(error){
+  console.error(error);
+  alert("❌ Błąd zapisu do Supabase");
+  return;
+}
 
 
     // ✅ różne komunikaty
@@ -1351,6 +1388,9 @@ if(currentService.key){
 }else{
   showSection('interwencjeSection');
 }
+
+await loadInterwencje();
+renderInterwencje();
 
 
   }catch(e){
@@ -1694,6 +1734,41 @@ function renderDevicesList(){
 
   document.getElementById("devicesList").innerHTML = html;
 }
+function renderInterwencje(){
+
+  const terminal = document.getElementById("interTerminalFilter").value.toLowerCase();
+  const user = document.getElementById("interUserFilter").value.toLowerCase();
+
+  let html = "";
+
+  interwencje.forEach(i => {
+
+    if(terminal && !i.device_id.toLowerCase().includes(terminal)) return;
+    if(user && !i.user_email.toLowerCase().includes(user)) return;
+
+    html += `
+      <div class="terminal-box">
+
+        <b>Parkomat ${i.device_id}</b><br>
+        ${i.location}<br><br>
+
+        <b>${i.event_name}</b><br>
+
+        <small>
+          Od: ${i.start_date}<br>
+          Do: ${i.end_date}
+        </small><br><br>
+
+        👤 ${i.user_email}<br>
+        🔧 ${i.actions || ""}
+
+      </div>
+    `;
+  });
+
+  document.getElementById("interwencjeList").innerHTML = html;
+}
+  
   /* ===== STATYSTYKI ===== */
 function showStats(){
 
@@ -1732,7 +1807,7 @@ async function init(){
   await loadHistory();
   await loadServiceActions();
   await loadTechnicians();
-
+  await loadInterwencje();
 
   populateActiveEventFilter();
   populateEventFilter();
