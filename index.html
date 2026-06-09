@@ -607,8 +607,11 @@ Zaloguj
 
   <div class="filter-item">
     <span>👤</span>
-    <input type="text" id="interUserFilter" placeholder="Pracownik"
-           oninput="renderInterwencje()">
+    
+<select id="interUserFilter" onchange="renderInterwencje()">
+  <option value="">👤 Wszyscy pracownicy</option>
+</select>
+
   </div>
 
   <div class="filter-item">
@@ -1065,12 +1068,21 @@ async function loadServiceActions(){
 }
 
 async function loadTechnicians(){
-  const rows = parseCSV(await (await fetch(USERS_URL)).text()).slice(1);
 
-  technicians = rows.map(r => ({
-    name: r[0]?.trim(),
-    city: r[1]?.trim()
-  })).filter(t => t.name);
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("*");
+
+  if(error){
+    console.error("BŁĄD USERS:", error);
+    return;
+  }
+
+  technicians = data.map(u => ({
+    name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
+    email: u.email,
+    role: u.role
+  }));
 }
 
 
@@ -1239,8 +1251,9 @@ function openServiceModal(key, event){
   const techSelect = document.getElementById("techSelect");
 
   techSelect.innerHTML = technicians
-    .map(t => `<option value="${t.name}">${t.name} (${t.city})</option>`)
-    .join('');
+  .filter(t => t.role === "serwis") // ✅ tylko serwis
+  .map(t => `<option value="${t.name}">${t.name}</option>`)
+  .join('');
 
   const box = document.getElementById("actionsBox");
 
@@ -1734,17 +1747,48 @@ function renderDevicesList(){
 
   document.getElementById("devicesList").innerHTML = html;
 }
+  function populateUserFilter(){
+
+  const select = document.getElementById("interUserFilter");
+  if(!select) return;
+
+  // zbierz unikalnych użytkowników
+  const users = [...new Set(
+    interwencje
+      .map(i => i.user_email)
+      .filter(Boolean)
+  )].sort();
+
+  select.innerHTML =
+    `<option value="">👤 Wszyscy pracownicy</option>` +
+    users.map(u => `<option value="${u}">${u}</option>`).join('');
+}
+
 function renderInterwencje(){
 
   const terminal = document.getElementById("interTerminalFilter").value.toLowerCase();
-  const user = document.getElementById("interUserFilter").value.toLowerCase();
+  
+const userInput = document
+  .getElementById("interUserFilter")
+  ?.value;
+
 
   let html = "";
 
   interwencje.forEach(i => {
 
+    const isAdmin = window.currentUser?.role === "admin";
+
+    // ✅ SERWIS widzi tylko swoje interwencje
+    if(!isAdmin){
+      if(i.user_email !== window.currentUser.email) return;
+    }
+
+    // ✅ filtr po numerze parkomatu
     if(terminal && !(i.device_id || "").toLowerCase().includes(terminal)) return;
-    if(user && !(i.user_email || "").toLowerCase().includes(user)) return;
+
+    // ✅ filtr po użytkowniku TYLKO dla admina
+    if(isAdmin && userInput && i.user_email !== userInput) return;
 
     html += `
       <div class="terminal-box">
@@ -1808,7 +1852,7 @@ async function init(){
   await loadServiceActions();
   await loadTechnicians();
   await loadInterwencje();
-
+  populateUserFilter();
   populateActiveEventFilter();
   populateEventFilter();
   renderAdminPanel();
@@ -1837,12 +1881,21 @@ function applyUserRole(profile){
   console.log("ROLE:", profile.role);
 
   const adminBtn = document.getElementById("adminBtn");
+  const userFilter = document.getElementById("interUserFilter");
 
   if(profile.role === "admin"){
-    adminBtn.style.display = "flex";   // ✅ tylko przycisk
+    // ✅ ADMIN
+    if(adminBtn) adminBtn.style.display = "flex";
+
+    if(userFilter) userFilter.style.display = "block"; // filtr widoczny
+
   }else{
-    adminBtn.style.display = "none";   // ✅ ukryj przycisk
+    // ✅ SERWIS
+    if(adminBtn) adminBtn.style.display = "none";
+
+    if(userFilter) userFilter.style.display = "none"; // filtr ukryty
   }
+
 }
 
 // zamykanie po kliknięciu poza panel
