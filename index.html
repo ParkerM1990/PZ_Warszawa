@@ -433,11 +433,13 @@ Zaloguj
   🧰 <span>Interwencje</span>
 </button>
   
-<button class="nav-btn"
+
+<button id="adminBtn" class="nav-btn"
   title="Admin"
   onclick="setActiveNav(this);showSection('adminPanel')">
   👤 <span>Admin</span>
 </button>
+
 
 </div>
 <div class="main">
@@ -781,6 +783,7 @@ async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  // ✅ 1. LOGOWANIE
   const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
@@ -792,26 +795,46 @@ async function login(){
     return;
   }
 
+  // ✅ UI
   document.getElementById("authBox").style.display = "none";
-
   const user = data.user.email;
   document.getElementById("userBadge").innerText = "👤 " + user;
 
-  await init(); // ✅ zostaje
+  // ✅ 2. POBIERZ PROFIL
+  const { data: profile } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("id", data.user.id)
+    .single();
+
+  // ✅ 3. ZASTOSUJ ROLĘ
+  applyUserRole(profile);
+
+  // ✅ 4. ŁADUJ DANE
+  await init();
 }
 async function checkAuth(){
 
   const { data } = await supabaseClient.auth.getSession();
 
   if(data.session){
+
     document.getElementById("authBox").style.display = "none";
 
     document.getElementById("userBadge").innerText =
       "👤 " + data.session.user.email;
 
+    const { data: profile } = await supabaseClient
+      .from("users")
+      .select("*")
+      .eq("id", data.session.user.id)
+      .single();
+
+    applyUserRole(profile);
+
     await init();
   }else{
-    document.getElementById("authBox").style.display = "flex"; // ✅ DODAJ
+    document.getElementById("authBox").style.display = "flex";
   }
 }
   
@@ -1673,7 +1696,7 @@ async function init(){
 }
 
 checkAuth();
-
+document.getElementById("adminPanel").style.display = "none";
 // zamykanie po wyborze
 
 setTimeout(()=>{
@@ -1685,7 +1708,26 @@ setTimeout(()=>{
     });
   }
 }, 0);
+function applyUserRole(profile){
 
+  if(!profile){
+    console.warn("Brak profilu usera");
+    return;
+  }
+
+  console.log("ROLE:", profile.role);
+
+  const adminPanel = document.getElementById("adminPanel");
+  const adminBtn = document.getElementById("adminBtn");
+
+  if(profile.role === "admin"){
+    adminPanel.style.display = "block";
+    adminBtn.style.display = "flex";   // ✅ pokaż przycisk
+  }else{
+    adminPanel.style.display = "none";
+    adminBtn.style.display = "none";   // ✅ ukryj przycisk
+  }
+}
 
 // zamykanie po kliknięciu poza panel
 
