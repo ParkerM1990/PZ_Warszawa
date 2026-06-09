@@ -1780,9 +1780,16 @@ const userInput = document
     const isAdmin = window.currentUser?.role === "admin";
 
     // ✅ SERWIS widzi tylko swoje interwencje
-    if(!isAdmin){
-      if(i.user_email !== window.currentUser.email) return;
-    }
+    
+if(!isAdmin){
+
+  const fullName =
+    (window.currentUser?.first_name || "") + " " +
+    (window.currentUser?.last_name || "");
+
+  if(i.user_email !== fullName.trim()) return;
+}
+
 
     // ✅ filtr po numerze parkomatu
     if(terminal && !(i.device_id || "").toLowerCase().includes(terminal)) return;
