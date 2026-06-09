@@ -780,15 +780,25 @@ async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
+  
+const { data, error } = await supabaseClient.auth.signUp({
+  email,
+  password
+});
 
-  if(error){
-    alert("❌ Błędne dane");
-    return;
-  }
+if(error){
+  console.error("AUTH ERROR:", error);
+  alert("❌ " + error.message);
+  return;
+}
+
+if(!data.user){
+  alert("❌ User utworzony, ale brak ID (sprawdź email confirmation)");
+  return;
+}
+
+const userId = data.user.id;
+
 
   document.getElementById("authBox").style.display = "none";
 
