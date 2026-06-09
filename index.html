@@ -983,17 +983,687 @@ function parseCSV(text){
 }
 
 
-let actionDict = {}; // ✅ dodaj nad funkcją (globalnie)
-
 async function loadServiceActions(){
   const rows = parseCSV(await (await fetch(ACTIONS_URL)).text()).slice(1);
+  serviceActions = rows.map(r => r[0]?.trim()).filter(Boolean);
+}
 
-  serviceActions = [];
-  actionDict = {};
+async function loadTechnicians(){
+  const rows = parseCSV(await (await fetch(USERS_URL)).text()).slice(1);
+
+  technicians = rows.map(r => ({
+    name: r[0]?.trim(),
+    city: r[1]?.trim()
+  })).filter(t => t.name);
+}
+
+
+/* ===== LOAD PARKOMATY ===== */
+async function loadParkomaty(){
+
+  const rows = parseCSV(await (await fetch(PARKOMATY_URL)).text()).slice(1);
+
+  const nodeSet = new Set();
 
   rows.forEach(r => {
-    const name = r[0]?.trim();        // nazwa akcji
-    const type = r[1]?.trim().toLowerCase(); // typ: hardware/software
 
-    if(name){
-      serviceActions.push(name);      // ✅ lista checkboxów
+    const id = r[0]?.trim(); 
+    const lng = parseFloat(r[2]);
+    const lat = parseFloat(r[3]);
+    const structure = r[5]?.trim();
+    const node = r[4];
+
+    if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
+
+    const key = makeKey(id, structure);
+
+    allParkomaty[key] = {
+      id,
+      structure,
+      lat,
+      lng,
+      location: r[1],
+      node
+    };
+
+    nodeSet.add(node);
+  });
+
+  // ✅ wspólna lista stref
+  const nodes = [...nodeSet].sort();
+
+  const options =
+    `<option value="">Wszystkie strefy</option>` +
+    nodes.map(n => `<option value="${n}">${n}</option>`).join('');
+
+  // ✅ MAPA
+  document.getElementById("nodeFilter").innerHTML = options;
+
+  // ✅ AWARIE
+  const activeNode = document.getElementById("activeNodeFilter");
+  if(activeNode) activeNode.innerHTML = options;
+
+  // ✅ HISTORIA
+  const historyNode = document.getElementById("historyNodeFilter");
+  if(historyNode) historyNode.innerHTML = options;
+
+  // ✅ URZĄDZENIA
+  const deviceNode = document.getElementById("deviceNodeFilter");
+  if(deviceNode) deviceNode.innerHTML = options;
+}
+
+/* ===== LOAD ACTIVE ===== */
+async function loadActive(){
+  const rows=parseCSV(await (await fetch(ACTIVE_URL)).text()).slice(1);
+
+  activeEvents={};
+  let count=0;
+
+ 
+rows.forEach(r=>{
+  const id = r[0]?.trim();
+const structure = r[1]?.trim();
+
+const key = makeKey(id, structure);
+if (!allParkomaty[key]) return;
+
+if (!activeEvents[key]) activeEvents[key] = [];
+
+activeEvents[key].push({
+  name: r[5],
+  code: r[4],
+  hardware: r[7] || "",
+  date: r[3]
+});
+    count++;
+  });
+
+  document.getElementById("alarmCounter").innerText=count;
+}
+
+/* ===== LOAD HISTORY ===== */
+async function loadHistory(){
+  historyEvents=parseCSV(await (await fetch(HISTORY_URL)).text()).slice(1);
+}
+
+/* ===== UI ===== */
+function showSection(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if(id==="mapSection") setTimeout(()=>map.invalidateSize(),200);
+}
+function setActiveNav(btn){
+
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(b=>b.classList.remove("active"));
+
+  btn.classList.add("active");
+}
+
+function openServiceModal(key, event){
+
+  currentService = {key, event};
+
+  const techSelect = document.getElementById("techSelect");
+
+  techSelect.innerHTML = technicians
+    .map(t => `<option value="${t.name}">${t.name} (${t.city})</option>`)
+    .join('');
+
+  const box = document.getElementById("actionsBox");
+
+  box.innerHTML = serviceActions.map(a => `
+    <label style="display:flex;gap:6px;">
+      <input type="checkbox" value="${a}">
+      ${a}
+    </label>
+  `).join('');
+
+  document.getElementById("serviceModal").style.display = "flex";
+}
+function openManualServiceModal(){
+
+  currentService = {
+    key: null,
+    event: {
+      name: "Interwencja serwisowa",
+      date: new Date().toISOString().slice(0,19).replace("T"," ")
+    }
+  };
+
+  // ✅ lista parkomatów
+  const deviceSelect = document.getElementById("deviceSelect");
+
+  deviceSelect.innerHTML = Object.values(allParkomaty)
+    .sort((a,b)=>a.id.localeCompare(b.id))
+    .map(p => `<option value="${makeKey(p.id,p.structure)}">
+      ${p.id} - ${p.location}
+    </option>`)
+    .join('');
+
+  // ✅ technicy
+  const techSelect = document.getElementById("techSelect");
+
+  techSelect.innerHTML = technicians
+    .map(t => `<option value="${t.name}">${t.name} (${t.city})</option>`)
+    .join('');
+
+  // ✅ czynności
+  const box = document.getElementById("actionsBox");
+
+  box.innerHTML = serviceActions.map(a => `
+    <label style="display:flex;gap:6px;">
+      <input type="checkbox" value="${a}">
+      ${a}
+    </label>
+  `).join('');
+
+  document.getElementById("serviceModal").style.display = "flex";
+}
+
+function closeModal(){
+  document.getElementById("serviceModal").style.display = "none";
+}
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRoNHMfvANKbxLBFU7a8xmAAaL5s9mHdE774Yxcbriqof4PT6NNw/exec";
+
+async function submitService(){
+
+  const user = document.getElementById("techSelect").value;
+
+  const checked = document.querySelectorAll("#actionsBox input:checked");
+  const actions = [...checked].map(el => el.value);
+
+  if(!user){
+    alert("❌ Wybierz pracownika");
+    return;
+  }
+
+  if(actions.length === 0){
+    alert("❌ Wybierz czynności");
+    return;
+  }
+
+  let {key, event} = currentService;
+
+  // ✅ jeśli interwencja ręczna → pobierz parkomat
+  if(!key){
+    key = document.getElementById("deviceSelect").value;
+  }
+
+  const p = allParkomaty[key];
+
+  const now = new Date().toISOString().slice(0,19).replace("T"," ");
+
+  const payload = {
+    id: p.id,
+    structure: p.structure,
+    location: p.location,
+    eventName: event.name,
+    startDate: event.date,
+    endDate: now,
+    user: user,
+    actions: actions
+  };
+
+  try{
+
+    
+await fetch(SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",   // ✅ KLUCZOWE
+  body: JSON.stringify(payload)
+});
+
+
+    // ✅ różne komunikaty
+    if(currentService.key){
+      alert("✅ Awaria zamknięta");
+    }else{
+      alert("✅ Interwencja zapisana");
+    }
+
+    // ✅ usuwamy TYLKO jeśli to awaria
+    if(currentService.key){
+      activeEvents[key] = activeEvents[key].filter(e => e !== event);
+
+      if(activeEvents[key].length === 0){
+        delete activeEvents[key];
+      }
+    }
+
+    closeModal();
+
+    // ✅ odśwież UI
+    renderAll();
+
+    // ✅ opcjonalnie powrót na mapę
+    
+if(currentService.key){
+  showSection('mapSection');
+}else{
+  showSection('interwencjeSection');
+}
+
+
+  }catch(e){
+    alert("❌ Błąd zapisu");
+    console.error(e);
+  }
+}
+
+/* ===== MAP + AUTO CENTER ===== */
+function renderMarkers(){
+
+  const node=document.getElementById("nodeFilter").value;
+  markerLayer.clearLayers();
+
+  let points=[];
+
+ 
+
+Object.keys(activeEvents).forEach(key => {
+
+  const p = allParkomaty[key];
+  if(!p) return;
+
+  if(node && p.node!==node) return;
+
+  let popup = `<b>Parkomat ${p.id}</b><br>${p.location}<br><br>`;
+
+  
+
+activeEvents[key].forEach(e=>{
+  popup+=`
+    • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
+    <small>${e.date}</small><br>
+  `;
+
+  });
+
+  popup+=`
+    <br>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+       target="_blank"
+       style="background:#16a34a;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">
+       🧭 Nawiguj
+    </a>
+  `;
+
+  // ✅ 👉 DODAJ TO TU
+  const codes = activeEvents[key].map(e => (e.code ? String(e.code).trim() : ""));
+  const hasCritical = codes.some(code => RED_CODES.includes(code));
+
+  // ✅ marker
+  const icon = L.divIcon({
+    className: '',
+    html: `
+      <div style="
+        width:22px;
+        height:22px;
+        border-radius:50%;
+        background:${hasCritical ? '#dc2626' : '#16a34a'};
+        border:2px solid white;
+        box-shadow:0 0 8px rgba(0,0,0,0.6);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:12px;
+        color:white;
+        font-weight:bold;
+      ">
+        ${activeEvents[key].length}
+      </div>
+    `
+  });
+
+  L.marker([p.lat,p.lng], { icon })
+    .bindPopup(popup)
+    .addTo(markerLayer);
+
+  points.push([p.lat,p.lng]);
+});
+
+
+  if(points.length===0){
+    map.setView([52.2297,21.0122],6);
+  }
+  else if(points.length===1){
+    map.setView(points[0],15);
+  }
+  else{
+    map.fitBounds(L.latLngBounds(points),{
+      padding:[50,50],
+      maxZoom:16
+    });
+  }
+}
+
+/* ===== FILTR AWARII (RESTORED) ===== */
+function populateActiveEventFilter(){
+
+  const set=new Set();
+
+  Object.values(activeEvents).forEach(arr=>{
+    arr.forEach(e=>{
+      if(e.name) set.add(e.name);
+    });
+  });
+
+  document.getElementById("activeEventFilter").innerHTML=
+    `<option value="">Wszystkie awarie</option>`+
+    [...set].sort().map(e=>`<option value="${e}">${e}</option>`).join('');
+}
+
+/* ===== FILTR HISTORII (RESTORED) ===== */
+function populateEventFilter(){
+
+  const set=new Set();
+
+  historyEvents.forEach(r=>{
+    if(r[5]) set.add(r[5]);
+  });
+
+  document.getElementById("historyEventFilter").innerHTML=
+    `<option value="">Wszystkie awarie</option>`+
+    [...set].sort().map(e=>`<option value="${e}">${e}</option>`).join('');
+}
+
+/* ===== AWARIE ===== */
+function renderActiveList(){
+
+  const node = document.getElementById("activeNodeFilter").value;
+  const from = document.getElementById("activeDateFrom").value;
+  const to = document.getElementById("activeDateTo").value;
+  const terminal = document.getElementById("activeTerminalFilter").value.trim();
+  const event = document.getElementById("activeEventFilter").value;
+
+  let html = "";
+
+  Object.keys(activeEvents).forEach(key => {
+
+    const p = allParkomaty[key];
+    if(!p) return;
+
+    const id = p.id;
+
+    const filtered = activeEvents[key].filter(e => {
+
+      // ✅ bezpieczne parsowanie daty
+      const raw = e.date;
+      if(!raw) return false;
+
+      const d = new Date(raw.replace(" ", "T"));
+
+      // ✅ filtr OD
+      if(from && d < new Date(from)) return false;
+
+      // ✅ filtr DO (cały dzień!)
+      if(to){
+        const toDate = new Date(to);
+        toDate.setHours(23,59,59,999);
+        if(d > toDate) return false;
+      }
+
+      // ✅ filtr po numerze
+      if(terminal && !id.includes(terminal)) return false;
+
+      // ✅ filtr po typie zdarzenia
+      if(event && e.name !== event) return false;
+
+      // ✅ filtr po strefie
+      if(node && p.node !== node) return false;
+
+      return true;
+    });
+
+    if(filtered.length === 0) return;
+
+    html += `
+      <div class="terminal-box">
+        <b>Parkomat ${id}</b><br>
+        ${p.location}<br><br>
+    `;
+
+    
+filtered.forEach(e => {
+  html += `
+    • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
+    <small>${e.date}</small><br>
+
+    <button onclick="openServiceModal('${key}', ${JSON.stringify(e).replace(/"/g,'&quot;')})"
+      style="
+        margin-top:6px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        padding:5px 8px;
+        border-radius:6px;
+      ">
+      🔧 Usuń awarię
+    </button>
+
+    <br><br>
+  `;
+});
+
+// ✅ ZAMKNIĘCIE BOXA
+html += `</div>`;
+});
+
+  document.getElementById("awarieList").innerHTML = html;
+}
+
+/* ===== HISTORIA ===== */
+function renderHistoryList(){
+  const node = document.getElementById("historyNodeFilter").value;
+  const from=document.getElementById("historyDateFrom").value;
+  const to=document.getElementById("historyDateTo").value;
+  const terminal=document.getElementById("historyTerminalFilter").value.trim();
+  const event=document.getElementById("historyEventFilter").value;
+
+  let html="";
+
+  
+historyEvents.forEach(r=>{
+
+  if(!r[0]) return;
+
+  // ✅ NOWE – filtr po liście parkomatów
+  
+const key = makeKey(r[0], r[1]); // ✅ r[1] = structure
+
+
+const p = allParkomaty[key];
+if (!p) return;
+
+if(node && p.node !== node) return;
+
+
+
+  const d=new Date(r[3]);
+
+  if(from && d<new Date(from)) return;
+  if(to && d>new Date(to)) return;
+  if(terminal && !r[0].includes(terminal)) return;
+  if(event && r[5]!==event) return;
+
+  html+=`
+    <div class="terminal-box">
+      <b>Parkomat ${r[0]}</b><br>
+      
+<div class="event-name">
+  ${r[5]} (${r[7]||""})
+</div>
+      Od: ${r[3]}<br>
+      Do: ${r[8]||""}
+    </div>
+  `;
+});
+
+
+  document.getElementById("historiaList").innerHTML=html;
+}
+/* ===== URZĄDZENIA ===== */
+function renderDevicesList(){
+  const node = document.getElementById("deviceNodeFilter").value;
+  const search = document
+    .getElementById("deviceSearch")
+    .value
+    .trim()
+    .toLowerCase();
+
+  let html = "";
+
+  Object.values(allParkomaty)
+    .sort((a,b)=>a.id.localeCompare(b.id))
+    .forEach(p=>{
+
+      const text = `
+        ${p.id}
+        ${p.location}
+      `.toLowerCase();
+
+      if(search && !text.includes(search)) return;
+      if(node && p.node !== node) return;
+      const key = makeKey(p.id, p.structure);
+
+      const alarms = activeEvents[key]?.length || 0;
+
+      html += `
+  <div class="terminal-box">
+
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    ">
+
+      <div>
+        <b>Parkomat ${p.id}</b><br>
+        ${p.location}<br>
+
+        <small style="color:#9ca3af;">
+          Strefa: ${p.node || "-"}
+        </small>
+      </div>
+
+      <div style="
+        min-width:50px;
+        text-align:center;
+        padding:6px 10px;
+        border-radius:10px;
+        background:${alarms ? '#dc2626' : '#16a34a'};
+        color:white;
+        font-weight:bold;
+      ">
+        ${alarms}
+      </div>
+
+    </div>
+
+    <!-- ✅ NOWY PRZYCISK -->
+    <div style="margin-top:10px;">
+      <a 
+        href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+        target="_blank"
+        style="
+          display:inline-block;
+          background:#16a34a;
+          color:white;
+          padding:6px 10px;
+          border-radius:8px;
+          text-decoration:none;
+          font-size:14px;
+        ">
+        🧭 Nawiguj
+      </a>
+    </div>
+
+  </div>
+`;
+    });
+
+  document.getElementById("devicesList").innerHTML = html;
+}
+  /* ===== STATYSTYKI ===== */
+function showStats(){
+
+  const totalDevices = Object.keys(allParkomaty).length;
+
+  const devicesWithAlarms = Object.keys(activeEvents).length;
+
+  let totalAlarms = 0;
+  Object.values(activeEvents).forEach(arr=>{
+    totalAlarms += arr.length;
+  });
+
+  alert(
+`📊 STATYSTYKI
+
+🖥️ Urządzenia: ${totalDevices}
+
+⚠️ Parkomaty z awarią: ${devicesWithAlarms}
+
+🔥 Wszystkie awarie: ${totalAlarms}`
+  );
+}
+
+/* ===== MASTER ===== */
+function renderAll(){
+  renderMarkers();
+  renderActiveList();
+  renderHistoryList();
+  renderDevicesList();
+}
+
+/* ===== INIT ===== */
+async function init(){
+  await loadParkomaty();
+  await loadActive();
+  await loadHistory();
+  await loadServiceActions();
+  await loadTechnicians();
+
+
+  populateActiveEventFilter();
+  populateEventFilter();
+
+  renderAll();
+}
+
+init();
+
+// zamykanie po wyborze
+
+setTimeout(()=>{
+  const nodeFilter = document.getElementById("nodeFilter");
+
+  if(nodeFilter){
+    nodeFilter.addEventListener("change", ()=>{
+      document.getElementById("mapFilterPanel").classList.remove("open");
+    });
+  }
+}, 0);
+
+
+// zamykanie po kliknięciu poza panel
+
+document.addEventListener("click", (e)=>{
+  const panel = document.getElementById("mapFilterPanel");
+  const button = document.querySelector(".filter-toggle");
+
+  if (!panel || !button) return;
+
+  if (!panel.contains(e.target) && !button.contains(e.target)) {
+    panel.classList.remove("open");
+  }
+});
+
+
+</script>
+
+</body>
+</html>
+
