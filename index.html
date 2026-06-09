@@ -323,6 +323,13 @@ input[type="date"] {
 }
 
 #mapSection{  position:absolute;  inset:0;  overflow:hidden;}
+  #adminPanel{
+  display: none;
+}
+
+#adminBtn{
+  display: none;
+}
 </style>
 </head>
 
@@ -1696,8 +1703,6 @@ async function init(){
 }
 
 checkAuth();
-document.getElementById("adminPanel").style.display = "none";
-  document.getElementById("adminBtn").style.display = "none";
 // zamykanie po wyborze
 
 setTimeout(()=>{
