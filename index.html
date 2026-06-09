@@ -362,6 +362,17 @@ Zaloguj
   </div>
 
   <div class="header-right">
+  
+<button onclick="refreshApp()" style="
+    background:#1f2937;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+  ">
+    🔄
+  </button>
 
   <div id="alarmCounter" onclick="showStats()" style="cursor:pointer;">
     0
@@ -1948,6 +1959,10 @@ function applyUserRole(profile){
     if(userFilter) userFilter.style.display = "none"; // filtr ukryty
   }
 
+}
+
+function refreshApp(){
+  location.reload();
 }
 
 
