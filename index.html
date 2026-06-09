@@ -940,11 +940,13 @@ const { data, error } = await supabaseClient.auth.signUp({
         nodes: nodes
       });
 
-    if(insertError){
-      console.error(insertError);
-      alert("❌ Błąd zapisu profilu");
-      return;
-    }
+    
+if(insertError){
+  console.error("INSERT ERROR:", insertError);
+  alert("❌ " + insertError.message);
+  return;
+}
+
 
     alert("✅ Użytkownik utworzony");
 
