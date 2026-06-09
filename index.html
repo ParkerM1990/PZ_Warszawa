@@ -805,6 +805,7 @@ const userId = data.user.id;
   // ✅ DODANE — ustaw usera w headerze
   const user = data.user.email;
   document.getElementById("userBadge").innerText = "👤 " + user;
+  await init();
 }
 async function checkAuth(){
 
