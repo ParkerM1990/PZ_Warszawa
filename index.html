@@ -801,8 +801,11 @@ async function login(){
 
   // ✅ UI
   document.getElementById("authBox").style.display = "none";
-  const user = data.user.email;
-  document.getElementById("userBadge").innerText = "👤 " + user;
+  const fullName = profile.first_name
+  ? profile.first_name + " " + (profile.last_name || "")
+  : data.user.email;
+
+document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
 
   // ✅ 2. POBIERZ PROFIL
   const { data: profile } = await supabaseClient
@@ -825,8 +828,11 @@ async function checkAuth(){
 
     document.getElementById("authBox").style.display = "none";
 
-    document.getElementById("userBadge").innerText =
-      "👤 " + data.session.user.email;
+   const fullName = profile.first_name
+  ? profile.first_name + " " + (profile.last_name || "")
+  : data.session.user.email;
+
+document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
 
     const { data: profile } = await supabaseClient
       .from("users")
