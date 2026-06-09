@@ -781,7 +781,7 @@ Zaloguj
 const SUPABASE_URL = "https://tiplqkdmgahdeoseahsd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpcGxxa2RtZ2FoZGVvc2VhaHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MjgyOTIsImV4cCI6MjA5NjUwNDI5Mn0.40_rGmSdhBW2SKGG8wgrGq4--n9qT578StHVzsSD_8w";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+window.currentUser = null;
 async function login(){
 
   const email = document.getElementById("email").value;
@@ -810,7 +810,7 @@ async function login(){
     .select("*")
     .eq("id", data.user.id)
     .single();
-
+    window.currentUser = profile;
   // ✅ 3. ZASTOSUJ ROLĘ
   applyUserRole(profile);
 
@@ -833,7 +833,7 @@ async function checkAuth(){
       .select("*")
       .eq("id", data.session.user.id)
       .single();
-
+window.currentUser = profile;
     applyUserRole(profile);
 
     await init();
