@@ -1930,7 +1930,12 @@ setTimeout(()=>{
 
   if(nodeFilter){
     nodeFilter.addEventListener("change", ()=>{
-      document.getElementById("mapFilterPanel").classList.remove("open");
+      
+const panel = document.getElementById("mapFilterPanel");
+if(panel){
+  panel.classList.remove("open");
+}
+
     });
   }
 }, 0);
@@ -1961,9 +1966,22 @@ function applyUserRole(profile){
 
 }
 
-function refreshApp(){
-  location.reload();
+
+async function refreshApp(){
+
+  const btn = document.querySelector('[onclick="refreshApp()"]');
+  if(btn) btn.innerText = "⏳";
+
+  await loadParkomaty();
+  await loadActive();
+  await loadHistory();
+  await loadInterwencje();
+
+  renderAll();
+
+  if(btn) btn.innerText = "🔄";
 }
+
 
 
 
