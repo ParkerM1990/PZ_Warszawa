@@ -919,11 +919,16 @@ const { data, error } = await supabaseClient.auth.signUp({
 });
 
 
-    if(error){
-      console.error(error);
-      alert("❌ Błąd tworzenia użytkownika (auth)");
-      return;
-    }
+    
+
+if(error){
+  console.error("AUTH ERROR:", error);
+  alert("❌ " + error.message);
+  return;
+}
+
+ 
+
 
     const userId = data.user.id;
 
