@@ -775,37 +775,29 @@ Zaloguj
 const SUPABASE_URL = "https://tiplqkdmgahdeoseahsd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpcGxxa2RtZ2FoZGVvc2VhaHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MjgyOTIsImV4cCI6MjA5NjUwNDI5Mn0.40_rGmSdhBW2SKGG8wgrGq4--n9qT578StHVzsSD_8w";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 async function login(){
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  
-const { data, error } = await supabaseClient.auth.signUp({
-  email,
-  password
-});
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
 
-if(error){
-  console.error("AUTH ERROR:", error);
-  alert("❌ " + error.message);
-  return;
-}
-
-if(!data.user){
-  alert("❌ User utworzony, ale brak ID (sprawdź email confirmation)");
-  return;
-}
-
-const userId = data.user.id;
-
+  if(error){
+    console.error("LOGIN ERROR:", error);
+    alert("❌ " + error.message);
+    return;
+  }
 
   document.getElementById("authBox").style.display = "none";
 
-  // ✅ DODANE — ustaw usera w headerze
   const user = data.user.email;
   document.getElementById("userBadge").innerText = "👤 " + user;
-  await init();
+
+  await init(); // ✅ zostaje
 }
 async function checkAuth(){
 
@@ -813,8 +805,17 @@ async function checkAuth(){
 
   if(data.session){
     document.getElementById("authBox").style.display = "none";
+
+    document.getElementById("userBadge").innerText =
+      "👤 " + data.session.user.email;
+
+    await init();
+  }else{
+    document.getElementById("authBox").style.display = "flex"; // ✅ DODAJ
   }
 }
+  
+
 async function logout(){
 
   await supabaseClient.auth.signOut();
@@ -1671,7 +1672,7 @@ async function init(){
   renderAll();
 }
 
-init();
+checkAuth();
 
 // zamykanie po wyborze
 
