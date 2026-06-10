@@ -297,14 +297,24 @@ input[type="date"] {
   overflow-wrap: break-word;
 }
 
-#mapSection{  position:absolute;  inset:0;  overflow:hidden;}
+
+#mapSection{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  padding:0; 
+}
+
+
 
 
 #mapSection .filter-bar {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  margin: 0;       /* ✅ usuwa odstęp */
+  border-radius: 0; /* (opcjonalnie – ładniej) */
 }
+
 
 
 #adminBtn{
@@ -363,16 +373,18 @@ Zaloguj
 
   <div class="header-right">
   
-<button onclick="refreshApp()" style="
-    background:#1f2937;
-    color:white;
-    border:none;
-    padding:6px 10px;
-    border-radius:8px;
-    cursor:pointer;
-  ">
-    🔄
-  </button>
+
+<button id="refreshBtn" onclick="refreshApp()" style="
+  background:#1f2937;
+  color:white;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+">
+  <span id="refreshIcon">🔄</span>
+</button>
+
 
   <div id="alarmCounter" onclick="showStats()" style="cursor:pointer;">
     0
@@ -687,10 +699,13 @@ Zaloguj
   ">
     <option value="serwis">Serwis</option>
     <option value="admin">Admin</option>
+    
   </select>
 
   <h3>Struktury / Miasta</h3>
   <div id="structuresBox" style="display:grid; gap:6px;"></div>
+
+
 
   <button onclick="createUser()" style="
     margin-top:12px;
@@ -701,7 +716,7 @@ Zaloguj
     border-radius:8px;
     width:100%;
   ">
-    ✅ Generuj dane
+    ✅ Utwórz użytkownika
   </button>
 
   <pre id="outputJson" style="
@@ -712,7 +727,8 @@ Zaloguj
     font-size:12px;
     overflow:auto;
   "></pre>
-
+<h3>📋 Użytkownicy</h3>
+<div id="usersList"></div>
 </div>
 </div>
 
@@ -729,45 +745,79 @@ Zaloguj
   z-index:5000;
 ">
 
-  <div style="
-    background:#020617;
-    padding:16px;
-    border-radius:12px;
-    width:90%;
-    max-width:400px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  ">
+<div style="
+  background:#020617;
+  padding:16px;
+  border-radius:12px;
+  width:90%;
+  max-width:400px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+">
 
-    <h3>🔧 Interwencja Serwisowa</h3>
-    <select id="deviceSelect"></select>
+<h3>🔧 Interwencja Serwisowa</h3>
 
-    <select id="techSelect" style="display:none;"></select>
+<select id="deviceSelect"></select>
 
-    <div id="actionsBox" style="max-height:150px;overflow:auto;"></div>
+<select id="techSelect" style="display:none;"></select>
 
-    <button onclick="submitService()" style="
-      background:#16a34a;
-      color:white;
-      padding:10px;
-      border:none;
-      border-radius:8px;
-    ">
-      ✅ Zapisz
-    </button>
+<div id="actionsBox" style="max-height:150px;overflow:auto;"></div>
 
-    <button onclick="closeModal()" style="
-      background:#374151;
-      color:white;
-      padding:8px;
-      border:none;
-      border-radius:8px;
-    ">
-      Anuluj
-    </button>
+<button onclick="submitService()" style="
+  background:#16a34a;color:white;padding:10px;border:none;border-radius:8px;">
+  ✅ Zapisz
+</button>
 
-  </div>
+<button onclick="closeModal()" style="
+  background:#374151;color:white;padding:8px;border:none;border-radius:8px;">
+  Anuluj
+</button>
+
+</div>
+</div>
+  
+<div id="editUserModal" style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.7);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:6000;
+">
+
+<div style="
+background:#020617;
+padding:16px;
+border-radius:12px;
+width:90%;
+max-width:400px;
+display:flex;
+flex-direction:column;
+gap:10px;
+">
+
+<h3>✏️ Edytuj użytkownika</h3>
+
+<input id="editFirstName" placeholder="Imię">
+<input id="editLastName" placeholder="Nazwisko">
+
+<select id="editRole">
+  <option value="serwis">Serwis</option>
+  <option value="admin">Admin</option>
+</select>
+
+<h4>Struktury</h4>
+<div id="editStructures"></div>
+
+<h4>Strefy</h4>
+<div id="editNodes" style="max-height:150px; overflow:auto;"></div>
+
+<button onclick="saveUserEdit()">✅ Zapisz</button>
+<button onclick="closeEditModal()">❌ Anuluj</button>
+
+</div>
 </div>
 <!-- ✅ JS zostaje praktycznie bez zmian -->
 <script>
@@ -803,6 +853,15 @@ const { data: profile } = await supabaseClient
   .single();
 
 window.currentUser = profile;
+  
+
+if(profile && profile.is_active === false){
+  alert("⛔ Konto zablokowane");
+  await supabaseClient.auth.signOut();
+  return;
+}
+
+
 
 // ✅ DOPIERO TERAZ używamy profile
 const fullName = profile?.first_name
@@ -1001,6 +1060,7 @@ if(insertError){
     console.error(e);
     alert("❌ Błąd");
   }
+  await loadUsers();
 }
 
   
@@ -1332,7 +1392,11 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRo
 
 async function submitService(){
 
-  const user = document.getElementById("techSelect").value;
+  
+const user = window.currentUser
+  ? `${window.currentUser.first_name || ""} ${window.currentUser.last_name || ""}`.trim()
+  : "unknown";
+
 
   const checked = document.querySelectorAll("#actionsBox input:checked");
   const actions = [...checked].map(el => el.value);
@@ -1915,6 +1979,7 @@ async function init(){
   await loadServiceActions();
   await loadTechnicians();
   await loadInterwencje();
+  await loadUsers();
   populateUserFilter();
   populateActiveEventFilter();
   populateEventFilter();
@@ -1955,13 +2020,14 @@ function applyUserRole(profile){
 
 let isRefreshing = false;
 
+
 async function refreshApp(){
 
-  if(isRefreshing) return; // ✅ blokada
+  if(isRefreshing) return;
   isRefreshing = true;
 
-  const btn = document.getElementById("refreshBtn");
-  if(btn) btn.innerText = "⏳";
+  const icon = document.getElementById("refreshIcon");
+  if(icon) icon.innerText = "⏳";
 
   await loadParkomaty();
   await loadActive();
@@ -1970,11 +2036,179 @@ async function refreshApp(){
 
   renderAll();
 
-  if(btn) btn.innerText = "🔄";
+  if(icon) icon.innerText = "🔄";
 
   isRefreshing = false;
 }
 
+let editingUserId = null;
+
+/* ===== LOAD USERS ===== */
+async function loadUsers(){
+
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select("*");
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  renderUsers(data);
+}
+
+/* ===== LIST ===== */
+function renderUsers(users){
+
+  document.getElementById("usersList").innerHTML = users.map(u => {
+
+    const fullName = `${u.first_name || ""} ${u.last_name || ""}`.trim();
+
+    return `
+    <div class="terminal-box">
+
+      <b>${fullName || u.email}</b><br>
+      ${u.email}<br>
+      <small>Rola: ${u.role}</small><br>
+      <small>Status: ${u.is_active !== false ? "✅ aktywny" : "⛔ zablokowany"}</small><br><br>
+
+      <button onclick="openEditUser('${u.id}')"
+        style="background:#2563eb;color:white;border:none;padding:6px 10px;border-radius:6px;">
+        ✏️ Edytuj
+      </button>
+
+      <button onclick="toggleUser('${u.id}', ${u.is_active !== false})"
+        style="background:#f59e0b;color:white;border:none;padding:6px 10px;border-radius:6px;">
+        ${u.is_active !== false ? "🚫 Zablokuj" : "✅ Odblokuj"}
+      </button>
+
+      <button onclick="resetPassword('${u.email}')"
+        style="background:#7c3aed;color:white;border:none;padding:6px 10px;border-radius:6px;">
+        🔑 Hasło
+      </button>
+
+      <button onclick="deleteUser('${u.id}')"
+        style="background:#dc2626;color:white;border:none;padding:6px 10px;border-radius:6px;">
+        🗑️ Usuń
+      </button>
+
+    </div>
+    `;
+  }).join("");
+}
+
+/* ===== EDIT OPEN ===== */
+async function openEditUser(id){
+
+  editingUserId = id;
+
+  const { data } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  document.getElementById("editFirstName").value = data.first_name || "";
+  document.getElementById("editLastName").value = data.last_name || "";
+  document.getElementById("editRole").value = data.role;
+
+  const structures = [...new Set(
+    Object.values(allParkomaty).map(p => p.structure)
+  )];
+
+  document.getElementById("editStructures").innerHTML =
+    structures.map(s => `
+      <label>
+        <input type="checkbox" value="${s}"
+        ${data.structures?.includes(s) ? "checked" : ""}>
+        ${s}
+      </label>
+    `).join("");
+
+  const nodes = [...new Set(
+    Object.values(allParkomaty).map(p => p.node).filter(Boolean)
+  )];
+
+  document.getElementById("editNodes").innerHTML =
+    nodes.map(n => `
+      <label>
+        <input type="checkbox" value="${n}"
+        ${data.nodes?.includes(n) ? "checked" : ""}>
+        ${n}
+      </label>
+    `).join("");
+
+  document.getElementById("editUserModal").style.display="flex";
+}
+
+/* ===== SAVE ===== */
+async function saveUserEdit(){
+
+  const first = document.getElementById("editFirstName").value;
+  const last = document.getElementById("editLastName").value;
+  const role = document.getElementById("editRole").value;
+
+  const structures = [...document.querySelectorAll("#editStructures input:checked")]
+    .map(el => el.value);
+
+  const nodes = [...document.querySelectorAll("#editNodes input:checked")]
+    .map(el => el.value);
+
+  await supabaseClient
+    .from("users")
+    .update({
+      first_name: first,
+      last_name: last,
+      role: role,
+      structures: structures,
+      nodes: nodes
+    })
+    .eq("id", editingUserId);
+
+  closeEditModal();
+  loadUsers();
+}
+
+function closeEditModal(){
+  document.getElementById("editUserModal").style.display="none";
+}
+
+/* ===== BLOCK ===== */
+async function toggleUser(id, active){
+
+  await supabaseClient
+    .from("users")
+    .update({ is_active: !active })
+    .eq("id", id);
+
+  loadUsers();
+}
+
+/* ===== DELETE ===== */
+async function deleteUser(id){
+
+  if(!confirm("Usunąć użytkownika?")) return;
+
+  await supabaseClient
+    .from("users")
+    .delete()
+    .eq("id", id);
+
+  loadUsers();
+}
+
+/* ===== RESET PASSWORD ===== */
+async function resetPassword(email){
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+
+  if(error){
+    alert("❌ Błąd");
+  }else{
+    alert("✅ Mail resetu wysłany");
+  }
+}
 
 
 
