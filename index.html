@@ -191,14 +191,19 @@ header{
   z-index:1;           /* ✅ nisko */
 }
 
+
 .filter-item{
   display:flex;
-  align-items:center;
+  flex-direction:column;   /* 🔥 KLUCZOWE */
+  align-items:flex-start;  /* 🔥 KLUCZOWE */
+
   background:#020617;
   border:1px solid #1f2937;
   border-radius:10px;
-  padding:6px 8px;
+  padding:8px;
+  gap:4px;                 /* ✅ odstęp */
 }
+
 
 .filter-item span{
   font-size:14px;
@@ -250,10 +255,6 @@ select,input{
   padding-top: 0;
 }
 
-#awarieSection .filter-bar,
-#historiaSection .filter-bar{
-  top: 0;
-}
 /* ✅ pełne wymuszenie stylu date */
 input[type="date"] {
   color: #ffffff !important;
@@ -596,20 +597,21 @@ Zaloguj
 <div id="interwencjeSection" class="section">
 <div class="filter-bar mobile">
 
-<div class="filter-item">
-  <span>📅</span>
-<input type="date" id="statsFrom" onchange="renderInterStats()">
-<input type="date" id="statsTo" onchange="renderInterStats()">
-  
-<select onchange="setDateRange(this.value)" style="margin-left:6px;">
-  <option value="">📅 Własny zakres</option>
-  <option value="today">Dziś</option>
-  <option value="week">Ostatnie 7 dni</option>
-  <option value="month">Obecny miesiąc</option>
-  <option value="prevMonth">Poprzedni miesiąc</option>
-</select>
-
-</div>
+  <div class="filter-item">
+    <span>📅</span>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; width:100%;">
+      <input type="date" id="statsFrom" onchange="renderInterStats()">
+      <input type="date" id="statsTo" onchange="renderInterStats()">
+      
+      <select onchange="setDateRange(this.value)" style="margin-left:6px;">
+        <option value="">📅 Własny zakres</option>
+        <option value="today">Dziś</option>
+        <option value="week">Ostatnie 7 dni</option>
+        <option value="month">Obecny miesiąc</option>
+        <option value="prevMonth">Poprzedni miesiąc</option>
+      </select>
+    </div>
+  </div>
 
   <div class="filter-item">
     <span>🔎</span>
@@ -619,21 +621,19 @@ Zaloguj
 
   <div class="filter-item">
     <span>👤</span>
-    
-<select id="interUserFilter" onchange="renderInterwencje()">
-  <option value="">👤 Wszyscy pracownicy</option>
-</select>
-
+    <select id="interUserFilter" onchange="renderInterwencje()">
+      <option value="">👤 Wszyscy pracownicy</option>
+    </select>
   </div>
 
   <div class="filter-item">
     <span>⚙️</span>
     <select id="interTypeFilter" onchange="renderInterwencje()">
-  <option value="">Wszystkie</option>
-  <option value="wymiany">🔧 Wymiany</option>
-  <option value="operacje">⚙️ Operacje</option>
-  <option value="serwis">🧹 Serwis</option>
-</select>
+      <option value="">Wszystkie</option>
+      <option value="wymiany">🔧 Wymiany</option>
+      <option value="operacje">⚙️ Operacje</option>
+      <option value="serwis">🧹 Serwis</option>
+    </select>
   </div>
 
 </div>
