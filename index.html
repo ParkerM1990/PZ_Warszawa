@@ -2202,7 +2202,9 @@ async function deleteUser(id){
 /* ===== RESET PASSWORD ===== */
 async function resetPassword(email){
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://parkerm1990.github.io/PZ_Warszawa/"
+  });
 
   if(error){
     alert("❌ Błąd");
