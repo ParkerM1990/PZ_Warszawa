@@ -990,10 +990,10 @@ function renderAdminPanel(){
 });
 
 async function createUser(){
-
-  const firstName = document.getElementById("newFirstName").value;
-  const lastName = document.getElementById("newLastName").value;
-  const email = document.getElementById("newEmail").value;
+  
+  const firstName = document.getElementById("newFirstName").value.trim();
+  const lastName = document.getElementById("newLastName").value.trim();
+  const email = document.getElementById("newEmail").value.toLowerCase().trim();
   const password = document.getElementById("newPassword").value;
   const role = document.getElementById("newRole").value;
 
