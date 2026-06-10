@@ -1161,18 +1161,37 @@ function hasAccessToParkomat(p){
 function parseLocalDate(dateStr){
   if(!dateStr) return null;
 
-  // zamiana na ISO
   const fixed = dateStr.replace(" ", "T");
+  const d = new Date(fixed);
 
-  // ✅ traktujemy jako UTC
-  const utcDate = new Date(fixed + "Z");
-
-  if(isNaN(utcDate)) return null;
-
-  // ✅ konwersja na lokalny czas
-  return new Date(utcDate.getTime() - utcDate.getTimezoneOffset()*60000);
+  return isNaN(d) ? null : d;
 }
+function getLocalDateTime(){
+  const now = new Date();
 
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+}
+  function formatDateForDB(date){
+  if(!date) return null;
+
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  const d = String(date.getDate()).padStart(2,'0');
+
+  const hh = String(date.getHours()).padStart(2,'0');
+  const mm = String(date.getMinutes()).padStart(2,'0');
+  const ss = String(date.getSeconds()).padStart(2,'0');
+
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+}
 function toLocalDateInput(date){
   const offset = date.getTimezoneOffset();
   const local = new Date(date.getTime() - offset*60000);
@@ -1405,10 +1424,12 @@ function openManualServiceModal(){
 
   currentService = {
     key: null,
-    event: {
-      name: "Interwencja serwisowa",
-      date: new Date().toISOString().slice(0,19).replace("T"," ")
-    }
+    
+event: {
+  name: "Interwencja serwisowa",
+  date: getLocalDateTime()
+}
+
   };
 
   // ✅ lista parkomatów
@@ -1493,7 +1514,7 @@ const user = window.currentUser
     return;
   }
 
-  const now = new Date().toISOString().slice(0,19).replace("T"," ");
+  const now = getLocalDateTime();
 
   try{
 
@@ -1504,7 +1525,7 @@ const user = window.currentUser
         structure: p.structure,
         location: p.location,
         event_name: event.name,
-        start_date: event.date,
+        start_date: formatDateForDB(parseLocalDate(event.date)),
         end_date: now,
         user_email: user,
         actions: actions
