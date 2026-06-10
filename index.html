@@ -186,9 +186,9 @@ header{
   padding:10px;
   background:#020617;
   border-bottom:1px solid #1f2937;
-  position:sticky;
-  top:0;
-  z-index:5;
+
+  position:relative;  /* ✅ zamiast sticky */
+  z-index:1;           /* ✅ nisko */
 }
 
 .filter-item{
@@ -302,8 +302,6 @@ input[type="date"] {
 
 
 #mapSection .filter-bar {
-  position: sticky;
-  top: 0;
   margin: 0;       /* ✅ usuwa odstęp */
   border-radius: 0; /* (opcjonalnie – ładniej) */
 }
