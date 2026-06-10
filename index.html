@@ -1986,8 +1986,9 @@ async function init(){
   renderAdminPanel();
   renderAll();
 }
-
+handleRecovery();
 checkAuth();
+  
 // zamykanie po wyborze
 
 function applyUserRole(profile){
@@ -2207,6 +2208,71 @@ async function resetPassword(email){
     alert("❌ Błąd");
   }else{
     alert("✅ Mail resetu wysłany");
+  }
+}
+  function handleRecovery(){
+
+  const hash = window.location.hash;
+
+  if(hash.includes("type=recovery")){
+
+    document.body.innerHTML = `
+      <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        background:#020617;
+        color:white;
+      ">
+
+        <div style="
+          background:#0b1220;
+          padding:20px;
+          border-radius:12px;
+          width:300px;
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+        ">
+          <h3>🔑 Ustaw nowe hasło</h3>
+
+          <input id="newPass" type="password" placeholder="Nowe hasło">
+
+          <button onclick="saveNewPassword()" style="
+            background:#16a34a;
+            color:white;
+            padding:10px;
+            border:none;
+            border-radius:8px;
+          ">
+            Zmień hasło
+          </button>
+        </div>
+      </div>
+    `;
+  }
+}
+async function saveNewPassword(){
+
+  const password = document.getElementById("newPass").value;
+
+  if(!password){
+    alert("❌ Wpisz hasło");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.updateUser({
+    password: password
+  });
+
+  if(error){
+    console.error(error);
+    alert("❌ Błąd: " + error.message);
+  }else{
+    alert("✅ Hasło zmienione!");
+
+    window.location.href = "https://parkerm1990.github.io/PZ_Warszawa/";
   }
 }
 
