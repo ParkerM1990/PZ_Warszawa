@@ -1158,6 +1158,21 @@ function hasAccessToParkomat(p){
   return true;
 }
 
+function parseLocalDate(dateStr){
+  if(!dateStr) return null;
+
+  const fixed = dateStr.replace(" ", "T");
+  const d = new Date(fixed);
+
+  return isNaN(d) ? null : d;
+}
+
+function toLocalDateInput(date){
+  const offset = date.getTimezoneOffset();
+  const local = new Date(date.getTime() - offset*60000);
+  return local.toISOString().slice(0,10);
+}
+
 /* ===== CSV ===== */
 function parseCSV(text){
   const rows=[];
@@ -1674,8 +1689,10 @@ function renderActiveList(){
 
       
 
-const rawDate = (raw || "").replace(" ", "T");
-const d = new Date(rawDate);
+
+const d = parseLocalDate(raw);
+if(!d) return false;
+
 
 // ✅ blokada śmieciowych dat
 if(!raw || isNaN(d) || raw.length < 10) return false;
@@ -1685,8 +1702,7 @@ if(!raw || isNaN(d) || raw.length < 10) return false;
       
 // ✅ filtr OD (początek dnia)
 if(from){
-  const fromDate = new Date(from);
-  fromDate.setHours(0,0,0,0);
+  const fromDate = new Date(from + "T00:00:00");
 
   if(d < fromDate) return false;
 }
@@ -1694,8 +1710,7 @@ if(from){
 
       // ✅ filtr DO (cały dzień!)
       if(to){
-        const toDate = new Date(to);
-        toDate.setHours(23,59,59,999);
+        const toDate = new Date(to + "T23:59:59");
         if(d > toDate) return false;
       }
 
@@ -1778,17 +1793,23 @@ if(node && p.node !== node) return;
   
 const raw = r[3];
 
-const rawDate = (raw || "").replace(" ", "T");
-const d = new Date(rawDate);
+
+const d = parseLocalDate(raw);
+if(!d) return false;
+
 
 if(!raw || isNaN(d) || raw.length < 10) return;
 
 
-  if(from && d<new Date(from)) return;
+  
+if(from){
+  const f = new Date(from + "T00:00:00");
+  if(d < f) return;
+}
+
   
 if(to){
-  const toDate = new Date(to);
-  toDate.setHours(23,59,59,999);
+  const toDate = new Date(to + "T23:59:59");
   if(d > toDate) return;
 }
 
@@ -2059,19 +2080,18 @@ actions.forEach(a => {
 
   interwencje.forEach(i => {
 
-    const d = new Date(i.start_date);
-    if(isNaN(d)) return;
+    
+const d = parseLocalDate(i.start_date);
+if(!d) return;
 
     // filtr czasu
     if(from){
-      const f = new Date(from);
-      f.setHours(0,0,0,0);
+      const f = new Date(from + "T00:00:00");
       if(d < f) return;
     }
 
     if(to){
-      const t = new Date(to);
-      t.setHours(23,59,59,999);
+      const t = new Date(to + "T23:59:59");
       if(d > t) return;
     }
 
@@ -2171,31 +2191,31 @@ function setDateRange(type){
   const now = new Date();
 
   if(type === "today"){
-    const d = now.toISOString().slice(0,10);
-    from.value = d;
-    to.value = d;
+    from.value = toLocalDateInput(now);
+    to.value = toLocalDateInput(now);
   }
 
   if(type === "week"){
     const past = new Date();
     past.setDate(now.getDate() - 7);
 
-    from.value = past.toISOString().slice(0,10);
-    to.value = now.toISOString().slice(0,10);
+    from.value = toLocalDateInput(past);
+    to.value = toLocalDateInput(now);
   }
 
   if(type === "month"){
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    from.value = start.toISOString().slice(0,10);
-    to.value = now.toISOString().slice(0,10);
+
+    from.value = toLocalDateInput(start);
+    to.value = toLocalDateInput(now);
   }
 
   if(type === "prevMonth"){
     const start = new Date(now.getFullYear(), now.getMonth()-1, 1);
     const end = new Date(now.getFullYear(), now.getMonth(), 0);
 
-    from.value = start.toISOString().slice(0,10);
-    to.value = end.toISOString().slice(0,10);
+    from.value = toLocalDateInput(start);
+    to.value = toLocalDateInput(end);
   }
 
   renderInterStats();
