@@ -1006,9 +1006,26 @@ async function createUser(){
   ].map(el => el.value);
 
   if(!email || !password || !firstName){
-    alert("❌ Uzupełnij dane");
-    return;
-  }
+  alert("❌ Uzupełnij dane");
+  return;
+}
+
+if(!isValidEmail(email)){
+  alert("❌ Niepoprawny email");
+  return;
+}
+
+// ✅ sprawdź czy email istnieje
+const { data: existingUser } = await supabaseClient
+  .from("users")
+  .select("id")
+  .eq("email", email)
+  .maybeSingle();
+
+if(existingUser){
+  alert("❌ Użytkownik z takim emailem już istnieje");
+  return;
+}
 
   try{
 
@@ -1141,6 +1158,10 @@ function parseCSV(text){
     rows.push(line.split(",").map(v=>v.replace(/^"|"$/g,"")));
   }
   return rows;
+}
+
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 
@@ -1997,8 +2018,15 @@ async function init(){
   renderAdminPanel();
   renderAll();
 }
-handleRecovery();
-checkAuth();
+
+const hash = window.location.hash;
+
+if(hash.includes("type=recovery")){
+  handleRecovery();
+}else{
+  checkAuth();
+}
+
   
 // zamykanie po wyborze
 
