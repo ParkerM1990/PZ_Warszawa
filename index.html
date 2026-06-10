@@ -599,6 +599,15 @@ Zaloguj
   <span>📅</span>
 <input type="date" id="statsFrom" onchange="renderInterStats()">
 <input type="date" id="statsTo" onchange="renderInterStats()">
+  
+<select onchange="setDateRange(this.value)" style="margin-left:6px;">
+  <option value="">📅 Własny zakres</option>
+  <option value="today">Dziś</option>
+  <option value="week">Ostatnie 7 dni</option>
+  <option value="month">Obecny miesiąc</option>
+  <option value="prevMonth">Poprzedni miesiąc</option>
+</select>
+
 </div>
 
   <div class="filter-item">
@@ -2041,7 +2050,97 @@ actions.forEach(a => {
 
   document.getElementById("interwencjeList").innerHTML = html;
 }
-  
+ function renderInterStats(){
+
+  const from = document.getElementById("statsFrom").value;
+  const to = document.getElementById("statsTo").value;
+
+  let stats = {};
+
+  interwencje.forEach(i => {
+
+    const d = new Date(i.start_date);
+    if(isNaN(d)) return;
+
+    // filtr czasu
+    if(from){
+      const f = new Date(from);
+      f.setHours(0,0,0,0);
+      if(d < f) return;
+    }
+
+    if(to){
+      const t = new Date(to);
+      t.setHours(23,59,59,999);
+      if(d > t) return;
+    }
+
+    const user = i.user_email || "Brak";
+
+    if(!stats[user]){
+      stats[user] = {
+        total: 0,
+        actions: {},
+        wymiany: {}
+      };
+    }
+
+    stats[user].total++;
+
+    const actions = Array.isArray(i.actions)
+      ? i.actions
+      : (i.actions || "").split(",").map(s => s.trim());
+
+    actions.forEach(a => {
+
+      const low = a.toLowerCase();
+
+      // wszystkie czynności
+      stats[user].actions[a] = (stats[user].actions[a] || 0) + 1;
+
+      // wymiany
+      if(low.startsWith("wymiana")){
+        const item = a.replace("Wymiana ", "");
+        stats[user].wymiany[item] = (stats[user].wymiany[item] || 0) + 1;
+      }
+    });
+  });
+
+  let html = "";
+
+  Object.keys(stats).forEach(user => {
+
+    const s = stats[user];
+
+    html += `
+      <div class="terminal-box">
+
+        <b>👤 ${user}</b><br>
+        <small>Interwencji: ${s.total}</small><br><br>
+
+        <b>🔧 Wymiany:</b>
+        <ul>
+          ${Object.entries(s.wymiany)
+            .sort((a,b)=>b[1]-a[1])
+            .map(([k,v])=>`<li>${k}: ${v}</li>`)
+            .join("")}
+        </ul>
+
+        <b>⚙️ Wszystkie czynności:</b>
+        <ul>
+          ${Object.entries(s.actions)
+            .sort((a,b)=>b[1]-a[1])
+            .map(([k,v])=>`<li>${k}: ${v}</li>`)
+            .join("")}
+        </ul>
+
+      </div>
+    `;
+  });
+
+  document.getElementById("interwencjeList").innerHTML = html;
+}
+ 
   /* ===== STATYSTYKI ===== */
 function showStats(){
 
@@ -2064,7 +2163,45 @@ function showStats(){
 🔥 Wszystkie awarie: ${totalAlarms}`
   );
 }
+function setDateRange(type){
 
+  const from = document.getElementById("statsFrom");
+  const to = document.getElementById("statsTo");
+
+  const now = new Date();
+
+  if(type === "today"){
+    const d = now.toISOString().slice(0,10);
+    from.value = d;
+    to.value = d;
+  }
+
+  if(type === "week"){
+    const past = new Date();
+    past.setDate(now.getDate() - 7);
+
+    from.value = past.toISOString().slice(0,10);
+    to.value = now.toISOString().slice(0,10);
+  }
+
+  if(type === "month"){
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    from.value = start.toISOString().slice(0,10);
+    to.value = now.toISOString().slice(0,10);
+  }
+
+  if(type === "prevMonth"){
+    const start = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 0);
+
+    from.value = start.toISOString().slice(0,10);
+    to.value = end.toISOString().slice(0,10);
+  }
+
+  renderInterStats();
+}
+
+  
 /* ===== MASTER ===== */
 function renderAll(){
   renderMarkers();
