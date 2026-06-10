@@ -619,11 +619,11 @@ Zaloguj
   <div class="filter-item">
     <span>⚙️</span>
     <select id="interTypeFilter" onchange="renderInterwencje()">
-      <option value="">Wszystkie typy</option>
-      <option value="hardware">Hardware</option>
-      <option value="software">Software</option>
-      <option value="serwis">Serwis</option>
-    </select>
+  <option value="">Wszystkie</option>
+  <option value="wymiany">🔧 Wymiany</option>
+  <option value="operacje">⚙️ Operacje</option>
+  <option value="serwis">🧹 Serwis</option>
+</select>
   </div>
 
 </div>
@@ -1911,10 +1911,8 @@ function renderInterwencje(){
 
   const terminal = (document.getElementById("interTerminalFilter").value || "").toLowerCase()
   
-const userInput = document
-  .getElementById("interUserFilter")
-  ?.value;
-
+const userInput = document.getElementById("interUserFilter")?.value;
+const typeFilter = document.getElementById("interTypeFilter")?.value;
 
   let html = "";
 
@@ -1947,9 +1945,27 @@ const userInput = document
 
   // ✅ filtr po userze (admin)
   if(isAdmin && userInput && i.user_email !== userInput) return;
-const actions = Array.isArray(i.actions)
-  ? i.actions
-  : (i.actions || "").split(",").map(s => s.trim());
+
+// ✅ filtr po typie czynności
+if(typeFilter){
+
+  const actions = Array.isArray(i.actions)
+    ? i.actions
+    : (i.actions || "").split(",").map(s => s.trim());
+
+  const hasType = actions.some(a => {
+    const low = a.toLowerCase();
+
+    if(typeFilter === "wymiany") return low.startsWith("wymiana");
+    if(typeFilter === "operacje") return !low.startsWith("wymiana") && !low.includes("czyszczenie");
+    if(typeFilter === "serwis") return low.includes("czyszczenie");
+
+    return false;
+  });
+
+  if(!hasType) return;
+}
+const actions = Array.isArray(i.actions)? i.actions : (i.actions || "").split(",").map(s => s.trim());
 
 const grouped = {
   wymiany: [],
