@@ -1543,7 +1543,23 @@ const user = window.currentUser
     }else{
       alert("✅ Interwencja zapisana");
     }
+if(currentService.key){
 
+  try{
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        type: "close",
+        device_id: p.id,
+        structure: p.structure,
+        event_name: event.name,
+        date: event.date // ✅ KLUCZOWE
+      })
+    });
+  }catch(err){
+    console.error("Błąd zamykania awarii:", err);
+  }
+}
     // ✅ usuwamy tylko jeśli to awaria
     if(currentService.key){
       activeEvents[key] = activeEvents[key].filter(e => e !== event);
