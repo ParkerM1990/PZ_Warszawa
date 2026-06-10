@@ -1947,7 +1947,27 @@ const userInput = document
 
   // ✅ filtr po userze (admin)
   if(isAdmin && userInput && i.user_email !== userInput) return;
+const actions = Array.isArray(i.actions)
+  ? i.actions
+  : (i.actions || "").split(",").map(s => s.trim());
 
+const grouped = {
+  wymiany: [],
+  operacje: [],
+  serwis: []
+};
+
+actions.forEach(a => {
+  const low = a.toLowerCase();
+
+  if (low.startsWith("wymiana")) {
+    grouped.wymiany.push(a.replace("Wymiana ", ""));
+  } else if (low.includes("czyszczenie")) {
+    grouped.serwis.push(a);
+  } else {
+    grouped.operacje.push(a);
+  }
+});
   html += `
     <div class="terminal-box">
 
@@ -1962,7 +1982,41 @@ const userInput = document
       </small><br><br>
 
       👤 ${i.user_email}<br>
-      🔧 ${Array.isArray(i.actions) ? i.actions.join(", ") : (i.actions || "")}
+      
+<div style="margin-top:8px;">
+  <b>🔧 Czynności:</b>
+
+  ${grouped.wymiany.length ? `
+    
+<div style="margin-top:6px;">
+  <b style="color:#60a5fa;">🔧 Wymiany:</b>
+  <ul style="margin:4px 0 8px 15px; padding:0;">
+
+        ${grouped.wymiany.map(a => `<li>${a}</li>`).join("")}
+      </ul>
+    </div>` : ""}
+
+  ${grouped.operacje.length ? `
+    
+<div style="margin-top:6px;">
+  <b style="color:#34d399;">⚙️ Operacje:</b>
+  <ul style="margin:4px 0 8px 15px; padding:0;">
+
+        ${grouped.operacje.map(a => `<li>${a}</li>`).join("")}
+      </ul>
+    </div>` : ""}
+
+  ${grouped.serwis.length ? `
+    
+<div style="margin-top:6px;">
+  <b style="color:#fbbf24;">🧹 Serwis:</b>
+  <ul style="margin:4px 0 8px 15px; padding:0;">
+
+        ${grouped.serwis.map(a => `<li>${a}</li>`).join("")}
+      </ul>
+    </div>` : ""}
+</div>
+
 
     </div>
   `;
