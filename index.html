@@ -1055,6 +1055,17 @@ if(insertError){
 
 
     alert("✅ Użytkownik utworzony");
+    
+// ✅ reset pól
+document.getElementById("newFirstName").value = "";
+document.getElementById("newLastName").value = "";
+document.getElementById("newEmail").value = "";
+document.getElementById("newPassword").value = "";
+document.getElementById("newRole").value = "serwis";
+
+// ✅ odznacz checkboxy
+document.querySelectorAll(".structCheck").forEach(el => el.checked = false);
+document.querySelectorAll(".nodeCheck").forEach(el => el.checked = false);
 
   }catch(e){
     console.error(e);
