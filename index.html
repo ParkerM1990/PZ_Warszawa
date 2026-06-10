@@ -1161,10 +1161,16 @@ function hasAccessToParkomat(p){
 function parseLocalDate(dateStr){
   if(!dateStr) return null;
 
+  // zamiana na ISO
   const fixed = dateStr.replace(" ", "T");
-  const d = new Date(fixed);
 
-  return isNaN(d) ? null : d;
+  // ✅ traktujemy jako UTC
+  const utcDate = new Date(fixed + "Z");
+
+  if(isNaN(utcDate)) return null;
+
+  // ✅ konwersja na lokalny czas
+  return new Date(utcDate.getTime() - utcDate.getTimezoneOffset()*60000);
 }
 
 function toLocalDateInput(date){
