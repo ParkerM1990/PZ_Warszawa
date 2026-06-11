@@ -1102,6 +1102,10 @@ document.querySelectorAll(".nodeCheck").forEach(el => el.checked = false);
     alert("❌ Błąd");
   }
   await loadUsers();
+  
+await supabaseClient.auth.signOut();
+alert("✅ Użytkownik utworzony — zaloguj się ponownie");
+
 }
 
   
