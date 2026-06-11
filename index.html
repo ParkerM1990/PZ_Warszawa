@@ -194,14 +194,20 @@ header{
 
 .filter-item{
   display:flex;
-  flex-direction:column;   /* 🔥 KLUCZOWE */
-  align-items:flex-start;  /* 🔥 KLUCZOWE */
+  flex-direction:column;   /* dalej kolumna dla inputów */
 
   background:#020617;
   border:1px solid #1f2937;
   border-radius:10px;
   padding:8px;
-  gap:4px;                 /* ✅ odstęp */
+  gap:4px;
+}
+
+
+.filter-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 
 
@@ -487,7 +493,12 @@ Zaloguj
 </div>
     
 <div class="filter-item">
-  <span>📅</span>
+
+  <div class="filter-label">
+    <span>📅</span>
+    <span>Data od</span>
+  </div>
+
   <input 
     type="text" 
     placeholder="Data od"
@@ -495,31 +506,59 @@ Zaloguj
     onchange="renderActiveList()"
     onfocus="this.type='date'"
     onblur="if(!this.value)this.type='text'">
+
 </div>
 
 
 
 
     <div class="filter-item">
-      <span>➡️</span>   
-<input 
-  type="text" 
-  placeholder="Data do"
-  id="activeDateTo"
-  onchange="renderActiveList()"
-  onfocus="this.type='date'"
-  onblur="if(!this.value)this.type='text'">
-    </div>
+
+  <div class="filter-label">
+    <span>➡️</span>
+    <span>Data do</span>
+  </div>
+
+  <input 
+    type="text" 
+    placeholder="Data do"
+    id="activeDateTo"
+    onchange="renderActiveList()"
+    onfocus="this.type='date'"
+    onblur="if(!this.value)this.type='text'">
+
+</div>
 
     <div class="filter-item">
-      <span>🔎</span>
-      <input type="text" id="activeTerminalFilter" placeholder="Nr parkomatu" oninput="renderActiveList()">
-    </div>
 
-    <div class="filter-item">
-      <span>⚠️</span>
-      <select id="activeEventFilter" onchange="renderActiveList()"></select>
-    </div>
+  <div class="filter-label">
+    <span>🔎</span>
+    <span>Nr parkomatu</span>
+  </div>
+
+  <input 
+    type="text" 
+    id="activeTerminalFilter"
+    placeholder="Nr parkomatu"
+    oninput="renderActiveList()">
+
+</div>
+
+<div class="filter-item">
+
+  <div class="filter-label">
+    <span>⚠️</span>
+    <span>Typ awarii</span>
+  </div>
+
+  <select 
+    id="activeEventFilter" 
+    onchange="renderActiveList()">
+  </select>
+
+</div>
+
+</div>
 
   </div>
 
