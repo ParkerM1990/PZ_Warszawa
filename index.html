@@ -771,7 +771,15 @@ Zaloguj
 
 <h3>🔧 Interwencja Serwisowa</h3>
 
-<select id="deviceSelect"></select>
+<input
+  type="text" 
+  id="deviceSearchInput"
+  placeholder="🔎 Nr lub adres parkomatu..."
+  oninput="filterDevicesForSelect()"
+  style="padding:8px;border-radius:8px;"
+>
+
+<select id="deviceSelect" style="max-height:150px;overflow:auto;"></select>
 
 <select id="techSelect" style="display:none;"></select>
 
@@ -1137,6 +1145,7 @@ let serviceActions = [];
 let technicians = [];
 let interwencje = [];
 let currentService = null;
+let deviceOptionsCache = [];
 
 /* ===== MAPA ===== */
 let map = L.map('map').setView([52.23218280963405, 21.007884183479632],12);
@@ -1444,16 +1453,12 @@ event: {
   const deviceSelect = document.getElementById("deviceSelect");
 
   
-deviceSelect.innerHTML = Object.values(allParkomaty)
+deviceOptionsCache = Object.values(allParkomaty)
   .filter(p => hasAccessToParkomat(p))
-  .sort((a,b)=>a.id.localeCompare(b.id))
-  .map(p => `
-    <option value="${makeKey(p.id,p.structure)}">
-      ${p.id} - ${p.location}
-    </option>
-  `)
-  .join('');
+  .sort((a,b)=>a.id.localeCompare(b.id));
 
+renderDeviceOptions(deviceOptionsCache);
+document.getElementById("deviceSearchInput").value = "";
   // ✅ technicy
   const techSelect = document.getElementById("techSelect");
 
@@ -1475,7 +1480,32 @@ techSelect.innerHTML = technicians
 
   document.getElementById("serviceModal").style.display = "flex";
 }
+function renderDeviceOptions(list) {
 
+  const deviceSelect = document.getElementById("deviceSelect");
+
+  deviceSelect.innerHTML = list.map(p => `
+    <option value="${makeKey(p.id,p.structure)}">
+      ${p.id} - ${p.location}
+    </option>
+  `).join('');
+}
+  function filterDevicesForSelect(){
+
+  const search = document
+    .getElementById("deviceSearchInput")
+    .value
+    .toLowerCase();
+
+  const filtered = deviceOptionsCache.filter(p => {
+
+    const text = `${p.id} ${p.location}`.toLowerCase();
+
+    return text.includes(search);
+  });
+
+  renderDeviceOptions(filtered);
+}
 function closeModal(){
   document.getElementById("serviceModal").style.display = "none";
 }
