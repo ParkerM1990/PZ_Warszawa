@@ -143,13 +143,12 @@ header{
   top:var(--header-h);
   left:var(--sidebar-w);
   right:0;
-  bottom:0;
+  bottom: env(safe-area-inset-bottom); /* ⬅️ odsuń od systemowego paska */
   overflow:auto;
 }
 
 .section{
   position:relative;
-  inset:0;
   display:none;
   overflow:visible;
   box-sizing:border-box;
