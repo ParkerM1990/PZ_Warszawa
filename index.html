@@ -4635,10 +4635,16 @@ function scanBarcode(btn){
   container.style.background = "black";
   container.style.zIndex = "99999";
 
-  const video = document.createElement("video");
-  video.setAttribute("playsinline", true); // ✅ ważne na iOS
-  video.style.width = "100%";
-  video.style.height = "100%";
+ 
+const video = document.createElement("video");
+
+video.setAttribute("playsinline", true);   // iOS
+video.setAttribute("autoplay", true);      // ✅ start bez kliknięcia
+video.muted = true;                        // ✅ wymagane przez przeglądarki
+
+video.style.width = "100%";
+video.style.height = "100%";
+
 
   const closeBtn = document.createElement("button");
   closeBtn.innerText = "❌ Zamknij";
@@ -4664,6 +4670,7 @@ function scanBarcode(btn){
   let stopped = false;
 
  
+
 codeReader.decodeFromVideoDevice(
   {
     facingMode: { ideal: "environment" },
@@ -4678,53 +4685,46 @@ codeReader.decodeFromVideoDevice(
 
       console.log("✅ SCAN:", result.text);
 
-      // ✅ wpisz do pola
       const input = btn.parentElement.querySelector(".serialInput");
       input.value = result.text;
 
-      // ✅ 🔊 DŹWIĘK
-      const beep = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+      const beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
       beep.play().catch(()=>{});
 
-      // ✅ 📳 WIBRACJA (telefon)
       if(navigator.vibrate){
-        navigator.vibrate(200);
+        navigator.vibrate([100,50,100]);
       }
 
       stop();
     }
-  });
-
-  // ✅ AUTO FOCUS (próba co 1s)
-  const focusInterval = setInterval(async () => {
-
-    try{
-      const track = video.srcObject?.getVideoTracks()[0];
-      if(!track) return;
-
-      const capabilities = track.getCapabilities?.();
-      
-      if(capabilities && capabilities.focusMode){
-        await track.applyConstraints({
-          advanced: [{ focusMode: "continuous" }]
-        });
-      }
-
-    }catch(e){
-      // ignoruj błędy (nie każda kamera wspiera)
-    }
-
-  }, 1000);
-
-  function stop(){
-    if(stopped) return;
-    stopped = true;
-
-    clearInterval(focusInterval);
-
-    codeReader.reset();
-    container.remove();
   }
+);
+
+// 🔦 TORCH
+setTimeout(() => {
+  try {
+    const track = video.srcObject?.getVideoTracks()[0];
+    if (!track) return;
+
+    const caps = track.getCapabilities?.();
+    
+    if (caps && caps.torch) {
+      track.applyConstraints({
+        advanced: [{ torch: true }]
+      });
+    }
+  } catch (e) {}
+}, 800);
+
+  
+function stop(){
+  if(stopped) return;
+  stopped = true;
+
+  codeReader.reset();
+  container.remove();
+}
+
 
   closeBtn.onclick = stop;
 
