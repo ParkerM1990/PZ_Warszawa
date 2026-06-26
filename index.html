@@ -4696,45 +4696,6 @@ function stopScanner(html5QrCode, container){
     });
 }
 
-  const container = document.createElement("div");
-  container.id = "scannerOverlay";
-
-  Object.assign(container.style, {
-    position: "fixed",
-    inset: "0",
-    background: "black",
-    zIndex: "99999"
-  });
-
-  // ✅ PRZYCISK ZAMKNIJ
-  const closeBtn = document.createElement("button");
-  closeBtn.innerText = "❌ Zamknij";
-
-  Object.assign(closeBtn.style, {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    padding: "10px",
-    zIndex: "100000",
-    background: "red",
-    color: "white",
-    border: "none",
-    borderRadius: "8px"
-  });
-
-  // ✅ INFO (opcjonalnie)
-  const info = document.createElement("div");
-  info.innerText = "Kliknij ❌ aby zamknąć";
-  Object.assign(info.style, {
-    position: "absolute",
-    bottom: "20px",
-    width: "100%",
-    textAlign: "center",
-    color: "white",
-    zIndex: "100000"
-  });
-
-  // ✅ KONIEC – NOWY DIV POD SKANER
   
 </script>
 
