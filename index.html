@@ -781,7 +781,7 @@ input[type="date"] {
 
 
 </style>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 
 <body>
@@ -4585,22 +4585,14 @@ await supabaseClient
 function scanBarcode(btn){
 
   const container = document.createElement("div");
-  container.id = "scannerOverlay";
+  container.style.position = "fixed";
+  container.style.inset = "0";
+  container.style.background = "black";
+  container.style.zIndex = "99999";
 
-  Object.assign(container.style, {
-    position: "fixed",
-    inset: "0",
-    background: "black",
-    zIndex: "99999"
-  });
-
-  const scannerDiv = document.createElement("div");
-  scannerDiv.id = "scanner";
-
-  Object.assign(scannerDiv.style, {
-    width: "100%",
-    height: "100%"
-  });
+  const video = document.createElement("video");
+  video.style.width = "100%";
+  video.style.height = "100%";
 
   const closeBtn = document.createElement("button");
   closeBtn.innerText = "❌ Zamknij";
@@ -4610,38 +4602,49 @@ function scanBarcode(btn){
     top: "20px",
     right: "20px",
     padding: "10px",
-    zIndex: "100000",
     background: "red",
     color: "white",
     border: "none",
-    borderRadius: "8px"
+    borderRadius: "8px",
+    zIndex: "100000"
   });
 
-  container.appendChild(scannerDiv);
+  container.appendChild(video);
   container.appendChild(closeBtn);
   document.body.appendChild(container);
 
-  const html5QrCode = new Html5Qrcode("scanner");
+  const codeReader = new ZXing.BrowserMultiFormatReader();
 
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    (decodedText) => {
-      console.log("✅ SCAN:", decodedText);
+  let stopped = false;
+
+  codeReader.decodeFromVideoDevice(null, video, (result) => {
+
+    if(result){
+      console.log("✅ BARCODE:", result.text);
 
       const input = btn.parentElement.querySelector(".serialInput");
-      input.value = decodedText;
+      input.value = result.text;
 
-      stopScanner(html5QrCode, container);
-    },
-    (err) => {
-      console.log("scan error:", err); // 🔥 debug
+      stop();
     }
-  );
+  });
 
-  closeBtn.onclick = () => {
-    stopScanner(html5QrCode, container);
-  };
+  function stop(){
+    if(stopped) return;
+    stopped = true;
+
+    codeReader.reset();
+    container.remove();
+  }
+
+  closeBtn.onclick = stop;
+
+  document.addEventListener("keydown", function esc(e){
+    if(e.key === "Escape"){
+      stop();
+      document.removeEventListener("keydown", esc);
+    }
+  });
 }
 
 
