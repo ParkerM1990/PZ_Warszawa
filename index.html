@@ -4584,7 +4584,17 @@ await supabaseClient
 }
 function scanBarcode(btn){
 
-  scannerDiv = document.createElement("div");  // ✅ GŁÓWNY OVERLAY (już NIE "scanner")
+  const container = document.createElement("div");
+  container.id = "scannerOverlay";
+
+  Object.assign(container.style, {
+    position: "fixed",
+    inset: "0",
+    background: "black",
+    zIndex: "99999"
+  });
+
+  const scannerDiv = document.createElement("div");
   scannerDiv.id = "scanner";
 
   Object.assign(scannerDiv.style, {
@@ -4592,73 +4602,62 @@ function scanBarcode(btn){
     height: "100%"
   });
 
-  // ✅ KOLEJNOŚĆ WAŻNA
-  container.appendChild(scannerDiv);   // kamera
-  container.appendChild(closeBtn);     // przycisk
-  container.appendChild(info);         // opis
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "❌ Zamknij";
+
+  Object.assign(closeBtn.style, {
+    position: "absolute",
+    top: "20px",
+    right: "20px",
+    padding: "10px",
+    zIndex: "100000",
+    background: "red",
+    color: "white",
+    border: "none",
+    borderRadius: "8px"
+  });
+
+  container.appendChild(scannerDiv);
+  container.appendChild(closeBtn);
   document.body.appendChild(container);
 
   const html5QrCode = new Html5Qrcode("scanner");
 
   html5QrCode.start(
     { facingMode: "environment" },
-    {
-      fps: 10,
-      qrbox: { width: 320, height: 160 },
-      formatsToSupport: [
-        Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.EAN_8,
-        Html5QrcodeSupportedFormats.QR_CODE
-      ]
-    },
+    { fps: 10, qrbox: 250 },
     (decodedText) => {
-
       console.log("✅ SCAN:", decodedText);
 
-      // ✅ wpis do pola
       const input = btn.parentElement.querySelector(".serialInput");
       input.value = decodedText;
 
-      // ✅ zamknij skaner
       stopScanner(html5QrCode, container);
+    },
+    (err) => {
+      console.log("scan error:", err); // 🔥 debug
     }
-  ).catch(err => {
-    console.error("❌ Kamera error:", err);
-    alert("Nie można uruchomić kamery");
-    container.remove();
-  });
+  );
 
-  // ✅ klik ❌
   closeBtn.onclick = () => {
     stopScanner(html5QrCode, container);
   };
-
-  // ✅ ESC na komputerze
-  document.addEventListener("keydown", function escHandler(e){
-    if(e.key === "Escape"){
-      stopScanner(html5QrCode, container);
-      document.removeEventListener("keydown", escHandler);
-    }
-  });
 }
+
 
 function stopScanner(html5QrCode, container){
 
   html5QrCode.stop()
-    .catch(err => {
-      console.warn("Stop error:", err);
-    })
+    .catch(()=>{})
     .finally(() => {
       try{
-        html5QrCode.clear();   // 🔥 NAJWAŻNIEJSZE
+        html5QrCode.clear();
       }catch(e){}
 
-      if(container && container.parentNode){
-        container.remove();
-      }
+      if(container) container.remove();
     });
 }
+
   const container = document.createElement("div");
   container.id = "scannerOverlay";
 
@@ -4698,26 +4697,6 @@ function stopScanner(html5QrCode, container){
   });
 
   // ✅ KONIEC – NOWY DIV POD SKANER
-
-
-function stopScanner(html5QrCode, container){
-
-  if(!html5QrCode) return;
-
-  html5QrCode.stop()
-    .catch(err => {
-      console.warn("Stop error:", err);
-    })
-    .finally(() => {
-      try{
-        html5QrCode.clear();   // ✅ najważniejsze
-      }catch(e){}
-
-      if(container && container.parentNode){
-        container.remove();
-      }
-    });
-}
   
 </script>
 
