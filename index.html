@@ -4584,39 +4584,22 @@ await supabaseClient
 }
 function scanBarcode(btn){
 
-  // ✅ kontener
-  const container = document.createElement("div");
-  container.id = "scanner";
+  scannerDiv = document.createElement("div");  // ✅ GŁÓWNY OVERLAY (już NIE "scanner")
+  scannerDiv.id = "scanner";
 
-  Object.assign(container.style, {
-    position: "fixed",
-    inset: "0",
-    background: "black",
-    zIndex: "99999"
+  Object.assign(scannerDiv.style, {
+    width: "100%",
+    height: "100%"
   });
 
-  // ❌ przycisk zamknij
-  const closeBtn = document.createElement("button");
-  closeBtn.innerText = "❌ Zamknij";
-
-  Object.assign(closeBtn.style, {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    padding: "10px",
-    zIndex: "100000",
-    background: "red",
-    color: "white",
-    border: "none",
-    borderRadius: "8px"
-  });
-
-  container.appendChild(closeBtn);
+  // ✅ KOLEJNOŚĆ WAŻNA
+  container.appendChild(scannerDiv);   // kamera
+  container.appendChild(closeBtn);     // przycisk
+  container.appendChild(info);         // opis
   document.body.appendChild(container);
 
   const html5QrCode = new Html5Qrcode("scanner");
 
-  // ✅ START
   html5QrCode.start(
     { facingMode: "environment" },
     {
@@ -4633,25 +4616,25 @@ function scanBarcode(btn){
 
       console.log("✅ SCAN:", decodedText);
 
-      // ✅ wpisz do inputa
+      // ✅ wpis do pola
       const input = btn.parentElement.querySelector(".serialInput");
       input.value = decodedText;
 
-      // ✅ zamknij
+      // ✅ zamknij skaner
       stopScanner(html5QrCode, container);
     }
   ).catch(err => {
-    console.error("❌ START ERROR:", err);
+    console.error("❌ Kamera error:", err);
     alert("Nie można uruchomić kamery");
     container.remove();
   });
 
-  // ✅ zamknięcie ręczne
+  // ✅ klik ❌
   closeBtn.onclick = () => {
     stopScanner(html5QrCode, container);
   };
 
-  // ✅ ESC (PC)
+  // ✅ ESC na komputerze
   document.addEventListener("keydown", function escHandler(e){
     if(e.key === "Escape"){
       stopScanner(html5QrCode, container);
@@ -4659,6 +4642,63 @@ function scanBarcode(btn){
     }
   });
 }
+
+function stopScanner(html5QrCode, container){
+
+  html5QrCode.stop()
+    .catch(err => {
+      console.warn("Stop error:", err);
+    })
+    .finally(() => {
+      try{
+        html5QrCode.clear();   // 🔥 NAJWAŻNIEJSZE
+      }catch(e){}
+
+      if(container && container.parentNode){
+        container.remove();
+      }
+    });
+}
+  const container = document.createElement("div");
+  container.id = "scannerOverlay";
+
+  Object.assign(container.style, {
+    position: "fixed",
+    inset: "0",
+    background: "black",
+    zIndex: "99999"
+  });
+
+  // ✅ PRZYCISK ZAMKNIJ
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "❌ Zamknij";
+
+  Object.assign(closeBtn.style, {
+    position: "absolute",
+    top: "20px",
+    right: "20px",
+    padding: "10px",
+    zIndex: "100000",
+    background: "red",
+    color: "white",
+    border: "none",
+    borderRadius: "8px"
+  });
+
+  // ✅ INFO (opcjonalnie)
+  const info = document.createElement("div");
+  info.innerText = "Kliknij ❌ aby zamknąć";
+  Object.assign(info.style, {
+    position: "absolute",
+    bottom: "20px",
+    width: "100%",
+    textAlign: "center",
+    color: "white",
+    zIndex: "100000"
+  });
+
+  // ✅ KONIEC – NOWY DIV POD SKANER
+
 
 function stopScanner(html5QrCode, container){
 
