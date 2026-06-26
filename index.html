@@ -779,6 +779,51 @@ input[type="date"] {
   }
 }
 
+.serialBox button {
+  margin-top: 6px;
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+
+.serialBox input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  margin-top: 6px;
+}
+/* 🔥 DUŻE checkboxy */
+#actionsBox input[type="checkbox"],
+#partsBox input[type="checkbox"] {
+  transform: scale(1.5);
+  margin-right: 10px;
+}
+
+/* 🔥 większy klik */
+#actionsBox label,
+#partsBox > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #111827;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+/* hover */
+#actionsBox label:hover,
+#partsBox > div:hover {
+  background: #1f2937;
+}
+
 
 </style>
   <script src="https://unpkg.com/@zxing/library@latest"></script>
@@ -1371,7 +1416,7 @@ input[type="date"] {
   padding:16px;
   border-radius:12px;
   width:90%;
-  max-width:400px;
+  max-width:520px;
   display:flex;
   flex-direction:column;
   gap:10px;
@@ -1395,9 +1440,9 @@ input[type="date"] {
 
 <select id="techSelect" style="display:none;"></select>
 
-<div id="actionsBox" style="max-height:150px;overflow:auto;"></div>
+<div id="actionsBox" style="max-height:250px;overflow:auto;"></div>
   <h4>⚙️ Wymienione podzespoły</h4>
-<div id="partsBox" style="max-height:150px;overflow:auto;"></div>
+<div id="partsBox" style="max-height:250px;overflow:auto;"></div>
 
 <button onclick="submitService()" style="
   background:#16a34a;color:white;padding:10px;border:none;border-radius:8px;">
