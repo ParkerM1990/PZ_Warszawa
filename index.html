@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Monitoring Parkomatów</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -28,9 +28,9 @@ body{
   color:#e5e7eb;
 }
 :root{
-  --header-h: 60px;
+  --header-h: 50px;
   --sidebar-w: 72px;
-  --bottom-bar: 70px;
+  --bottom-bar: 50px;
 }
 
 header{
@@ -98,7 +98,7 @@ header{
 
   .sidebar{
     width:100%;
-    height:70px;
+    height:50px;
     top:auto;
     bottom:0;
     flex-direction:row;
@@ -109,9 +109,16 @@ header{
     padding-bottom:env(safe-area-inset-bottom);
   }
 
-  .main{
-    left: 0 !important;
-    bottom: calc(var(--bottom-bar) + env(safe-area-inset-bottom)) !important;
+ .main{
+    left:0 !important;
+
+    bottom:calc(
+      var(--bottom-bar)
+      + env(safe-area-inset-bottom)
+      + 20px
+    ) !important;
+
+    padding-bottom:40px;
   }
 
   .nav-btn{
@@ -120,7 +127,7 @@ header{
   }
 }
 .header-left{
-  font-weight:600;
+  font-weight:500;
 }
 
 .header-right{
@@ -131,10 +138,182 @@ header{
 
 
 
+
 #alarmCounter{
   background:#dc2626;
   padding:4px 10px;
   border-radius:20px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  min-width:50px;    /* 🔥 minimalna szerokość */
+  font-size:14px;
+  white-space:nowrap; /* 🔥 nie łamie tekstu */
+}
+
+
+#adminPanel input,
+#adminPanel select {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #1f2937;
+  background:#020617;
+  color:white;
+  margin-bottom:8px;
+}
+/* ✅ kontener admin */
+
+
+
+
+#adminPanel{
+  min-height:100%;
+  padding:20px 20px 40px 20px;
+}
+
+
+
+
+/* ✅ główny wrapper */
+
+
+.admin-container{
+  width:100%;
+  max-width:1100px;   /* może być szerzej */
+  margin:0;           /* 🔥 usunięcie centrowania */
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:flex-start; 
+}
+
+
+
+/* ✅ karta */
+.admin-card{
+  background:#020617;
+  width:100%;
+  border:1px solid #1f2937;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* ✅ pola */
+
+.admin-card input,
+.admin-card select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #1f2937;
+  background:#020617;
+  color:#e5e7eb;              /* 🔥 lepszy kontrast */
+  margin-bottom:12px;         /* 🔥 więcej odstępu */
+  transition:border-color .2s ease; /* 🔥 subtelny efekt */
+}
+
+/* ✅ focus – najważniejsze */
+.admin-card input:focus,
+.admin-card select:focus{
+  border-color:#2563eb;
+  outline:none;
+}
+
+
+/* ✅ grid dla struktur */
+
+
+
+.struct-grid{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.struct-header{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+}
+
+.node-list.hidden{
+  display:none;
+}
+
+.node-list{
+  margin-top:8px;
+  margin-left:20px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  align-items:flex-start;
+}
+
+
+/* ✅ pojedyncza struktura */
+.struct-box{
+  border:1px solid #1f2937;
+  border-radius:10px;
+  padding:10px;
+}
+
+/* ✅ checkbox inline */
+
+
+.struct-box label{
+  display:grid;
+  grid-template-columns: 20px auto;  /* 🔥 checkbox + tekst */
+  align-items:center;
+  gap:10px;
+}
+
+
+
+
+.struct-box label span{
+  word-break: break-word;
+}
+
+
+
+
+/* ✅ nodes lista */
+
+.node-list{
+  margin-top:8px;
+  margin-left:12px;  /* 🔥 lepsze wyrównanie */
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+
+/* ✅ przyciski */
+.admin-tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.admin-tab-btn.active{
+  background:#1d4ed8;
+}
+  
+#adminPanel h2 {
+  margin-bottom: 10px;
+}
+
+.admin-box {
+  background:#020617;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #1f2937;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
 }
 
 
@@ -143,18 +322,25 @@ header{
   top:var(--header-h);
   left:var(--sidebar-w);
   right:0;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
-  overflow:auto;
+  bottom:0;
+  overflow-y:auto;
+  padding-bottom:20px;
 }
 
+
+
+
+
 .section{
-  position:relative;
   display:none;
-  overflow:visible;
+  width:100%;
+  padding:16px;
   box-sizing:border-box;
-  padding:16px;  
-  padding-bottom: calc(var(--bottom-bar) + env(safe-area-inset-bottom) + 20px);
 }
+
+
+
+
 
 .section.active{
   display:block;
@@ -293,23 +479,31 @@ input[type="date"] {
   overflow-wrap: break-word;
 }
 
+.leaflet-control {
+  z-index: 4000 !important;
+}
+
+@media (max-width: 768px){
+  .leaflet-top {top: 150px !important;}
+  .leaflet-bottom {bottom: 2px !important;}
+  .leaflet-control-zoom {display: none;}
+}
+
+
 
 #mapSection{
   position:absolute;
   inset:0;
   overflow:hidden;
-  padding:0; 
+  padding:0;
+  z-index:-1;   /* 🔥 KLUCZOWA ZMIANA */
 }
-
-
 
 
 #mapSection .filter-bar {
   margin: 0;       /* ✅ usuwa odstęp */
   border-radius: 0; /* (opcjonalnie – ładniej) */
 }
-
-
 
 #adminBtn{
   display: none;
@@ -326,47 +520,322 @@ input[type="date"] {
   margin-bottom:10px;
 }
 
+.admin-tab-btn{
+  background:#1f2937;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.admin-tab-btn:hover{
+  background:#374151;
+}
+
+#nodeFilterBox {
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  max-height:70px;
+  overflow:auto;
+}
+
+#nodeFilterBox label {
+  background:#111827;
+  padding:3px 6px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.multi-select{
+  position:relative;
+  width:100%;
+}
+
+.select-box{
+  background:#020617;
+  border:1px solid #1f2937;
+  padding:6px 8px;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+}
+
+.options{
+  position:absolute;
+  top:105%;
+  left:0;
+  right:0;
+  background:#020617;
+  border:1px solid #1f2937;
+  border-radius:10px;
+  max-height:200px;
+  overflow:auto;
+  z-index:3000;
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.options.hidden{
+  display:none;
+}
+
+.options label{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  cursor:pointer;
+  font-size:13px;
+  padding:4px;
+  border-radius:6px;
+}
+
+.options label:hover{
+  background:#111827;
+}
+.login-screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b,
+      #2563eb
+    );
+  overflow:hidden;
+  z-index:99999;
+}
+
+.login-card{
+  width:420px;
+  max-width:90%;
+  padding:40px;
+  border-radius:28px;
+
+  background:rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(18px);
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.35);
+
+  text-align:center;
+}
+
+.logo-circle{
+  width:90px;
+  height:90px;
+  margin:auto;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:40px;
+  font-weight:700;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #60a5fa
+    );
+}
+
+.login-logo h1{
+  margin-top:20px;
+  color:white;
+  font-size:30px;
+}
+
+.login-logo p{
+  color:#cbd5e1;
+  margin-top:5px;
+}
+
+.login-form{
+  margin-top:30px;
+}
+
+.login-form input{
+  width:100%;
+  padding:15px;
+  margin-bottom:15px;
+
+  border:none;
+  outline:none;
+
+  border-radius:14px;
+
+  background:
+    rgba(255,255,255,0.1);
+
+  color:white;
+
+  font-size:16px;
+}
+
+.login-form input::placeholder{
+  color:#cbd5e1;
+}
+
+.login-form button{
+  width:100%;
+  padding:15px;
+
+  border:none;
+  border-radius:14px;
+
+  cursor:pointer;
+
+  font-size:17px;
+  font-weight:600;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #60a5fa
+    );
+
+  transition:0.3s;
+}
+
+.login-form button:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 10px 30px rgba(37,99,235,0.5);
+}
+
+.login-footer{
+  margin-top:25px;
+  padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.15);
+  text-align:center;
+  color:#94a3b8;
+  line-height:1.6;
+}
+
+.login-footer strong{
+  color:#fff;
+  font-size:15px;
+}
+
+.author{
+  margin-top:12px;
+}
+
+.author strong{
+  color:white;
+  font-size:15px;
+}
+.logo-icon{
+   width:80px;
+   height:80px;
+   margin:auto;
+   border-radius:20px;
+   background:#2563eb;
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   font-size:42px;
+   box-shadow:0 10px 30px rgba(37,99,235,.4);
+}
+
+.login-corner-logo {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 250px;      /* możesz zmienić */
+  max-width: 40vw;   /* mobile */
+  height: auto;
+  z-index: 10001;
+  opacity: 0.95;
+}
+
+@media (max-width: 768px) {
+  .login-corner-logo {
+    width: 120px;
+    top: 10px;
+    left: 10px;
+  }
+}
+
 
 </style>
 </head>
 
 <body>
-<div id="authBox" style="
-position:fixed;
-inset:0;
-background:#020617;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
-">
+  
 
-<div style="
-background:#0b1220;
-padding:20px;
-border-radius:12px;
-width:300px;
-display:flex;
-flex-direction:column;
-gap:10px;
-">
+<div id="authBox" class="login-screen">
 
-<h3>🔐 Logowanie</h3>
+<!-- 🔝 LOGO W LEWYM GÓRNYM ROGU -->
+  <img src="cpg-logo-new.png" class="login-corner-logo" alt="CPG Logo">
 
-<input id="email" placeholder="Email" style="padding:8px;border-radius:8px;">
-<input id="password" type="password" placeholder="Hasło" style="padding:8px;border-radius:8px;">
+  <div class="login-card">
 
-<button onclick="login()" style="
-background:#1d4ed8;
-color:white;
-padding:10px;
-border:none;
-border-radius:8px;
-">
-Zaloguj
-</button>
+    <!-- LOGO -->
+    <div class="login-logo">
+      <div class="logo-icon">🅿️</div>
+      <h1>SPP Warszawa</h1>
+      <p>Monitoring Parkomatów</p>
+    </div>
 
-</div>
+    <!-- FORM -->
+    <div class="login-form">
+      <h3>🔐 Logowanie</h3>
+
+      <input 
+        id="email" 
+        type="email" 
+        placeholder="Email" 
+        autofocus
+      >
+
+      <input 
+        id="password" 
+        type="password" 
+        placeholder="Hasło"
+      >
+
+      <button onclick="login()">
+        Zaloguj się
+      </button>
+    </div>
+
+    <!-- STOPKA -->
+    <div class="login-footer">
+      <div class="version">
+        Wersja 2.0
+      </div>
+
+      <div class="author">
+        Projekt i wykonanie<br>
+        <strong>Piotr Mądrzak</strong>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <header>
@@ -454,6 +923,12 @@ Zaloguj
   👤 <span>Admin</span>
 </button>
 
+<button class="nav-btn"
+  title="Konto"
+  onclick="setActiveNav(this);showSection('userPanel')">
+  👤 <span>Konto</span>
+</button>
+
 
 </div>
 <div class="main">
@@ -462,12 +937,41 @@ Zaloguj
 <div id="mapSection" class="section active">
 
   <div class="filter-bar mobile">
-    <div class="filter-item">
-      <span>📍</span>
-      <select id="nodeFilter" onchange="renderAll()">
-        <option value="">Wszystkie strefy</option>
-      </select>
+    
+
+<div class="filter-item">
+  <span>📍</span>
+
+  <div class="multi-select" id="nodeMultiSelect">
+    <div class="select-box" onclick="toggleNodeDropdown()">
+      <span id="nodeSelectedText">Wybierz strefy</span>
+      ▼
     </div>
+
+    <div class="options hidden" id="nodeOptions"></div>
+  </div>
+</div>
+
+    
+ <!-- ✅ NOWY PRÓG -->
+  <div class="filter-item">
+    <span>🔥</span>
+    <select id="thresholdSelect" onchange="refreshApp()">
+      <option value="1" selected>🔥 Czuły (1)</option>
+      <option value="7">⚖️ Standard (7)</option>
+      <option value="15">🧊 Duże (15)</option>
+    </select>
+  </div>
+
+<div class="filter-item">
+  <span>⏱️</span>
+  <select id="timeSelect" onchange="refreshApp()">
+    <option value="24">24h</option>
+    <option value="48">48h</option>
+    <option value="72">72h</option>
+  </select>
+</div>
+
   </div>
 
   <div id="map"></div>
@@ -602,8 +1106,10 @@ Zaloguj
   <div class="filter-item">
     <span>📅</span>
     <div style="display:flex; gap:6px; flex-wrap:wrap; width:100%;">
-      <input type="date" id="statsFrom" onchange="renderInterStats()">
-      <input type="date" id="statsTo" onchange="renderInterStats()">
+      
+<input type="date" id="statsFrom" onchange="renderInterStats(); renderInterwencje()">
+<input type="date" id="statsTo" onchange="renderInterStats(); renderInterwencje()">
+
       
       <select onchange="setDateRange(this.value)" style="margin-left:6px;">
         <option value="">📅 Własny zakres</option>
@@ -634,7 +1140,6 @@ Zaloguj
       <option value="">Wszystkie</option>
       <option value="wymiany">🔧 Wymiany</option>
       <option value="operacje">⚙️ Operacje</option>
-      <option value="serwis">🧹 Serwis</option>
     </select>
   </div>
 
@@ -673,75 +1178,177 @@ Zaloguj
 
 <div id="interwencjeList"></div>
 </div>
-  <div id="adminPanel" class="section">
-  <h2>👤 Panel admina</h2>
-    
-  <input id="newFirstName" placeholder="Imię" style="
-  padding:8px;
-  border-radius:8px;
-  margin-bottom:8px;
-  width:100%;
-">
+  <div id="userPanel" class="section">
 
-<input id="newLastName" placeholder="Nazwisko" style="
-  padding:8px;
-  border-radius:8px;
-  margin-bottom:8px;
-  width:100%;
-">
-  <input id="newEmail" placeholder="Email" style="
-    padding:8px;
-    border-radius:8px;
-    margin-bottom:8px;
-    width:100%;
-  ">
+  <h2>👤 Moje konto</h2>
 
-  <input id="newPassword" type="password" placeholder="Hasło" style="
-    padding:8px;
-    border-radius:8px;
-    margin-bottom:8px;
-    width:100%;
-  ">
+  <div class="admin-card">
 
-  <select id="newRole" style="
-    padding:8px;
-    border-radius:8px;
-    margin-bottom:10px;
-    width:100%;
-  ">
-    <option value="serwis">Serwis</option>
-    <option value="admin">Admin</option>
-    
-  </select>
+    <h3>🔑 Hasło</h3>
 
-  <h3>Struktury / Miasta</h3>
-  <div id="structuresBox" style="display:grid; gap:6px;"></div>
+    <button onclick="resetPassword(window.currentUser.email)" style="
+      background:#7c3aed;
+      color:white;
+      padding:10px;
+      border:none;
+      border-radius:10px;
+    ">
+      🔑 Resetuj hasło (mail)
+    </button>
 
+  </div>
 
+  <div class="admin-card">
 
-  <button onclick="createUser()" style="
-    margin-top:12px;
-    background:#16a34a;
-    color:white;
-    border:none;
-    padding:10px;
-    border-radius:8px;
-    width:100%;
-  ">
-    ✅ Utwórz użytkownika
-  </button>
+    <h3>📍 Lokalizacja</h3>
 
-  <pre id="outputJson" style="
-    margin-top:10px;
-    background:#111827;
-    padding:10px;
-    border-radius:8px;
-    font-size:12px;
-    overflow:auto;
-  "></pre>
-<h3>📋 Użytkownicy</h3>
-<div id="usersList"></div>
+    <p style="font-size:13px;color:#9ca3af;">
+      Możesz w każdej chwili wycofać zgodę na śledzenie GPS.
+      Spowoduje to zatrzymanie wysyłania lokalizacji.
+    </p>
+
+    <button onclick="revokeConsent()" style="
+      background:#dc2626;
+      color:white;
+      padding:10px;
+      border:none;
+      border-radius:10px;
+    ">
+      ❌ Cofnij zgodę na lokalizację
+    </button>
+
+  </div>
+
 </div>
+  <div id="adminPanel" class="section">
+
+  <div class="admin-container">
+
+    <h2>👤 Panel admina</h2>
+
+    <div class="admin-tabs">
+      <button onclick="showAdminTab('addUser')" class="admin-tab-btn">
+        ➕ Dodaj użytkownika
+      </button>
+
+      <button onclick="showAdminTab('manageUsers')" class="admin-tab-btn">
+        📋 Zarządzaj użytkownikami
+      </button>
+      
+<button onclick="showAdminTab('parkomaty')" class="admin-tab-btn">
+  🅿️ Parkomaty
+</button>
+
+<button onclick="showAdminTab('config')" class="admin-tab-btn">
+  ⚙️ Słowniki
+</button>
+
+    </div>
+
+    <!-- ✅ DODAWANIE -->
+    <div id="adminAddUser">
+
+      <div class="admin-card">
+
+        <input id="newFirstName" placeholder="Imię">
+        <input id="newLastName" placeholder="Nazwisko">
+        <input id="newEmail" placeholder="Email">
+        <input id="newPassword" type="password" placeholder="Hasło">
+
+        <select id="newRole">
+          <option value="serwis">Serwis</option>
+          <option value="admin">Admin</option>
+        </select>
+
+      </div>
+
+      <div class="admin-card">
+        <h3>📍 Struktury / Miasta</h3>
+        <div id="structuresBox" class="struct-grid"></div>
+      </div>
+
+      <button onclick="createUser()" style="
+        background:#16a34a;
+        color:white;
+        padding:12px;
+        border:none;
+        border-radius:10px;
+      ">
+        ✅ Utwórz użytkownika
+      </button>
+
+    </div>
+
+    <!-- ✅ LISTA -->
+    <div id="adminManageUsers" style="display:none;">
+      <div class="admin-card">
+        <h3>📋 Użytkownicy</h3>
+        <div id="usersList"></div>
+      </div>
+    </div>
+<div id="adminParkomaty" style="display:none;">
+  <div class="admin-card">
+    <h3>🅿️ Parkomaty</h3>
+
+    <button onclick="openAddParkomatModal()" style="
+      background:#16a34a;
+      color:white;
+      padding:10px;
+      border:none;
+      border-radius:10px;
+      margin-bottom:10px;
+    ">
+      ➕ Dodaj parkomat
+    </button>
+
+<input 
+      type="text"
+      id="parkomatSearch"
+      placeholder="🔎 Szukaj numeru lub adresu..."
+      oninput="renderParkomatyAdminList()"
+      style="
+        width:100%;
+        padding:10px;
+        border-radius:10px;
+        border:1px solid #1f2937;
+        background:#020617;
+        color:white;
+        margin-bottom:10px;
+      "
+    >
+
+    <div id="parkomatyList"></div>
+  </div>
+</div>
+    <div id="adminConfig" style="display:none;">
+
+  <div class="admin-card">
+    <h3>🔧 Części</h3>
+
+    <input id="newPart" placeholder="Nowa część">
+
+    <button onclick="addPart()" style="margin:5px 0;">
+      ➕ Dodaj
+    </button>
+
+    <div id="partsList"></div>
+  </div>
+
+  <div class="admin-card">
+    <h3>⚙️ Czynności</h3>
+
+    <input id="newAction" placeholder="Nowa czynność">
+
+    <button onclick="addAction()" style="margin:5px 0;">
+      ➕ Dodaj
+    </button>
+
+    <div id="actionsList"></div>
+  </div>
+
+</div>
+  </div>
+
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -757,6 +1364,7 @@ Zaloguj
   z-index:5000;
 ">
 
+
 <div style="
   background:#020617;
   padding:16px;
@@ -766,7 +1374,11 @@ Zaloguj
   display:flex;
   flex-direction:column;
   gap:10px;
+
+  max-height:80vh;
+  overflow-y:auto;
 ">
+
 
 <h3>🔧 Interwencja Serwisowa</h3>
 
@@ -783,6 +1395,8 @@ Zaloguj
 <select id="techSelect" style="display:none;"></select>
 
 <div id="actionsBox" style="max-height:150px;overflow:auto;"></div>
+  <h4>⚙️ Wymienione podzespoły</h4>
+<div id="partsBox" style="max-height:150px;overflow:auto;"></div>
 
 <button onclick="submitService()" style="
   background:#16a34a;color:white;padding:10px;border:none;border-radius:8px;">
@@ -796,15 +1410,87 @@ Zaloguj
 
 </div>
 </div>
-  
-<div id="editUserModal" style="
+ 
+<div id="editUserModal"style="
+  inset:0; 
+  position:fixed;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+   z-index:6000;
+">
+
+
+<div style="
+background:#020617;
+padding:16px;
+border-radius:12px;
+width:90%;
+max-width:400px;
+max-height:85vh;
+display:flex;
+flex-direction:column;
+gap:10px;
+overflow:hidden;
+">
+
+<h3>✏️ Edytuj użytkownika</h3>
+
+<div style="overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px;">
+
+  <input id="editFirstName" placeholder="Imię">
+  <input id="editLastName" placeholder="Nazwisko">
+
+  <select id="editRole">
+    <option value="serwis">Serwis</option>
+    <option value="admin">Admin</option>
+  </select>
+
+  <h4>Struktury</h4>
+  <div id="editStructures"></div>
+
+</div>
+
+<div style="
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:10px;
+  position:sticky;
+  bottom:20px;
+  background:#020617;
+  padding-top:10px;
+">
+
+  <button onclick="saveUserEdit()"style="
+  background:#16a34a;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+    ">✅ Zapisz</button>
+  <button onclick="closeEditModal()" 
+    style="
+  background:#374151;
+  color:white;
+  padding:8px;
+  border:none;
+  border-radius:8px;
+">❌ Anuluj</button>
+
+</div>
+</div>
+</div>
+  <!-- ✅ MODAL PARKOMAT -->
+<div id="parkomatModal" style="
 position:fixed;
 inset:0;
 background:rgba(0,0,0,0.7);
 display:none;
 justify-content:center;
 align-items:center;
-z-index:6000;
+z-index:7000;
 ">
 
 <div style="
@@ -818,39 +1504,104 @@ flex-direction:column;
 gap:10px;
 ">
 
-<h3>✏️ Edytuj użytkownika</h3>
+<h3 id="parkomatModalTitle">🅿️ Parkomat</h3>
 
-<input id="editFirstName" placeholder="Imię">
-<input id="editLastName" placeholder="Nazwisko">
+<input id="pm_id" placeholder="Numer">
+<input id="pm_location" placeholder="Adres">
+<input id="pm_node" placeholder="Strefa-dla serwisu">
+<input id="pm_node2" placeholder="Miasto / struktura dla widoku admin">
+<input id="pm_lat" placeholder="Lat">
+<input id="pm_lng" placeholder="Lng">
+<input id="pm_structure" placeholder="Structure do email">
 
-<select id="editRole">
-  <option value="serwis">Serwis</option>
-  <option value="admin">Admin</option>
-</select>
+<button onclick="saveParkomat()" style="
+  background:#16a34a;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+">
+  ✅ Zapisz
+</button>
 
-<h4>Struktury</h4>
-<div id="editStructures"></div>
+<button onclick="closeParkomatModal()" style="
+  background:#374151;
+  color:white;
+  padding:8px;
+  border:none;
+  border-radius:8px;
+">
+  Anuluj
+</button>
 
-<h4>Strefy</h4>
-<div id="editNodes" style="max-height:150px; overflow:auto;"></div>
+</div>
+  
+</div>
+  <div id="rodoModal" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10000;
+">
 
-<button onclick="saveUserEdit()">✅ Zapisz</button>
-<button onclick="closeEditModal()">❌ Anuluj</button>
+<div style="
+  background:#020617;
+  padding:20px;
+  border-radius:12px;
+  max-width:400px;
+  width:90%;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+">
+
+<h3>📍 Zgoda na lokalizację</h3>
+
+<p style="font-size:14px; color:#cbd5f5;">
+Aplikacja wykorzystuje Twoją lokalizację GPS w celu
+monitorowania pracy serwisu oraz wsparcia działań operacyjnych.
+
+Twoja lokalizacja będzie widoczna dla administratora systemu.
+</p>
+
+<label style="display:flex; gap:6px;">
+  <input type="checkbox" id="rodoCheck">
+  Wyrażam zgodę na przetwarzanie lokalizacji
+</label>
+
+<button onclick="acceptRodo()" style="
+  background:#16a34a;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  color:white;
+">
+  ✅ Akceptuję
+</button>
 
 </div>
 </div>
+  
 <!-- ✅ JS zostaje praktycznie bez zmian -->
 <script>
 const SUPABASE_URL = "https://tiplqkdmgahdeoseahsd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpcGxxa2RtZ2FoZGVvc2VhaHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MjgyOTIsImV4cCI6MjA5NjUwNDI5Mn0.40_rGmSdhBW2SKGG8wgrGq4--n9qT578StHVzsSD_8w";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+let editingUserId = null;
+let editingParkomatKey = null;
+
 window.currentUser = null;
 async function login(){
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  // ✅ 1. LOGOWANIE
+  // ✅ logowanie
   const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
@@ -862,87 +1613,143 @@ async function login(){
     return;
   }
 
+  // ✅ pobierz profil
+  const { data: profile, error: profileError } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("id", data.user.id)
+    .single();
+
+  if(profileError || !profile){
+    alert("❌ Brak profilu użytkownika");
+    console.error(profileError);
+    return;
+  }
+
+  window.currentUser = profile;
+
+  // ✅ blokada konta
+  if(profile.is_active === false){
+    alert("⛔ Konto zablokowane");
+    await supabaseClient.auth.signOut();
+    return;
+  }
+
   // ✅ UI
-document.getElementById("authBox").style.display = "none";
+  document.getElementById("authBox").style.display = "none";
 
-// ✅ 2. pobierz profil NAJPIERW
-const { data: profile } = await supabaseClient
-  .from("users")
-  .select("*")
-  .eq("id", data.user.id)
-  .single();
+  const fullName = profile.first_name
+    ? profile.first_name + " " + (profile.last_name || "")
+    : data.user.email;
 
-window.currentUser = profile;
-  
+  document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
 
-if(profile && profile.is_active === false){
-  alert("⛔ Konto zablokowane");
-  await supabaseClient.auth.signOut();
-  return;
-}
+  // ✅ ONLINE STATUS
+  await supabaseClient
+    .from("users")
+    .update({
+      is_online: true,
+      last_seen: new Date().toISOString()
+    })
+    .eq("id", data.user.id);
 
-
-
-// ✅ DOPIERO TERAZ używamy profile
-const fullName = profile?.first_name
-  ? profile.first_name + " " + (profile.last_name || "")
-  : data.user.email;
-
-document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
-  // ✅ 3. ZASTOSUJ ROLĘ
+  // ✅ role
   applyUserRole(profile);
 
-  // ✅ 4. ŁADUJ DANE
+  // ✅ dane
   await init();
-  
-// ✅ RESET widoku
-showSection('mapSection');
 
+  // ✅ RODO
+  if(!profile.location_consent){
+    document.getElementById("rodoModal").style.display = "flex";
+  }else{
+    startGeoTracking();
+  }
+
+  // ✅ sekcja
+  showSection('mapSection');
 }
+  
 async function checkAuth(){
+
+// ✅ zabezpieczenie — checkbox reset
+document.getElementById("rodoCheck").checked = false;
 
   const { data } = await supabaseClient.auth.getSession();
 
-  if(data.session){
-
-    document.getElementById("authBox").style.display = "none";
-
-    // ✅ NAJPIERW pobierz profil
-    const { data: profile } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("id", data.session.user.id)
-      .single();
-
-    window.currentUser = profile;
-
-    // ✅ dopiero teraz używaj profile
-    const fullName = profile?.first_name
-      ? profile.first_name + " " + (profile.last_name || "")
-      : data.session.user.email;
-
-    document.getElementById("userBadge").innerText = "👤 " + fullName.trim();
-
-    applyUserRole(profile);
-    await init();
-    
-// ✅ RESET widoku
-showSection('mapSection');
-
-  }else{
+  if(!data.session){
     document.getElementById("authBox").style.display = "flex";
+    return;
   }
+
+  // ✅ profil
+  const { data: profile, error } = await supabaseClient
+    .from("users_status")
+    .select("*")
+    .eq("id", data.session.user.id)
+    .single();
+
+  if(error || !profile){
+    console.error("PROFILE ERROR:", error);
+    await supabaseClient.auth.signOut();
+    document.getElementById("authBox").style.display = "flex";
+    return;
+  }
+
+  // ✅ 🔒 wylogowanie przez admina
+  if(profile.is_online === false || profile.is_active === false){
+    alert("🔒 Zostałeś wylogowany przez administratora");
+
+    await supabaseClient.auth.signOut();
+    document.getElementById("authBox").style.display = "flex";
+    return;
+  }
+
+  window.currentUser = profile;
+
+  // ✅ UI
+  document.getElementById("authBox").style.display = "none";
+
+  const fullName = profile.first_name
+    ? profile.first_name + " " + (profile.last_name || "")
+    : data.session.user.email;
+
+  document.getElementById("userBadge").innerText =
+    "👤 " + fullName.trim();
+
+  // ✅ role
+  applyUserRole(profile);
+
+  // ✅ dane
+  await init();
+
+  // ✅ RODO (🔥 kluczowe)
+  if(!profile.location_consent){
+    document.getElementById("rodoModal").style.display = "flex";
+  }else{
+    startGeoTracking();
+  }
+
+  showSection('mapSection');
 }
-  
 
 async function logout(){
+
+  if(window.currentUser){
+    await supabaseClient
+      .from("users")
+      .update({
+        is_online: false
+      })
+      .eq("id", window.currentUser.id);
+  }
 
   await supabaseClient.auth.signOut();
 
   document.getElementById("authBox").style.display = "flex";
   document.getElementById("userBadge").innerText = "";
 
-  window.currentUser = null; // ✅ dodatkowe bezpieczeństwo
+  window.currentUser = null;
 
   showSection('mapSection');
 }
@@ -950,56 +1757,91 @@ function renderAdminPanel(){
 
   const structBox = document.getElementById("structuresBox");
 
-  // ✅ budujemy mapę: structure -> nodes
+  // ✅ mapowanie: node_2 → node
   const map = {};
 
   Object.values(allParkomaty).forEach(p => {
 
-    if(!map[p.structure]){
-      map[p.structure] = new Set();
+    const main = p.node_2 || p.node;  // ✅ główna grupa dla admina
+    const sub = p.node;               // ✅ oryginalna strefa
+
+    if(!main) return;
+
+    if(!map[main]){
+      map[main] = new Set();
     }
 
-    if(p.node){
-      map[p.structure].add(p.node);
+    if(sub){
+      map[main].add(sub);
     }
   });
 
-  // ✅ budowanie HTML
+  // ✅ generowanie HTML
   structBox.innerHTML = Object.keys(map).sort().map(struct => {
 
     const nodes = [...map[struct]].sort();
 
     return `
-      <div style="
-        border:1px solid #1f2937;
-        border-radius:10px;
-        padding:10px;
-        margin-bottom:8px;
-      ">
+<div class="struct-box">
 
-        <label style="font-weight:bold;">
-          <input type="checkbox" value="${struct}" class="structCheck">
-          ${struct}
-        </label>
+  <div class="struct-header" onclick="toggleStruct(this)">
+    <input type="checkbox" value="${struct}" class="structCheck">
+    <b>${struct}</b>
+    <span class="arrow">▶</span>
+  </div>
 
-        <div style="margin-left:15px;margin-top:6px;display:grid;gap:4px;">
-          ${nodes.map(n => `
-            <label>
-              <input type="checkbox" value="${n}" class="nodeCheck" data-struct="${struct}">
-              ${n}
-            </label>
-          `).join("")}
-        </div>
+  <div class="node-list hidden">
+    ${nodes.map(n => `
+      <label>
+        <input type="checkbox" value="${n}" class="nodeCheck" data-struct="${struct}">
+        <span>${n}</span>
+      </label>
+    `).join("")}
+  </div>
 
-      </div>
-    `;
+</div>
+`;
+
   }).join("");
+
+  showAdminTab("addUser");
 }
+function showAdminTab(tab){
+  document.getElementById("adminConfig").style.display = "none";
+  document.getElementById("adminAddUser").style.display = "none";
+  document.getElementById("adminManageUsers").style.display = "none";
+  document.getElementById("adminParkomaty").style.display = "none";
+  document.querySelectorAll(".admin-tab-btn")
+    .forEach(b => b.classList.remove("active"));
+
+  if(tab === "addUser"){
+    document.getElementById("adminAddUser").style.display = "block";
+    document.querySelectorAll(".admin-tab-btn")[0].classList.add("active");
+  }
+
+  if(tab === "manageUsers"){
+    document.getElementById("adminManageUsers").style.display = "block";
+    document.querySelectorAll(".admin-tab-btn")[1].classList.add("active");
+  }
+  
+if(tab === "parkomaty"){
+  document.getElementById("adminParkomaty").style.display = "block";
+  document.querySelectorAll(".admin-tab-btn")[2].classList.add("active");
+  renderParkomatyAdminList(); // ✅ załaduj listę
+}
+if(tab === "config"){
+  document.getElementById("adminConfig").style.display = "block";
+  document.querySelectorAll(".admin-tab-btn")[3].classList.add("active");
+
+  renderParts();
+  renderActions();
+}
+}
+  
   document.addEventListener("change", (e) => {
 
-  // ✅ klik na strukturę
+  // ✅ ADD USER
   if(e.target.classList.contains("structCheck")){
-
     const struct = e.target.value;
     const checked = e.target.checked;
 
@@ -1007,6 +1849,17 @@ function renderAdminPanel(){
       .querySelectorAll(`.nodeCheck[data-struct="${struct}"]`)
       .forEach(cb => cb.checked = checked);
   }
+
+  // ✅ EDIT USER
+  if(e.target.classList.contains("editStructCheck")){
+    const struct = e.target.value;
+    const checked = e.target.checked;
+
+    document
+      .querySelectorAll(`.editNodeCheck[data-struct="${struct}"]`)
+      .forEach(cb => cb.checked = checked);
+  }
+
 });
 
 async function createUser(){
@@ -1017,13 +1870,25 @@ async function createUser(){
   const password = document.getElementById("newPassword").value;
   const role = document.getElementById("newRole").value;
 
-  const structures = [
-    ...document.querySelectorAll(".structCheck:checked")
-  ].map(el => el.value);
+ 
 
-  const nodes = [
-    ...document.querySelectorAll(".nodeCheck:checked")
-  ].map(el => el.value);
+// ✅ zbierz struktury (Set usuwa duplikaty)
+
+const selectedStructs = new Set(
+  [...document.querySelectorAll(".structCheck:checked")]
+    .map(el => el.value)
+);
+
+document.querySelectorAll(".nodeCheck:checked").forEach(el => {
+  selectedStructs.add(el.dataset.struct);
+});
+
+const structures = [...selectedStructs];
+
+const nodes = [
+  ...document.querySelectorAll(".nodeCheck:checked")
+].map(el => el.value);
+
 
   if(!email || !password || !firstName){
   alert("❌ Uzupełnij dane");
@@ -1110,8 +1975,8 @@ document.querySelectorAll(".nodeCheck").forEach(el => el.checked = false);
   }
   await loadUsers();
   
-await supabaseClient.auth.signOut();
-alert("✅ Użytkownik utworzony — zaloguj się ponownie");
+
+alert("✅ Użytkownik utworzony");
 
 }
 
@@ -1132,82 +1997,117 @@ function getNavLink(lat, lng){
 }
 
 /* ===== SHEETS ===== */
-const PARKOMATY_URL="parkomaty.json";
-const ACTIVE_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=0&single=true&output=csv";
-const HISTORY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1220391858&single=true&output=csv";
+//const PARKOMATY_URL="parkomaty.json";
+//const ACTIVE_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=0&single=true&output=csv";
+//const HISTORY_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1220391858&single=true&output=csv";
 
-const ACTIONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1441340771&single=true&output=csv";
+//onst ACTIONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1441340771&single=true&output=csv";
 
-const USERS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=2025072242&single=true&output=csv";
-const INTERWENCJE_URL ="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1460522074&single=true&output=csv";
+//const USERS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=2025072242&single=true&output=csv";
+//const INTERWENCJE_URL ="https://docs.google.com/spreadsheets/d/e/2PACX-1vTj9Z5qWrmqdo88LUJtOcJsUkaNZEhxfsXTucOKWI2hbwtUKdGwdvQn4JsR7Wj27TJwxW7H0jnODbfR/pub?gid=1460522074&single=true&output=csv";
 let serviceActions = [];
 let technicians = [];
 let interwencje = [];
 let currentService = null;
 let deviceOptionsCache = [];
+let serviceParts = [];
 
 /* ===== MAPA ===== */
-let map = L.map('map').setView([52.23218280963405, 21.007884183479632],12);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-let markerLayer = L.layerGroup().addTo(map);
+
+let map = L.map('map', {
+  zoomControl: true
+}).setView([52.23218, 21.00788], 12);
+
+// baza – light
+const satelita = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    attribution: '&copy; Esri & contributors'
+  }
+);
+// baza – light
+const light = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+  {
+    maxZoom: 18,
+    attribution: '&copy; Esri'
+  }
+);
+// baza – dark
+const dark = L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  {
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
+  }
+);
+
+// domyślna warstwa
+dark.addTo(map);
+
+// przełącznik warstw
+const baseMaps = {
+  "Satelita": satelita,
+  "Ciemna mapa": dark,
+  "Jasna mapa" : light
+};
+
+L.control.layers(baseMaps, null, {
+  position: 'bottomleft'
+}).addTo(map);
+
+
+// Twoje markery
+let markerLayer = L.layerGroup().addTo(map);  // ✅ parkomaty
+let userLayer = L.layerGroup().addTo(map);   // ✅ Uzytkownicy
 
 /* ===== DATA ===== */
 let allParkomaty={};
+let userLocations = [];
+let userMarkers = {};
 let activeEvents={};
 let historyEvents=[];
 const RED_CODES = ["16384","16385","16386","16900"];
-  
-function hasAccessToParkomat(p){
+function getNode(p){
 
-  // ✅ admin widzi wszystko
-  if(window.currentUser?.role === "admin") return true;
+  // ✅ admin widzi nową strukturę
+  if(window.currentUser?.role === "admin"){
+    return p.node_2 || p.node;
+  }
 
-  const userStructures = window.currentUser?.structures || [];
-  const userNodes = window.currentUser?.nodes || [];
-
-  // ✅ brak przypisanych struktur = brak dostępu
-  if(userStructures.length && !userStructures.includes(p.structure)) return false;
-
-  // ✅ brak przypisanych stref = brak dostępu
-  if(userNodes.length && p.node && !userNodes.includes(p.node)) return false;
-
-  return true;
+  // ✅ reszta – stara
+  return p.node;
 }
 
-function parseLocalDate(dateStr){
+function parseUTC(dateStr){
   if(!dateStr) return null;
 
-  const fixed = dateStr.replace(" ", "T");
-  const d = new Date(fixed);
+  const iso = dateStr
+    .replace(" ", "T")
+    .split(".")[0] + "Z";
 
-  return isNaN(d) ? null : d;
+  const d = new Date(iso);
+
+  return isNaN(d) ? null : d;  // ✅ BRAKOWAŁO
 }
-function getLocalDateTime(){
-  const now = new Date();
+  
 
-  const y = now.getFullYear();
-  const m = String(now.getMonth()+1).padStart(2,'0');
-  const d = String(now.getDate()).padStart(2,'0');
+function formatDatePL(dateStr){
+  if(!dateStr) return "";
 
-  const hh = String(now.getHours()).padStart(2,'0');
-  const mm = String(now.getMinutes()).padStart(2,'0');
-  const ss = String(now.getSeconds()).padStart(2,'0');
+  const d = parseUTC(dateStr);  // ✅ używamy poprawnej funkcji
 
-  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+  if(!d) return dateStr;
+
+  return d.toLocaleString("pl-PL", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
-  function formatDateForDB(date){
-  if(!date) return null;
 
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,'0');
-  const d = String(date.getDate()).padStart(2,'0');
-
-  const hh = String(date.getHours()).padStart(2,'0');
-  const mm = String(date.getMinutes()).padStart(2,'0');
-  const ss = String(date.getSeconds()).padStart(2,'0');
-
-  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
-}
+ 
 function toLocalDateInput(date){
   const offset = date.getTimezoneOffset();
   const local = new Date(date.getTime() - offset*60000);
@@ -1229,17 +2129,30 @@ function isValidEmail(email){
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-
+/* ===== Lista działan serwisu ===== */
 async function loadServiceActions(){
-  const rows = parseCSV(await (await fetch(ACTIONS_URL)).text()).slice(1);
-  serviceActions = rows.map(r => r[0]?.trim()).filter(Boolean);
+
+  const { data, error } = await supabaseClient
+    .from("actions")
+    .select("*");
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+ 
+serviceActions = data
+  .map(a => a.name)
+  .sort((a, b) => a.localeCompare(b, 'pl'));
+
 }
+
 
 async function loadTechnicians(){
 
   const { data, error } = await supabaseClient
-    .from("users")
-    .select("*");
+    .from("users_status").select("*");
 
   if(error){
     console.error("BŁĄD USERS:", error);
@@ -1253,97 +2166,218 @@ async function loadTechnicians(){
   }));
 }
 
+ async function loadParts(){
 
-/* ===== LOAD PARKOMATY ===== */
-async function loadParkomaty(){
+  const { data, error } = await supabaseClient
+    .from("parts")
+    .select("*");
 
-  const res = await fetch(PARKOMATY_URL);
-
-  if(!res.ok){
-    alert("❌ Nie można wczytać parkomaty.json");
+  if(error){
+    console.error(error);
     return;
   }
 
-  const data = await res.json();
+  
+serviceParts = data
+  .map(p => p.name)
+  .sort((a, b) => a.localeCompare(b, 'pl'));
+
+} 
+async function loadUserLocations(){
+
+  const { data, error } = await supabaseClient
+    .from("user_locations_full")
+    .select("*")
+    .eq("is_online", true)
+    .eq("location_consent", true);
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  userLocations = data;
+}
+/* ===== LOAD PARKOMATY ===== */
+async function loadParkomaty(){
+
+  let allData = [];
+  let from = 0;
+  const limit = 1000;
+
+  while(true){
+
+    const { data, error } = await supabaseClient
+      .from("parkomaty")
+      .select("*")
+      .range(from, from + limit - 1);
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    allData = allData.concat(data);
+
+    if(data.length < limit){
+      break; // ✅ koniec (ostatnia paczka)
+    }
+
+    from += limit;
+  }
 
   const nodeSet = new Set();
   allParkomaty = {};
 
-  data.forEach(p => {
+  
+allData.forEach(p => {
 
-    const id = p.id?.toString().trim();
-    const lat = parseFloat(p.lat);
-    const lng = parseFloat(p.lng);
-    const structure = p.structure?.trim();
-    const node = p.node;
+  const key = makeKey(p.id, p.structure);
 
-    if(!id || !structure || isNaN(lat) || isNaN(lng)) return;
+  const park = {
+    id: p.id,
+    structure: p.structure,
+    lat: Number(p.lat),
+    lng: Number(p.lng),
+    location: p.location,
+    node: p.node,
+    node_2: p.node_2 || p.node
+  };
 
-    const key = makeKey(id, structure);
+  allParkomaty[key] = park;
 
-    allParkomaty[key] = {
-      id,
-      structure,
-      lat,
-      lng,
-      location: p.location || "",
-      node
-    };
+  // ✅ 🔥 FILTR UPRAWNIEŃ
+const nodeVal = getNode(park);
+if(nodeVal) nodeSet.add(nodeVal);
+});
 
-    if(node) nodeSet.add(node);
-  });
+  console.log("✅ ZAŁADOWANO:", allData.length);
 
   const nodes = [...nodeSet].sort();
+renderNodeFilter(nodes);
 
-  const options =
-    `<option value="">Wszystkie strefy</option>` +
-    nodes.map(n => `<option value="${n}">${n}</option>`).join('');
+const options =
+  `<option value="">Wszystkie strefy</option>` +
+  nodes.map(n => `<option value="${n}">${n}</option>`).join('');
 
-  document.getElementById("nodeFilter").innerHTML = options;
+  // ✅ zapamiętaj poprzednie wartości
+const prevActiveNode = document.getElementById("activeNodeFilter").value;
+const prevHistoryNode = document.getElementById("historyNodeFilter").value;
+const prevDeviceNode = document.getElementById("deviceNodeFilter").value;
 
-  const activeNode = document.getElementById("activeNodeFilter");
-  if(activeNode) activeNode.innerHTML = options;
+// ✅ ustaw nowe opcje
+document.getElementById("activeNodeFilter").innerHTML = options;
+document.getElementById("historyNodeFilter").innerHTML = options;
+document.getElementById("deviceNodeFilter").innerHTML = options;
 
-  const historyNode = document.getElementById("historyNodeFilter");
-  if(historyNode) historyNode.innerHTML = options;
-
-  const deviceNode = document.getElementById("deviceNodeFilter");
-  if(deviceNode) deviceNode.innerHTML = options;
+// ✅ przywróć poprzedni wybór (jeśli nadal istnieje)
+if([...document.getElementById("activeNodeFilter").options].some(o => o.value === prevActiveNode)){
+  document.getElementById("activeNodeFilter").value = prevActiveNode;
 }
+
+if([...document.getElementById("historyNodeFilter").options].some(o => o.value === prevHistoryNode)){
+  document.getElementById("historyNodeFilter").value = prevHistoryNode;
+}
+
+if([...document.getElementById("deviceNodeFilter").options].some(o => o.value === prevDeviceNode)){
+  document.getElementById("deviceNodeFilter").value = prevDeviceNode;
+}
+}
+
 
 /* ===== LOAD ACTIVE ===== */
 async function loadActive(){
-  const rows=parseCSV(await (await fetch(ACTIVE_URL)).text()).slice(1);
 
-  activeEvents={};
-  let count=0;
+  // ✅ 1. POBIERZ NORMALNE BŁĘDY
+  const { data, error } = await supabaseClient
+  .from("active_events")
+  .select("*")
+  .neq("level", "RESET")
+  .not("level", "is", null);
 
- 
-rows.forEach(r=>{
-  const id = r[0]?.trim();
-const structure = r[1]?.trim();
+if (error) {
+  console.error(error);
+  return;
+}
 
-const key = makeKey(id, structure);
-if (!allParkomaty[key]) return;
+const threshold = Number(
+  document.getElementById("thresholdSelect")?.value || 7
+);
 
-if (!activeEvents[key]) activeEvents[key] = [];
+const hours = Number(
+  document.getElementById("timeSelect")?.value || 24
+);
 
+const now = new Date();
+
+activeEvents = {};
+let count = 0;
+
+data.forEach(e => {
+
+  const key = makeKey(e.id, e.structure);
+  if (!allParkomaty[key]) return;
+
+  const isInfo = e.event_level_name === "Informacja";
+
+  let add = false;
+
+  // ✅ INFO → filtr licznik + czas
+  if (isInfo) {
+
+    if (!e.info_count) return;
+
+    const d = new Date(e.date);
+    if (!d) return;
+
+    const diffHours = (now - d) / (1000 * 60 * 60);
+
+    if (e.info_count >= threshold && diffHours <= hours) {
+      add = true;
+    }
+
+  } 
+  // ✅ ERROR → zawsze pokazuj
+  else {
+    add = true;
+  }
+
+  if (!add) return;
+
+  if (!activeEvents[key]) activeEvents[key] = [];
+
+  
 activeEvents[key].push({
-  name: r[5],
-  code: r[4],
-  hardware: r[7] || "",
-  date: r[3]
+  name: e.event_name,
+  code: e.event_code,
+  hardware: e.hardware,
+  date: e.date,
+  count: isInfo ? e.info_count : 1,
+  level: e.event_level_name
 });
-    count++;
-  });
 
-  document.getElementById("alarmCounter").innerText=count;
+
+  count++;
+
+});
+  
 }
 
 /* ===== LOAD HISTORY ===== */
 async function loadHistory(){
-  historyEvents=parseCSV(await (await fetch(HISTORY_URL)).text()).slice(1);
+
+  const { data, error } = await supabaseClient
+    .from("history_events")
+    .select("*");
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  historyEvents = data;
 }
+  /* ===== LOAD Interwencje ===== */
 async function loadInterwencje(){
 
   const { data, error } = await supabaseClient
@@ -1385,7 +2419,8 @@ function showSection(id){
     historiaSection: "📜",
     devicesSection: "🖥️",
     interwencjeSection: "🧰",
-    adminPanel: "👤"
+    adminPanel: "👤",
+    userPanel: "👤"
   };
 
   const targetBtn = [...document.querySelectorAll(".nav-btn")]
@@ -1426,6 +2461,16 @@ techSelect.innerHTML = technicians
 
 
   const box = document.getElementById("actionsBox");
+  
+const partsBox = document.getElementById("partsBox");
+
+partsBox.innerHTML = serviceParts.map(p => `
+  <label style="display:flex;gap:6px;">
+    <input type="checkbox" value="${p}">
+    ${p}
+  </label>
+`).join('');
+
 
   box.innerHTML = serviceActions.map(a => `
     <label style="display:flex;gap:6px;">
@@ -1443,7 +2488,7 @@ function openManualServiceModal(){
     
 event: {
   name: "Interwencja serwisowa",
-  date: getLocalDateTime()
+  date: new Date().toISOString()
 }
 
   };
@@ -1452,9 +2497,10 @@ event: {
   const deviceSelect = document.getElementById("deviceSelect");
 
   
+
 deviceOptionsCache = Object.values(allParkomaty)
-  .filter(p => hasAccessToParkomat(p))
   .sort((a,b)=>a.id.localeCompare(b.id));
+
 
 renderDeviceOptions(deviceOptionsCache);
 document.getElementById("deviceSearchInput").value = "";
@@ -1469,6 +2515,14 @@ techSelect.innerHTML = technicians
 
   // ✅ czynności
   const box = document.getElementById("actionsBox");
+  const partsBox = document.getElementById("partsBox");
+
+partsBox.innerHTML = serviceParts.map(p => `
+  <label style="display:flex;gap:6px;">
+    <input type="checkbox" value="${p}">
+    ${p}
+  </label>
+`).join('');
 
   box.innerHTML = serviceActions.map(a => `
     <label style="display:flex;gap:6px;">
@@ -1508,18 +2562,19 @@ function renderDeviceOptions(list) {
 function closeModal(){
   document.getElementById("serviceModal").style.display = "none";
 }
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRoNHMfvANKbxLBFU7a8xmAAaL5s9mHdE774Yxcbriqof4PT6NNw/exec";
+//const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyR-RNSAU5ePpx0NpWRoNHMfvANKbxLBFU7a8xmAAaL5s9mHdE774Yxcbriqof4PT6NNw/exec";
 
 async function submitService(){
 
-  
-const user = window.currentUser
-  ? `${window.currentUser.first_name || ""} ${window.currentUser.last_name || ""}`.trim()
-  : "unknown";
+  const user = window.currentUser
+    ? `${window.currentUser.first_name || ""} ${window.currentUser.last_name || ""}`.trim()
+    : "unknown";
 
+  const actions = [...document.querySelectorAll("#actionsBox input:checked")]
+    .map(el => el.value);
 
-  const checked = document.querySelectorAll("#actionsBox input:checked");
-  const actions = [...checked].map(el => el.value);
+  const parts = [...document.querySelectorAll("#partsBox input:checked")]
+    .map(el => el.value);
 
   if(!user){
     alert("❌ Wybierz pracownika");
@@ -1533,7 +2588,6 @@ const user = window.currentUser
 
   let {key, event} = currentService;
 
-  // ✅ jeśli interwencja ręczna → pobierz parkomat
   if(!key){
     key = document.getElementById("deviceSelect").value;
   }
@@ -1545,16 +2599,12 @@ const user = window.currentUser
     return;
   }
 
-  // ✅ 🔥 KLUCZ – SPRAWDZENIE UPRAWNIEŃ
-  if(!hasAccessToParkomat(p)){
-    alert("❌ Brak uprawnień do tego parkomatu");
-    return;
-  }
-
-  const now = getLocalDateTime();
+  const now = new Date().toISOString();
+  const d = parseUTC(event.date);
 
   try{
 
+    // ✅ ZAPIS INTERWENCJI (KLUCZOWE)
     const { error } = await supabaseClient
       .from("interwencje2")
       .insert([{
@@ -1562,16 +2612,96 @@ const user = window.currentUser
         structure: p.structure,
         location: p.location,
         event_name: event.name,
-        start_date: formatDateForDB(parseLocalDate(event.date)),
+        start_date: d ? d.toISOString() : now,
         end_date: now,
+        user_id: window.currentUser.id,
         user_email: user,
-        actions: actions
+        actions: actions,
+        parts: parts,
+        hardware: event.hardware,
+        handled_spike: currentService?.event?.code === "INFO_SPAM"
       }]);
 
     if(error){
       console.error(error);
-      alert("❌ Błąd zapisu do Supabase");
+      alert("❌ Błąd zapisu");
       return;
+    }
+
+    const isInfoSpike = currentService?.event?.code === "INFO_SPAM";
+
+    // ===================================================
+    // ✅ NORMALNA AWARIA (ERROR)
+    // ===================================================
+    if(currentService.key && !isInfoSpike){
+
+      await supabaseClient
+        .from("active_events")
+        .delete()
+        .match({
+          id: p.id,
+          structure: p.structure,
+          event_code: event.code
+        });
+
+      await supabaseClient
+        .from("history_events")
+        .insert([{
+          id: p.id,
+          structure: p.structure,
+          event_name: event.name,
+          event_code: event.code,
+          hardware: event.hardware,
+          start_date: d ? d.toISOString() : now,
+          end_date: now
+        }]);
+    }
+
+    // ===================================================
+    // ✅ INFO_SPAM (KLUCZOWE — TWOJE PYTANIE)
+    // ===================================================
+    if(currentService.key && isInfoSpike){
+
+      // ✅ pobierz wszystkie INFO dla hardware
+      const { data: infoRows } = await supabaseClient
+        .from("active_events")
+        .select("date")
+        .match({
+          id: p.id,
+          structure: p.structure,
+          hardware: event.hardware
+        });
+
+      let startDate = d;
+
+      if(infoRows && infoRows.length > 0){
+        startDate = infoRows
+          .map(e => new Date(e.date))
+          .sort((a,b)=>a-b)[0];
+      }
+
+      // ✅ zapis JEDNEGO wpisu do historii
+      await supabaseClient
+        .from("history_events")
+        .insert([{
+          id: p.id,
+          structure: p.structure,
+          event_name: `INFO (${event.hardware}) – obsłużone`,
+          event_code: "INFO_SPAM",
+          hardware: event.hardware,
+          start_date: startDate ? startDate.toISOString() : now,
+          end_date: now
+        }]);
+
+      // ✅ USUNIĘCIE wszystkich INFO dla hardware
+      await supabaseClient
+        .from("active_events")
+        .delete()
+        .match({
+          id: p.id,
+          structure: p.structure,
+          hardware: event.hardware
+        });
     }
 
     // ✅ komunikat
@@ -1580,24 +2710,8 @@ const user = window.currentUser
     }else{
       alert("✅ Interwencja zapisana");
     }
-if(currentService.key){
 
-  try{
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        type: "close",
-        device_id: p.id,
-        structure: p.structure,
-        event_code: event.code,
-        date: event.date // ✅ KLUCZOWE
-      })
-    });
-  }catch(err){
-    console.error("Błąd zamykania awarii:", err);
-  }
-}
-    // ✅ usuwamy tylko jeśli to awaria
+     // ✅ UI cleanup
     if(currentService.key){
       activeEvents[key] = activeEvents[key].filter(e => e !== event);
 
@@ -1607,8 +2721,6 @@ if(currentService.key){
     }
 
     closeModal();
-
-    // ✅ refresh
     renderAll();
 
     if(currentService.key){
@@ -1621,94 +2733,153 @@ if(currentService.key){
     renderInterwencje();
 
   }catch(e){
-    alert("❌ Błąd zapisu");
     console.error(e);
+    alert("❌ Błąd operacji");
   }
 }
 
 /* ===== MAP + AUTO CENTER ===== */
 function renderMarkers(){
+markerLayer.clearLayers();
+  const nodes = getSelectedNodes();
 
-  const node=document.getElementById("nodeFilter").value;
-  markerLayer.clearLayers();
+  let points = [];
 
-  let points=[];
+  // ✅ PARKOMATY
+  Object.keys(activeEvents).forEach(key => {
 
- 
+    const p = allParkomaty[key];
+    if(!p) return;
+    if(nodes.length && !nodes.includes(getNode(p))) return;
 
-Object.keys(activeEvents).forEach(key => {
+    let popup = `<b>Parkomat ${p.id}</b><br>${p.location}<br><br>`;
 
-  const p = allParkomaty[key];
-  if(!p) return;
-  if(!hasAccessToParkomat(p)) return;
-  if(node && p.node!==node) return;
+    activeEvents[key].forEach(e => {
+      
+const isInfo = e.count > 1;
 
-  let popup = `<b>Parkomat ${p.id}</b><br>${p.location}<br><br>`;
+popup += `
+  • <b>${e.hardware || "Inne"}</b> – ${
+    isInfo
+      ? `ℹ️${e.name} (${e.count})`
+      : e.name
+  }<br>
+  <small>${formatDatePL(e.date)}</small><br>
+`;
 
+    });
+
+    popup += `
+      <br>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+         target="_blank"
+         style="background:#16a34a;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">
+         🧭 Nawiguj
+      </a>
+    `;
+
+    // ✅ sprawdzanie krytycznych kodów
+    const codes = activeEvents[key].map(e => (e.code ? String(e.code).trim() : ""));
+    const hasCritical = codes.some(code => RED_CODES.includes(code));
+
+    const icon = L.divIcon({
+      className: '',
+      html: `
+        <div style="
+          width:22px;
+          height:22px;
+          border-radius:50%;
+          background:${hasCritical ? '#dc2626' : '#16a34a'};
+          border:2px solid white;
+          box-shadow:0 0 8px rgba(0,0,0,0.6);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:12px;
+          color:white;
+          font-weight:bold;
+        ">
+          ${activeEvents[key].reduce((sum, e) => sum + (e.count || 1), 0)}
+        </div>
+      `
+    });
+
+    L.marker([p.lat, p.lng], { icon })
+      .bindPopup(popup)
+      .addTo(markerLayer);
+
+    // ✅ FIX (tu musi być p)
+    points.push([p.lat, p.lng]);
+  });
+
+  // ✅ 👤 LOKALIZACJE USERÓW
+  userLocations.forEach(u => {
+
+    if(window.currentUser?.role !== "admin"){
+      if(u.user_id !== window.currentUser?.id) return;
+    }
+
+    if(!u.lat || !u.lng){
+      console.log("❌ brak GPS:", u);
+      return;
+    }
+
+    const name = `${u.first_name || ""} ${u.last_name || ""}`;
+
+    const icon = L.divIcon({
+      className: '',
+      html: `
+        <div style="
+          width:18px;
+          height:18px;
+          border-radius:50%;
+          background:#3b82f6;
+          border:2px solid white;
+          box-shadow:0 0 6px black;
+        "></div>
+      `
+    });
+
+    if(!userMarkers[u.user_id]){
+
+  userMarkers[u.user_id] = L.marker([u.lat, u.lng], { icon })
+    .bindPopup(`
+      <b>👤 ${name.trim() || "User"}</b><br>
+    `)
+    .addTo(userLayer);
+
+}else{
+
+  userMarkers[u.user_id].setLatLng([u.lat, u.lng]); // ✅ przesunięcie zamiast resetu
+}
+
+    // ✅ FIX (tu musi być u, NIE p)
+    points.push([u.lat, u.lng]);
+  });
   
+Object.keys(userMarkers).forEach(id => {
 
-activeEvents[key].forEach(e=>{
-  popup+=`
-    • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
-    <small>${e.date}</small><br>
-  `;
+  const exists = userLocations.find(u => u.user_id === id);
 
-  });
+  if(!exists){
+    userLayer.removeLayer(userMarkers[id]);
+    delete userMarkers[id];
+  }
 
-  popup+=`
-    <br>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
-       target="_blank"
-       style="background:#16a34a;color:white;padding:6px 10px;border-radius:6px;text-decoration:none;">
-       🧭 Nawiguj
-    </a>
-  `;
-
-  // ✅ 👉 DODAJ TO TU
-  const codes = activeEvents[key].map(e => (e.code ? String(e.code).trim() : ""));
-  const hasCritical = codes.some(code => RED_CODES.includes(code));
-
-  // ✅ marker
-  const icon = L.divIcon({
-    className: '',
-    html: `
-      <div style="
-        width:22px;
-        height:22px;
-        border-radius:50%;
-        background:${hasCritical ? '#dc2626' : '#16a34a'};
-        border:2px solid white;
-        box-shadow:0 0 8px rgba(0,0,0,0.6);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:12px;
-        color:white;
-        font-weight:bold;
-      ">
-        ${activeEvents[key].length}
-      </div>
-    `
-  });
-
-  L.marker([p.lat,p.lng], { icon })
-    .bindPopup(popup)
-    .addTo(markerLayer);
-
-  points.push([p.lat,p.lng]);
 });
 
 
-  if(points.length===0){
+  // ✅ CENTROWANIE MAPY
+  if(points.length === 0){
     map.setView([52.2297,21.0122],6);
   }
-  else if(points.length===1){
+  else if(points.length === 1){
     map.setView(points[0],15);
   }
   else{
-    map.fitBounds(L.latLngBounds(points),{
-      padding:[50,50],
-      maxZoom:16
+    map.fitBounds(L.latLngBounds(points), {
+      padding: [50, 50],
+      maxZoom: 16
     });
   }
 }
@@ -1735,7 +2906,7 @@ function populateEventFilter(){
   const set=new Set();
 
   historyEvents.forEach(r=>{
-    if(r[5]) set.add(r[5]);
+    if(r.event_name) set.add(r.event_name);
   });
 
   document.getElementById("historyEventFilter").innerHTML=
@@ -1758,7 +2929,6 @@ function renderActiveList(){
 
     const p = allParkomaty[key];
     if(!p) return;
-    if(!hasAccessToParkomat(p)) return;
     const id = p.id;
 
     const filtered = activeEvents[key].filter(e => {
@@ -1770,7 +2940,7 @@ function renderActiveList(){
       
 
 
-const d = parseLocalDate(raw);
+const d = parseUTC(raw);
 if(!d) return false;
 
 
@@ -1782,7 +2952,7 @@ if(!raw || isNaN(d) || raw.length < 10) return false;
       
 // ✅ filtr OD (początek dnia)
 if(from){
-  const fromDate = new Date(from + "T00:00:00");
+  const fromDate = new Date(from + "T00:00:00Z");
 
   if(d < fromDate) return false;
 }
@@ -1790,7 +2960,7 @@ if(from){
 
       // ✅ filtr DO (cały dzień!)
       if(to){
-        const toDate = new Date(to + "T23:59:59");
+        const toDate = new Date(to + "T23:59:59Z");
         if(d > toDate) return false;
       }
 
@@ -1801,7 +2971,7 @@ if(from){
       if(event && e.name !== event) return false;
 
       // ✅ filtr po strefie
-      if(node && p.node !== node) return false;
+      if(node && getNode(p) !== node) return false;
 
       return true;
     });
@@ -1816,21 +2986,33 @@ if(from){
 
     
 filtered.forEach(e => {
-  html += `
-    • <b>${e.hardware || "Inne"}</b> – ${e.name}<br>
-    <small>${e.date}</small><br>
+  
+const isInfo = e.level === "Informacja";  
+html += `
+    • <b>${e.hardware || "Inne"}</b> – ${
+      isInfo
+        ? `${e.name} (${e.count})`
+        : e.name
+    }<br>
+    <small>${formatDatePL(e.date)}</small><br>
 
-    <button onclick="openServiceModal('${key}', ${JSON.stringify(e).replace(/"/g,'&quot;')})"
-      style="
-        margin-top:6px;
-        background:#2563eb;
-        color:white;
-        border:none;
-        padding:5px 8px;
-        border-radius:6px;
-      ">
-      🔧 Usuń awarię
-    </button>
+    
+<button 
+  class="fixBtn"
+  data-key="${key}"
+  data-event='${encodeURIComponent(JSON.stringify(e))}'
+  style="
+    margin-top:6px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:5px 8px;
+    border-radius:6px;
+  "
+>
+  🔧 Usuń awarię
+</button>
+
 
     <br><br>
   `;
@@ -1845,73 +3027,66 @@ html += `</div>`;
 
 /* ===== HISTORIA ===== */
 function renderHistoryList(){
+
   const node = document.getElementById("historyNodeFilter").value;
-  const from=document.getElementById("historyDateFrom").value;
-  const to=document.getElementById("historyDateTo").value;
-  const terminal = (document.getElementById("historyTerminalFilter").value || "").toLowerCase()
-  const event=document.getElementById("historyEventFilter").value;
+  const from = document.getElementById("historyDateFrom").value;
+  const to = document.getElementById("historyDateTo").value;
+  const terminal = (document.getElementById("historyTerminalFilter").value || "").toLowerCase();
+  const event = document.getElementById("historyEventFilter").value;
 
-  let html="";
+  let html = "";
 
-  
-historyEvents.forEach(r=>{
+  historyEvents.forEach(r => {
 
-  if(!r[0]) return;
+    const key = makeKey(r.id, r.structure);
+    const p = allParkomaty[key];
 
-  // ✅ NOWE – filtr po liście parkomatów
-  
-const key = makeKey(r[0], r[1]); // ✅ r[1] = structure
+    if(!p) return;
 
+    const id = r.id;
 
-const p = allParkomaty[key];
-if (!p) return;
-if(!hasAccessToParkomat(p)) return;
-if(node && p.node !== node) return;
+    // ✅ 🔥 NAPRAWA – filtr strefy
+    if(node && getNode(p) !== node) return;
 
+    if (terminal && !id.toLowerCase().includes(terminal)) return;
+    if (event && r.event_name !== event) return;
 
+    const d = parseUTC(r.start_date);
+    if (!d) return;
 
-  
-const raw = r[3];
+    if (from) {
+      const f = new Date(from + "T00:00:00Z");
+      if (d < f) return;
+    }
 
+    if (to) {
+      const t = new Date(to + "T23:59:59Z");
+      if (d > t) return;
+    }
 
-const d = parseLocalDate(raw);
-if(!d) return false;
+    html += `
+      <div class="terminal-box">
+        
+      <b>Parkomat ${id}</b><br>
 
+      <small style="color:#9ca3af;">
+        ${r.hardware || "Brak danych"}
+      </small><br>
 
-if(!raw || isNaN(d) || raw.length < 10) return;
+      <div class="event-name">
+        ${r.event_name}
+      </div>
 
+      Od: ${formatDatePL(r.start_date)}
+      Do: ${formatDatePL(r.end_date)}
 
-  
-if(from){
-  const f = new Date(from + "T00:00:00");
-  if(d < f) return;
+      </div>
+    `;
+  });
+
+  document.getElementById("historiaList").innerHTML = html;
 }
 
-  
-if(to){
-  const toDate = new Date(to + "T23:59:59");
-  if(d > toDate) return;
-}
-
-  if(terminal && !r[0].toLowerCase().includes(terminal)) return;
-  if(event && r[5]!==event) return;
-
-  html+=`
-    <div class="terminal-box">
-      <b>Parkomat ${r[0]}</b><br>
-      
-<div class="event-name">
-  ${r[5]} (${r[7]||""})
-</div>
-      Od: ${r[3]}<br>
-      Do: ${r[8]||""}
-    </div>
-  `;
-});
-
-
-  document.getElementById("historiaList").innerHTML=html;
-}
 /* ===== URZĄDZENIA ===== */
 function renderDevicesList(){
   const node = document.getElementById("deviceNodeFilter").value;
@@ -1928,7 +3103,6 @@ function renderDevicesList(){
   .forEach(p=>{
 
     // ✅ 🔥 NAJWAŻNIEJSZE – filtr uprawnień
-    if(!hasAccessToParkomat(p)) return;
 
     const text = `
       ${p.id}
@@ -1936,7 +3110,7 @@ function renderDevicesList(){
     `.toLowerCase();
 
     if(search && !text.includes(search)) return;
-    if(node && p.node !== node) return;
+    if(node && getNode(p) !== node) return;
 
     const key = makeKey(p.id, p.structure);
 
@@ -1958,7 +3132,7 @@ function renderDevicesList(){
         ${p.location}<br>
 
         <small style="color:#9ca3af;">
-          Strefa: ${p.node || "-"}
+          Strefa: ${getNode(p) || "-"}
         </small>
       </div>
 
@@ -2000,6 +3174,168 @@ function renderDevicesList(){
 
   document.getElementById("devicesList").innerHTML = html;
 }
+  function renderParkomatyAdminList(){
+
+  const box = document.getElementById("parkomatyList");
+
+  const search = (document.getElementById("parkomatSearch")?.value || "")
+    .toLowerCase()
+    .trim();
+
+  let filtered = Object.values(allParkomaty)
+    .sort((a,b)=>a.id.localeCompare(b.id));
+
+  // ✅ FILTR
+  if(search){
+    filtered = filtered.filter(p => {
+
+      const text = `${p.id} ${p.location}`.toLowerCase();
+
+      return text.includes(search);
+    });
+  }
+
+  let html = "";
+
+  filtered.forEach(p => {
+
+    html += `
+      <div class="terminal-box">
+
+        <b>${p.id}</b><br>
+        ${p.location}<br>
+
+        <small style="color:#9ca3af;">
+          ${p.node_2 || p.node}
+        </small><br>
+
+        <small>
+          ${p.lat}, ${p.lng}
+        </small><br><br>
+
+        <button onclick="openEditParkomat('${makeKey(p.id,p.structure)}')"
+          style="background:#2563eb;color:white;border:none;padding:6px 10px;border-radius:6px;">
+          ✏️ Edytuj
+        </button>
+
+      </div>
+    `;
+  });
+
+  if(filtered.length === 0){
+    html = `<div style="padding:10px;">❌ Brak wyników</div>`;
+  }
+
+  box.innerHTML = html;
+}
+  function openEditParkomat(key){
+
+  editingParkomatKey = key;
+
+  const p = allParkomaty[key];
+  if(!p) return;
+
+  document.getElementById("parkomatModalTitle").innerText = "✏️ Edytuj parkomat";
+
+  document.getElementById("pm_id").value = p.id;
+  document.getElementById("pm_id").disabled = true;
+  document.getElementById("pm_location").value = p.location;
+  document.getElementById("pm_node").value = p.node;
+  document.getElementById("pm_node2").value = p.node_2;
+  document.getElementById("pm_lat").value = p.lat;
+  document.getElementById("pm_lng").value = p.lng;
+  document.getElementById("pm_structure").value = p.structure;
+
+  document.getElementById("parkomatModal").style.display = "flex";
+}
+  function openAddParkomatModal(){
+
+  editingParkomatKey = null;
+
+  document.getElementById("parkomatModalTitle").innerText = "➕ Nowy parkomat";
+
+  document.getElementById("pm_id").value = "";
+  document.getElementById("pm_id").disabled = false;
+  document.getElementById("pm_location").value = "";
+  document.getElementById("pm_node").value = "";
+  document.getElementById("pm_node2").value = "";
+  document.getElementById("pm_lat").value = "";
+  document.getElementById("pm_lng").value = "";
+  document.getElementById("pm_structure").value = "";
+
+  document.getElementById("parkomatModal").style.display = "flex";
+}
+  async function saveParkomat(){
+
+  const obj = {
+    id: document.getElementById("pm_id").value.trim(),
+    location: document.getElementById("pm_location").value.trim(),
+    node: document.getElementById("pm_node").value.trim(),
+    node_2: document.getElementById("pm_node2").value.trim(),
+    lat: Number(document.getElementById("pm_lat").value),
+    lng: Number(document.getElementById("pm_lng").value),
+    structure: document.getElementById("pm_structure").value.trim()
+  };
+
+  
+if(!obj.id){
+  alert("❌ Brak numeru");
+  return;
+}
+
+if(isNaN(obj.lat) || isNaN(obj.lng)){
+  alert("❌ Lat/Lng muszą być liczbami");
+  return;
+}
+
+if(Math.abs(obj.lat) > 90 || Math.abs(obj.lng) > 180){
+  alert("❌ Nieprawidłowe współrzędne");
+  return;
+}
+
+
+  let error;
+
+  
+
+if (editingParkomatKey) {
+
+  const [origId] = editingParkomatKey.split("|");
+
+  const { data, error } = await supabaseClient
+    .from("parkomaty")
+    .update(obj)
+    .eq("id", origId)
+    .select();
+
+  console.log("UPDATE RESULT:", data);
+
+}
+
+
+else{
+  const { error } = await supabaseClient
+    .from("parkomaty")
+    .insert([obj]);
+}
+
+  if(error){
+    console.error(error);
+    alert("❌ Błąd zapisu");
+    return;
+  }
+
+  alert("✅ Zapisano");
+
+  closeParkomatModal();
+
+  await loadParkomaty();
+  renderParkomatyAdminList();
+}
+  function closeParkomatModal(){
+  document.getElementById("parkomatModal").style.display = "none";
+}
+
   function populateUserFilter(){
 
   const select = document.getElementById("interUserFilter");
@@ -2019,82 +3355,84 @@ function renderDevicesList(){
 
 function renderInterwencje(){
 
-  const terminal = (document.getElementById("interTerminalFilter").value || "").toLowerCase()
-  
-const userInput = document.getElementById("interUserFilter")?.value;
-const typeFilter = document.getElementById("interTypeFilter")?.value;
+  const terminal = (document.getElementById("interTerminalFilter").value || "").toLowerCase();
+  const from = document.getElementById("statsFrom").value;
+  const to = document.getElementById("statsTo").value;
+  const userInput = document.getElementById("interUserFilter")?.value;
+  const typeFilter = document.getElementById("interTypeFilter")?.value;
 
   let html = "";
 
   interwencje.forEach(i => {
 
-  const isAdmin = window.currentUser?.role === "admin";
+  const d = parseUTC(i.start_date);
+  if(!d) return;
 
-  // ✅ znajdź parkomat
-  const key = makeKey(i.device_id, i.structure);
-  const p = allParkomaty[key];
-
-  // ✅ 🔥 NAJPIERW: sprawdź czy parkomat istnieje
-  if(!p) return;
-
-  // ✅ 🔥 POTEM: sprawdź uprawnienia
-  if(!hasAccessToParkomat(p)) return;
-
-  // ✅ SERWIS widzi tylko swoje interwencje
-  if(!isAdmin){
-
-    const fullName =
-      (window.currentUser?.first_name || "") + " " +
-      (window.currentUser?.last_name || "");
-
-    if(i.user_email !== fullName.trim()) return;
+  if(from){
+    const f = new Date(from + "T00:00:00Z");
+    if(d < f) return;
   }
 
-  // ✅ filtr po numerze parkomatu
-  if(terminal && !(i.device_id || "").toLowerCase().includes(terminal)) return;
-
-  // ✅ filtr po userze (admin)
-  if(isAdmin && userInput && i.user_email !== userInput) return;
-
-// ✅ filtr po typie czynności
-if(typeFilter){
-
-  const actions = Array.isArray(i.actions)
-    ? i.actions
-    : (i.actions || "").split(",").map(s => s.trim());
-
-  const hasType = actions.some(a => {
-    const low = a.toLowerCase();
-
-    if(typeFilter === "wymiany") return low.startsWith("wymiana");
-    if(typeFilter === "operacje") return !low.startsWith("wymiana") && !low.includes("czyszczenie");
-    if(typeFilter === "serwis") return low.includes("czyszczenie");
-
-    return false;
-  });
-
-  if(!hasType) return;
-}
-const actions = Array.isArray(i.actions)? i.actions : (i.actions || "").split(",").map(s => s.trim());
-
-const grouped = {
-  wymiany: [],
-  operacje: [],
-  serwis: []
-};
-
-actions.forEach(a => {
-  const low = a.toLowerCase();
-
-  if (low.startsWith("wymiana")) {
-    grouped.wymiany.push(a.replace("Wymiana ", ""));
-  } else if (low.includes("czyszczenie")) {
-    grouped.serwis.push(a);
-  } else {
-    grouped.operacje.push(a);
+  if(to){
+    const t = new Date(to + "T23:59:59Z");
+    if(d > t) return;
   }
-});
-  html += `
+
+    const isAdmin = window.currentUser?.role === "admin";
+
+    const key = makeKey(i.device_id, i.structure);
+    const p = allParkomaty[key];
+
+    if(!p) return;
+
+    if(terminal && !(i.device_id || "").toLowerCase().includes(terminal)) return;
+    if(isAdmin && userInput && i.user_email !== userInput) return;
+
+    // ✅ ACTIONS
+    const actions = Array.isArray(i.actions)
+      ? i.actions
+      : (i.actions || "").split(",").map(s => s.trim());
+
+    // ✅ PARTS (NOWA LOGIKA)
+    let parts = [];
+
+    if(Array.isArray(i.parts)){
+      parts = i.parts;
+    }
+    else if(typeof i.parts === "object" && i.parts !== null){
+      parts = Object.values(i.parts);
+    }
+    else if(typeof i.parts === "string"){
+      try{
+        parts = JSON.parse(i.parts);
+      }catch{
+        parts = [i.parts];
+      }
+    }
+
+    // ✅ FILTR TYPU
+    if(typeFilter){
+      if(typeFilter === "wymiany" && parts.length === 0) return;
+      if(typeFilter === "operacje" && parts.length > 0) return;
+    }
+
+    // ✅ PODZIAŁ
+    const grouped = {
+      operacje: [],
+      serwis: []
+    };
+
+    actions.forEach(a => {
+      if(!a) return;
+
+      if(a.toLowerCase().includes("czyszczenie")){
+        grouped.serwis.push(a);
+      }else{
+        grouped.operacje.push(a);
+      }
+    });
+
+    html += `
     <div class="terminal-box">
 
       <b>Parkomat ${i.device_id}</b><br>
@@ -2103,51 +3441,31 @@ actions.forEach(a => {
       <b>${i.event_name}</b><br>
 
       <small>
-        Od: ${i.start_date}<br>
-        Do: ${i.end_date}
+        
+Od: ${formatDatePL(i.start_date)}
+Do: ${formatDatePL(i.end_date)}
+
       </small><br><br>
 
       👤 ${i.user_email}<br>
-      
-<div style="margin-top:8px;">
-  <b>🔧 Czynności:</b>
 
-  ${grouped.wymiany.length ? `
-    
-<div style="margin-top:6px;">
-  <b style="color:#60a5fa;">🔧 Wymiany:</b>
-  <ul style="margin:4px 0 8px 15px; padding:0;">
+      ${grouped.operacje.length ? `
+        <div><b>⚙️ Operacje:</b>
+          <ul>${grouped.operacje.map(a=>`<li>${a}</li>`).join("")}</ul>
+        </div>` : ""}
 
-        ${grouped.wymiany.map(a => `<li>${a}</li>`).join("")}
-      </ul>
-    </div>` : ""}
+      ${grouped.serwis.length ? `
+        <div><b>🧹 Serwis:</b>
+          <ul>${grouped.serwis.map(a=>`<li>${a}</li>`).join("")}</ul>
+        </div>` : ""}
 
-  ${grouped.operacje.length ? `
-    
-<div style="margin-top:6px;">
-  <b style="color:#34d399;">⚙️ Operacje:</b>
-  <ul style="margin:4px 0 8px 15px; padding:0;">
+      ${parts.length ? `
+        <div><b>🔧 Wymienione części:</b>
+          <ul>${parts.map(p=>`<li>${p}</li>`).join("")}</ul>
+        </div>` : ""}
 
-        ${grouped.operacje.map(a => `<li>${a}</li>`).join("")}
-      </ul>
-    </div>` : ""}
-
-  ${grouped.serwis.length ? `
-    
-<div style="margin-top:6px;">
-  <b style="color:#fbbf24;">🧹 Serwis:</b>
-  <ul style="margin:4px 0 8px 15px; padding:0;">
-
-        ${grouped.serwis.map(a => `<li>${a}</li>`).join("")}
-      </ul>
-    </div>` : ""}
-</div>
-
-
-    </div>
-  `;
-});
-
+    </div>`;
+  });
 
   document.getElementById("interwencjeList").innerHTML = html;
 }
@@ -2160,18 +3478,17 @@ actions.forEach(a => {
 
   interwencje.forEach(i => {
 
-    
-const d = parseLocalDate(i.start_date);
-if(!d) return;
+    const d = parseUTC(i.start_date);
+    if(!d) return;
 
-    // filtr czasu
+    // ✅ filtr dat
     if(from){
-      const f = new Date(from + "T00:00:00");
+      const f = new Date(from + "T00:00:00Z");
       if(d < f) return;
     }
 
     if(to){
-      const t = new Date(to + "T23:59:59");
+      const t = new Date(to + "T23:59:59Z");
       if(d > t) return;
     }
 
@@ -2187,25 +3504,43 @@ if(!d) return;
 
     stats[user].total++;
 
+    // ✅ ACTIONS (czynności)
     const actions = Array.isArray(i.actions)
       ? i.actions
       : (i.actions || "").split(",").map(s => s.trim());
 
-    actions.forEach(a => {
+    // ✅ PARTS (wymienione elementy)
+    let parts = [];
 
-      const low = a.toLowerCase();
-
-      // wszystkie czynności
-      stats[user].actions[a] = (stats[user].actions[a] || 0) + 1;
-
-      // wymiany
-      if(low.startsWith("wymiana")){
-        const item = a.replace("Wymiana ", "");
-        stats[user].wymiany[item] = (stats[user].wymiany[item] || 0) + 1;
+    if(Array.isArray(i.parts)){
+      parts = i.parts;
+    }
+    else if(typeof i.parts === "object" && i.parts !== null){
+      parts = Object.values(i.parts);
+    }
+    else if(typeof i.parts === "string"){
+      try{
+        parts = JSON.parse(i.parts);
+      }catch{
+        parts = [i.parts];
       }
+    }
+
+    // ✅ LICZENIE CZYNNOŚCI
+    actions.forEach(a => {
+      if(!a) return;
+      stats[user].actions[a] = (stats[user].actions[a] || 0) + 1;
     });
+
+    // ✅ 🔥 LICZENIE WYMIAN (TYLKO Z PARTS)
+    parts.forEach(p => {
+      if(!p) return;
+      stats[user].wymiany[p] = (stats[user].wymiany[p] || 0) + 1;
+    });
+
   });
 
+  // ✅ RENDER
   let html = "";
 
   Object.keys(stats).forEach(user => {
@@ -2223,7 +3558,7 @@ if(!d) return;
           ${Object.entries(s.wymiany)
             .sort((a,b)=>b[1]-a[1])
             .map(([k,v])=>`<li>${k}: ${v}</li>`)
-            .join("")}
+            .join("") || "<li>Brak</li>"}
         </ul>
 
         <b>⚙️ Wszystkie czynności:</b>
@@ -2231,7 +3566,7 @@ if(!d) return;
           ${Object.entries(s.actions)
             .sort((a,b)=>b[1]-a[1])
             .map(([k,v])=>`<li>${k}: ${v}</li>`)
-            .join("")}
+            .join("") || "<li>Brak</li>"}
         </ul>
 
       </div>
@@ -2244,13 +3579,32 @@ if(!d) return;
   /* ===== STATYSTYKI ===== */
 function showStats(){
 
-  const totalDevices = Object.keys(allParkomaty).length;
+  
+const nodes = getSelectedNodes();
 
-  const devicesWithAlarms = Object.keys(activeEvents).length;
 
+  let totalDevices = 0;
+  let devicesWithAlarms = 0;
   let totalAlarms = 0;
-  Object.values(activeEvents).forEach(arr=>{
-    totalAlarms += arr.length;
+
+  Object.keys(allParkomaty).forEach(key => {
+
+    const p = allParkomaty[key];
+    if(!p) return;
+
+    // ✅ filtr strefy
+    if(nodes.length && !nodes.includes(getNode(p))) return;
+
+    // ✅ filtr uprawnień
+
+    totalDevices++;
+
+    const alarms = activeEvents[key]?.length || 0;
+
+    if(alarms > 0){
+      devicesWithAlarms++;
+      totalAlarms += alarms;
+    }
   });
 
   alert(
@@ -2263,6 +3617,30 @@ function showStats(){
 🔥 Wszystkie awarie: ${totalAlarms}`
   );
 }
+function updateAlarmCounter(){
+
+  
+const nodes = getSelectedNodes();
+
+
+  let total = 0;
+  let devices = 0;
+
+  Object.keys(activeEvents).forEach(key => {
+
+    const p = allParkomaty[key];
+    if(!p) return;
+
+   if(nodes.length && !nodes.includes(getNode(p))) return;
+
+    devices++;
+    total += activeEvents[key].length;
+  });
+
+  document.getElementById("alarmCounter").innerText =
+    `${devices} / ${total}`;
+}
+  
 function setDateRange(type){
 
   const from = document.getElementById("statsFrom");
@@ -2299,6 +3677,7 @@ function setDateRange(type){
   }
 
   renderInterStats();
+  renderInterwencje();
 }
 
   
@@ -2308,22 +3687,86 @@ function renderAll(){
   renderActiveList();
   renderHistoryList();
   renderDevicesList();
+  updateAlarmCounter()
 }
 
 /* ===== INIT ===== */
+
 async function init(){
-  await loadParkomaty();
+  await loadUsers();          // ✅ MUSI być FIRST
+  await loadParkomaty();      // ✅ zależy od usera
   await loadActive();
   await loadHistory();
-  await loadServiceActions();
-  await loadTechnicians();
   await loadInterwencje();
-  await loadUsers();
+  await loadUserLocations();  // ✅ po users
+  await loadServiceActions();
+  await loadParts();
+  await loadTechnicians();
+
+
   populateUserFilter();
   populateActiveEventFilter();
   populateEventFilter();
+
   renderAdminPanel();
   renderAll();
+
+  // ✅ REALTIME (tylko raz)
+  if(!window.realtimeSubscribed){
+
+    // 🔴 ACTIVE EVENTS
+    supabaseClient
+      .channel('active_events_channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'active_events' },
+        () => refreshApp()
+      )
+      .subscribe();
+
+   // ✅ ✅ NOWE – GPS / USER LOCATIONS
+
+supabaseClient
+  .channel('user_locations_channel')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'user_locations'
+    },
+    (payload) => {
+
+      const newData = payload.new;
+      if(!newData) return;
+
+      const index = userLocations.findIndex(
+        u => u.user_id === newData.user_id
+      );
+
+      if(index !== -1){
+        // ✅ update istniejącego
+        userLocations[index] = {
+          ...userLocations[index],
+          ...newData
+        };
+      }else{
+        // ✅ nowy user
+        userLocations.push(newData);
+      }
+
+      renderMarkers(); // 🔥 NATYCHMIAST
+    }
+  )
+  .subscribe();
+
+
+
+    window.realtimeSubscribed = true;
+  }
+
+  // ✅ BACKUP (rzadko – nie spamuj)
+  setInterval(refreshApp, 300000); // 5 min zamiast 10
 }
 
 const hash = window.location.hash;
@@ -2376,26 +3819,83 @@ async function refreshApp(){
   const icon = document.getElementById("refreshIcon");
   if(icon) icon.innerText = "⏳";
 
-  await loadParkomaty();
-  await loadActive();
-  await loadHistory();
-  await loadInterwencje();
+  // ✅ 🔐 TU WSTAWIASZ
+  const { data: sessionData } = await supabaseClient.auth.getSession();
 
+  
+if(!sessionData.session){
+
+  // ✅ 🔥 DODAJ TO
+  
+if(window.currentUser){
+    await supabaseClient
+      .from("users")
+      .update({ is_online: false })
+      .eq("id", window.currentUser.id);
+  }
+
+  alert("🔒 Sesja wygasła");
+
+
+  isRefreshing = false;
+  logout();
+  return;
+}
+
+
+  const expiresAt = sessionData.session.expires_at * 1000;
+  if(Date.now() > expiresAt){
+    alert("🔒 Token wygasł");
+    isRefreshing = false;
+    logout();
+    return;
+  }
+
+  // ✅ RESZTA BEZ ZMIAN
+ 
+await loadUsers();
+await loadParkomaty();
+await loadActive();
+await loadHistory();
+await loadInterwencje();
+await loadUserLocations();
+
+  renderAdminPanel();
   renderAll();
 
-  if(icon) icon.innerText = "🔄";
+  populateActiveEventFilter();
+  populateEventFilter();
+  populateUserFilter();
 
+  // ✅ sprawdzenie czy admin wylogował usera
+  if(window.currentUser){
+
+    const { data, error } = await supabaseClient
+      .from("users")
+      .select("is_online")
+      .eq("id", window.currentUser.id)
+      .single();
+
+    if(!error && data && data.is_online === false){
+
+      alert("🔒 Sesja zakończona przez administratora");
+
+      isRefreshing = false;
+      logout();
+      return;
+    }
+  }
+
+  if(icon) icon.innerText = "🔄";
   isRefreshing = false;
 }
 
-let editingUserId = null;
 
 /* ===== LOAD USERS ===== */
 async function loadUsers(){
 
   const { data, error } = await supabaseClient
-    .from("users")
-    .select("*");
+    .from("users_status").select("*");
 
   if(error){
     console.error(error);
@@ -2408,41 +3908,68 @@ async function loadUsers(){
 /* ===== LIST ===== */
 function renderUsers(users){
 
-  document.getElementById("usersList").innerHTML = users.map(u => {
+  const html = users.map(u => {
 
     const fullName = `${u.first_name || ""} ${u.last_name || ""}`.trim();
+    const isOnline = u.session_status === "online";
+
+    const statusHtml = `
+      <small>
+        Status: ${u.is_active !== false ? "✅ aktywny" : "⛔ zablokowany"}
+        <br>
+        Online: ${
+          isOnline
+            ? '<span style="color:#16a34a;font-weight:bold;">🟢 ONLINE</span>'
+            : '<span style="color:#6b7280;">⚫ offline</span>'
+        }
+        <br>
+        <span style="color:#9ca3af;">
+          Ostatnio: ${u.last_seen ? formatDatePL(u.last_seen) : "-"}
+          <br>
+        </span>
+      </small>
+      <br><br>
+    `;
 
     return `
-    <div class="terminal-box">
+      <div class="terminal-box">
 
-      <b>${fullName || u.email}</b><br>
-      ${u.email}<br>
-      <small>Rola: ${u.role}</small><br>
-      <small>Status: ${u.is_active !== false ? "✅ aktywny" : "⛔ zablokowany"}</small><br><br>
+        <b>${fullName || u.email}</b><br>
+        ${u.email}<br>
+        <small>Rola: ${u.role}</small><br>
 
-      <button onclick="openEditUser('${u.id}')"
-        style="background:#2563eb;color:white;border:none;padding:6px 10px;border-radius:6px;">
-        ✏️ Edytuj
-      </button>
+        ${statusHtml}
 
-      <button onclick="toggleUser('${u.id}', ${u.is_active !== false})"
-        style="background:#f59e0b;color:white;border:none;padding:6px 10px;border-radius:6px;">
-        ${u.is_active !== false ? "🚫 Zablokuj" : "✅ Odblokuj"}
-      </button>
+        <button onclick="openEditUser('${u.id}')"
+          style="background:#2563eb;color:white;border:none;padding:6px 10px;border-radius:6px;">
+          ✏️ Edytuj
+        </button>
 
-      <button onclick="resetPassword('${u.email}')"
-        style="background:#7c3aed;color:white;border:none;padding:6px 10px;border-radius:6px;">
-        🔑 Hasło
-      </button>
+        <button onclick="forceLogout('${u.id}')"
+          style="background:#f59e0b;color:white;border:none;padding:6px 10px;border-radius:6px;">
+          🔌 Wyloguj
+        </button>
 
-      <button onclick="deleteUser('${u.id}')"
-        style="background:#dc2626;color:white;border:none;padding:6px 10px;border-radius:6px;">
-        🗑️ Usuń
-      </button>
+        <button onclick="toggleUser('${u.id}', ${u.is_active !== false})"
+          style="background:#f59e0b;color:white;border:none;padding:6px 10px;border-radius:6px;">
+          ${u.is_active !== false ? "🚫 Zablokuj" : "✅ Odblokuj"}
+        </button>
 
-    </div>
+        <button onclick="resetPassword('${u.email}')"
+          style="background:#7c3aed;color:white;border:none;padding:6px 10px;border-radius:6px;">
+          🔑 Hasło
+        </button>
+
+        <button onclick="deleteUser('${u.id}')"
+          style="background:#dc2626;color:white;border:none;padding:6px 10px;border-radius:6px;">
+          🗑️ Usuń
+        </button>
+
+      </div>
     `;
   }).join("");
+
+  document.getElementById("usersList").innerHTML = html;
 }
 
 /* ===== EDIT OPEN ===== */
@@ -2451,7 +3978,7 @@ async function openEditUser(id){
   editingUserId = id;
 
   const { data } = await supabaseClient
-    .from("users")
+    .from("users_status")
     .select("*")
     .eq("id", id)
     .single();
@@ -2460,31 +3987,66 @@ async function openEditUser(id){
   document.getElementById("editLastName").value = data.last_name || "";
   document.getElementById("editRole").value = data.role;
 
-  const structures = [...new Set(
-    Object.values(allParkomaty).map(p => p.structure)
-  )];
+  // ✅ MAPA jak przy dodawaniu
+  const map = {};
 
-  document.getElementById("editStructures").innerHTML =
-    structures.map(s => `
-      <label>
-        <input type="checkbox" value="${s}"
-        ${data.structures?.includes(s) ? "checked" : ""}>
-        ${s}
-      </label>
-    `).join("");
+  Object.values(allParkomaty).forEach(p => {
 
-  const nodes = [...new Set(
-    Object.values(allParkomaty).map(p => p.node).filter(Boolean)
-  )];
+    const main = p.node_2 || p.node;
+    const sub = p.node;
 
-  document.getElementById("editNodes").innerHTML =
-    nodes.map(n => `
-      <label>
-        <input type="checkbox" value="${n}"
-        ${data.nodes?.includes(n) ? "checked" : ""}>
-        ${n}
-      </label>
-    `).join("");
+    if(!main) return;
+
+    if(!map[main]){
+      map[main] = new Set();
+    }
+
+    if(sub){
+      map[main].add(sub);
+    }
+  });
+
+  // ✅ GENEROWANIE IDENTYCZNEGO UI
+  const html = Object.keys(map).sort().map(struct => {
+
+    const nodes = [...map[struct]].sort();
+
+    const structChecked = (data.structures || []).includes(struct);
+
+    return `
+    <div class="struct-box">
+
+      <div class="struct-header" onclick="toggleStruct(this)">
+        <input type="checkbox"
+               class="editStructCheck"
+               value="${struct}"
+               ${structChecked ? "checked" : ""}>
+        <b>${struct}</b>
+        <span class="arrow">▶</span>
+      </div>
+
+      <div class="node-list hidden">
+        ${nodes.map(n => {
+          const checked = (data.nodes || []).includes(n);
+
+          return `
+            <label>
+              <input type="checkbox"
+                     class="editNodeCheck"
+                     data-struct="${struct}"
+                     value="${n}"
+                     ${checked ? "checked" : ""}>
+              <span>${n}</span>
+            </label>
+          `;
+        }).join("")}
+      </div>
+
+    </div>
+    `;
+  }).join("");
+
+  document.getElementById("editStructures").innerHTML = html;
 
   document.getElementById("editUserModal").style.display="flex";
 }
@@ -2496,11 +4058,24 @@ async function saveUserEdit(){
   const last = document.getElementById("editLastName").value;
   const role = document.getElementById("editRole").value;
 
-  const structures = [...document.querySelectorAll("#editStructures input:checked")]
-    .map(el => el.value);
+  
 
-  const nodes = [...document.querySelectorAll("#editNodes input:checked")]
-    .map(el => el.value);
+const selectedStructs = new Set(
+  [...document.querySelectorAll(".editStructCheck:checked")]
+    .map(el => el.value)
+);
+
+document.querySelectorAll(".editNodeCheck:checked").forEach(el => {
+  selectedStructs.add(el.dataset.struct);
+});
+
+const structures = [...selectedStructs];
+
+const nodes = [
+  ...document.querySelectorAll(".editNodeCheck:checked")
+].map(el => el.value);
+
+
 
   await supabaseClient
     .from("users")
@@ -2624,7 +4199,300 @@ async function saveNewPassword(){
   }
 }
 
+function toggleStruct(el){
 
+  const list = el.nextElementSibling;
+  const arrow = el.querySelector(".arrow");
+
+  list.classList.toggle("hidden");
+
+  arrow.textContent = list.classList.contains("hidden") ? "▶" : "▼";
+}
+async function addPart(){
+
+  const name = document.getElementById("newPart").value.trim();
+
+  if(!name){
+    alert("❌ Podaj nazwę");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("parts")
+    .insert([{ name }]);
+
+  if(error){
+    alert("❌ Błąd");
+    return;
+  }
+
+  document.getElementById("newPart").value = "";
+
+  await loadParts();
+  renderParts();
+}
+function renderParts(){
+
+  const box = document.getElementById("partsList");
+
+  box.innerHTML = serviceParts.map(p => `
+    <div class="terminal-box">
+
+      ${p}
+
+      <button onclick="deletePart('${p}')"
+        style="float:right;background:#dc2626;color:white;border:none;padding:4px 8px;border-radius:6px;">
+        🗑️
+      </button>
+
+    </div>
+  `).join("");
+}
+async function deletePart(name){
+
+  if(!confirm("Usunąć część?")) return;
+
+  await supabaseClient
+    .from("parts")
+    .delete()
+    .eq("name", name);
+
+  await loadParts();
+  renderParts();
+}
+  async function addAction(){
+
+  const name = document.getElementById("newAction").value.trim();
+
+  if(!name){
+    alert("❌ Podaj nazwę");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("actions")
+    .insert([{ name }]);
+
+  if(error){
+    alert("❌ Błąd");
+    return;
+  }
+
+  document.getElementById("newAction").value = "";
+
+  await loadServiceActions();
+  renderActions();
+}
+  function renderActions(){
+
+  const box = document.getElementById("actionsList");
+
+  box.innerHTML = serviceActions.map(a => `
+    <div class="terminal-box">
+
+      ${a}
+
+      <button onclick="deleteAction('${a}')"
+        style="float:right;background:#dc2626;color:white;border:none;padding:4px 8px;border-radius:6px;">
+        🗑️
+      </button>
+
+    </div>
+  `).join("");
+}
+  async function deleteAction(name){
+
+  if(!confirm("Usunąć czynność?")) return;
+
+  await supabaseClient
+    .from("actions")
+    .delete()
+    .eq("name", name);
+
+  await loadServiceActions();
+  renderActions();
+}
+  
+setInterval(async () => {
+
+  if(!window.currentUser) return;
+
+  await supabaseClient
+    .from("users")
+    .update({
+      last_seen: new Date().toISOString()
+    })
+    .eq("id", window.currentUser.id);
+
+}, 60000);
+async function forceLogout(userId){
+
+  if(!confirm("Wylogować użytkownika?")) return;
+
+  const { error } = await supabaseClient
+    .from("users")
+    .update({
+      is_online: false
+    })
+    .eq("id", userId);
+
+  if(error){
+    console.error(error);
+    alert("❌ Błąd");
+    return;
+  }
+
+  alert("✅ Użytkownik wylogowany");
+
+  loadUsers();
+}
+  function renderNodeFilter(nodes){
+  const box = document.getElementById("nodeOptions");
+
+  box.innerHTML = nodes.map(n => `
+    <label>
+      <input type="checkbox" value="${n}" onchange="updateNodeSelection()">
+      ${n}
+    </label>
+  `).join('');
+
+  updateNodeSelection();
+}
+  
+function getSelectedNodes(){
+  return [...document.querySelectorAll("#nodeOptions input:checked")]
+    .map(i => i.value);
+}
+function toggleNodeDropdown(){
+  document.getElementById("nodeOptions").classList.toggle("hidden");
+}
+
+// zamknij po kliknięciu poza
+document.addEventListener("click", (e)=>{
+  const el = document.getElementById("nodeMultiSelect");
+  if(!el.contains(e.target)){
+    document.getElementById("nodeOptions").classList.add("hidden");
+  }
+});
+  function updateNodeSelection(){
+
+  const selected = [...document.querySelectorAll("#nodeOptions input:checked")]
+    .map(i => i.value);
+
+  const label = document.getElementById("nodeSelectedText");
+
+  if(selected.length === 0){
+    label.innerText = "Wszystkie strefy";
+  }
+  else if(selected.length <= 2){
+    label.innerText = selected.join(", ");
+  }
+  else{
+    label.innerText = `${selected.length} wybranych`;
+  }
+
+  renderAll(); // 🔥 od razu filtruj
+}
+  let geoStarted = false;
+
+function startGeoTracking(){
+
+  if(!window.currentUser?.location_consent) return;
+  if(!navigator.geolocation) return;
+
+  if(geoStarted) return;   // ✅ zostaje
+  geoStarted = true;
+
+  navigator.geolocation.watchPosition(
+
+    async pos => {
+
+      const { latitude, longitude } = pos.coords;
+
+      
+await supabaseClient
+  .from("user_locations")
+  .upsert({
+    user_id: window.currentUser.id,
+    lat: latitude,
+    lng: longitude,
+    updated_at: new Date().toISOString(),
+  });
+
+
+      console.log("📍 GPS:", latitude, longitude);
+    },
+
+    err => {
+      console.error("GPS ERROR:", err);
+    },
+
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 10000
+    }
+  );
+}
+  async function acceptRodo(){
+
+  const checked = document.getElementById("rodoCheck").checked;
+
+  if(!checked){
+    alert("❌ Musisz zaznaczyć zgodę");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("users")
+    .update({
+      location_consent: true
+    })
+    .eq("id", window.currentUser.id);
+
+  if(error){
+    console.error(error);
+    alert("❌ Błąd zapisu zgody");
+    return;
+  }
+
+  // ✅ zapisz lokalnie (ważne!)
+  window.currentUser.location_consent = true;
+
+  // ✅ zamknij popup
+  document.getElementById("rodoModal").style.display = "none";
+
+  // ✅ start GPS
+  startGeoTracking();
+
+  console.log("✅ RODO zaakceptowane");
+}
+  async function revokeConsent(){
+
+  await supabaseClient
+    .from("users")
+    .update({ location_consent: false })
+    .eq("id", window.currentUser.id);
+
+  await supabaseClient
+    .from("user_locations")
+    .delete()
+    .eq("user_id", window.currentUser.id);
+
+  alert("📍 Zgoda cofnięta");
+
+  location.reload();
+}
+  document.addEventListener("click", (ev) => {
+
+  const btn = ev.target.closest(".fixBtn");
+  if(!btn) return;
+
+  const key = btn.dataset.key;
+  const event = JSON.parse(decodeURIComponent(btn.dataset.event));
+
+  openServiceModal(key, event);
+});
 
 </script>
 
