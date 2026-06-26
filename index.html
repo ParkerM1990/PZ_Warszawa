@@ -2469,11 +2469,14 @@ partsBox.innerHTML = serviceParts.map(p => `
 
     <label>
       
+
 <input 
-  typep.name}"  type="checkbox" 
+  type="checkbox"
+  value="${p.name}"
   data-serial="${p.serial_number}"
   onchange="toggleSerialInput(this, '${p.serial_number}')"
 >
+
 
       ${p.name}
     </label>
@@ -2538,11 +2541,14 @@ partsBox.innerHTML = serviceParts.map(p => `
 
     <label>
       
+
 <input 
-  typep.name}"  type="checkbox" 
+  type="checkbox"
+  value="${p.name}"
   data-serial="${p.serial_number}"
   onchange="toggleSerialInput(this, '${p.serial_number}')"
 >
+
 
       ${p.name}
     </label>
@@ -4586,24 +4592,52 @@ function scanBarcode(btn){
   container.style.background = "black";
   container.style.zIndex = "9999";
 
+  // ✅ przycisk zamknij
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "❌ Zamknij";
+  closeBtn.style.position = "absolute";
+  closeBtn.style.top = "20px";
+  closeBtn.style.right = "20px";
+  closeBtn.style.padding = "10px";
+  closeBtn.style.zIndex = "10000";
+  closeBtn.style.background = "red";
+  closeBtn.style.color = "white";
+  closeBtn.style.border = "none";
+  closeBtn.style.borderRadius = "8px";
+
+  container.appendChild(closeBtn);
+
   document.body.appendChild(container);
 
   const html5QrCode = new Html5Qrcode("scanner");
 
   html5QrCode.start(
     { facingMode: "environment" },
-    {},
+    {
+      fps: 10,
+      qrbox: { width: 250, height: 100 }
+    },
     (decodedText) => {
 
-      html5QrCode.stop();
-      container.remove();
+      html5QrCode.stop().then(() => {
+        container.remove();
+      });
 
       const input = btn.parentElement.querySelector(".serialInput");
       input.value = decodedText;
 
     },
-    () => {}
+    (error) => {
+      // możesz zostawić pusty
+    }
   );
+
+  // ✅ zamknięcie ręczne
+  closeBtn.onclick = () => {
+    html5QrCode.stop().then(() => {
+      container.remove();
+    });
+  };
 }
 
   
