@@ -823,6 +823,24 @@ input[type="date"] {
 #partsBox > div:hover {
   background: #1f2937;
 }
+.switch-btn {
+  background: #374151;   /* domyślny (jak Lista) */
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  margin: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.switch-btn:hover {
+  background: #4b5563;
+}
+
+.switch-btn.active {
+  background: #1d4ed8;   /* 🔵 aktywny */
+}
 
 
 </style>
@@ -1200,27 +1218,18 @@ input[type="date"] {
   ">
     ➕ Dodaj interwencję
   </button>
-  <button onclick="renderInterStats()" style="
-  background:#1d4ed8;
-  color:white;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  margin:10px;
-">
+  <button id="statsBtn"
+  class="switch-btn"
+  onclick="switchInterView('stats')">
   📊 Statystyki
 </button>
 
-<button onclick="renderInterwencje()" style="
-  background:#374151;
-  color:white;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  margin:10px;
-">
+<button id="listBtn"
+  class="switch-btn active"
+  onclick="switchInterView('list')">
   📋 Lista
 </button>
+
 
 <div id="interwencjeList"></div>
 </div>
@@ -2479,8 +2488,9 @@ function showSection(id){
   if(finalId==="mapSection"){
     setTimeout(()=>map.invalidateSize(),200);
   }
-  if(finalId === "interwencjeSection"){
-  renderInterwencje();
+  
+if(finalId === "interwencjeSection"){
+  switchInterView('list');
 }
 }
 function setActiveNav(btn){
@@ -4749,6 +4759,25 @@ function stopScanner(html5QrCode, container){
 
       if(container) container.remove();
     });
+}
+function switchInterView(view){
+
+  const statsBtn = document.getElementById("statsBtn");
+  const listBtn = document.getElementById("listBtn");
+
+  // usuń aktywność
+  statsBtn.classList.remove("active");
+  listBtn.classList.remove("active");
+
+  if(view === "stats"){
+    statsBtn.classList.add("active");
+    renderInterStats();
+  }
+
+  if(view === "list"){
+    listBtn.classList.add("active");
+    renderInterwencje();
+  }
 }
 
   
