@@ -4671,16 +4671,17 @@ video.style.height = "100%";
 
  
 
-codeReader.decodeFromVideoDevice(
+
+codeReader.decodeFromConstraints(
   {
-    facingMode: { ideal: "environment" },
-    width: { ideal: 1920 },
-    height: { ideal: 1080 }
+    video: {
+      facingMode: { ideal: "environment" },
+      width: { ideal: 1920 },
+      height: { ideal: 1080 }
+    }
   },
   video,
-  async (result, err) => {
-
-
+  (result, err) => {
     if(result){
 
       console.log("✅ SCAN:", result.text);
