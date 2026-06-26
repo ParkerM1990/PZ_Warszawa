@@ -4663,7 +4663,16 @@ function scanBarcode(btn){
 
   let stopped = false;
 
-  codeReader.decodeFromVideoDevice(null, video, (result, err) => {
+ 
+codeReader.decodeFromVideoDevice(
+  {
+    facingMode: { ideal: "environment" },
+    width: { ideal: 1920 },
+    height: { ideal: 1080 }
+  },
+  video,
+  async (result, err) => {
+
 
     if(result){
 
