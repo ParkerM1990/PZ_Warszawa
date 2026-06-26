@@ -4591,6 +4591,7 @@ function scanBarcode(btn){
   container.style.zIndex = "99999";
 
   const video = document.createElement("video");
+  video.setAttribute("playsinline", true); // ✅ ważne na iOS
   video.style.width = "100%";
   video.style.height = "100%";
 
@@ -4617,21 +4618,55 @@ function scanBarcode(btn){
 
   let stopped = false;
 
-  codeReader.decodeFromVideoDevice(null, video, (result) => {
+  codeReader.decodeFromVideoDevice(null, video, (result, err) => {
 
     if(result){
-      console.log("✅ BARCODE:", result.text);
 
+      console.log("✅ SCAN:", result.text);
+
+      // ✅ wpisz do pola
       const input = btn.parentElement.querySelector(".serialInput");
       input.value = result.text;
+
+      // ✅ 🔊 DŹWIĘK
+      const beep = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+      beep.play().catch(()=>{});
+
+      // ✅ 📳 WIBRACJA (telefon)
+      if(navigator.vibrate){
+        navigator.vibrate(200);
+      }
 
       stop();
     }
   });
 
+  // ✅ AUTO FOCUS (próba co 1s)
+  const focusInterval = setInterval(async () => {
+
+    try{
+      const track = video.srcObject?.getVideoTracks()[0];
+      if(!track) return;
+
+      const capabilities = track.getCapabilities?.();
+      
+      if(capabilities && capabilities.focusMode){
+        await track.applyConstraints({
+          advanced: [{ focusMode: "continuous" }]
+        });
+      }
+
+    }catch(e){
+      // ignoruj błędy (nie każda kamera wspiera)
+    }
+
+  }, 1000);
+
   function stop(){
     if(stopped) return;
     stopped = true;
+
+    clearInterval(focusInterval);
 
     codeReader.reset();
     container.remove();
