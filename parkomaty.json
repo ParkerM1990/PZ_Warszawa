@@ -5385,7 +5385,7 @@
   },
   {
     "id": "11100923",
-    "location": "ul. E. Konopczyńskiego",
+    "location": "ul. E. Konopczy��skiego",
     "lng": 21.02101782,
     "lat": 52.23685665,
     "node": "Sródmiescie - Bilon+karta",
@@ -10381,7 +10381,7 @@
     "lng": 21.01042325,
     "lat": 52.21128697,
     "node": "Mokotów - Karta",
-    "structure": "Mokot��w - Karta"
+    "structure": "Mokotów - Karta"
   },
   {
     "id": "15040201",
@@ -14673,7 +14673,7 @@
   },
   {
     "id": "17170901",
-    "location": "ul. Pańska",
+    "location": "ul. Pa��ska",
     "lng": 20.99632431,
     "lat": 52.23208622,
     "node": "Wola - Karta",
