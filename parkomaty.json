@@ -3933,7 +3933,7 @@
     "lng": 21.03416935,
     "lat": 52.25253143,
     "node": "Praga-Pólnoc - Bilon+karta",
-    "structure": "Praga-P��lnoc - Bilon+karta"
+    "structure": "Praga-Pólnoc - Bilon+karta"
   },
   {
     "id": "13070709",
@@ -5385,7 +5385,7 @@
   },
   {
     "id": "11100923",
-    "location": "ul. E. Konopczy��skiego",
+    "location": "ul. E. Konopczyńskiego",
     "lng": 21.02101782,
     "lat": 52.23685665,
     "node": "Sródmiescie - Bilon+karta",
@@ -10276,7 +10276,7 @@
     "location": "ul. Chocimska 9",
     "lng": 21.02356165,
     "lat": 52.2088836,
-    "node": "Mokotów - Karta",
+    "node": "Mokot��w - Karta",
     "structure": "Mokotów - Karta"
   },
   {
@@ -14673,7 +14673,7 @@
   },
   {
     "id": "17170901",
-    "location": "ul. Pa��ska",
+    "location": "ul. Pańska",
     "lng": 20.99632431,
     "lat": 52.23208622,
     "node": "Wola - Karta",
