@@ -5372,7 +5372,7 @@
     "location": "ul. Świętokrzyska 3",
     "lng": 21.01858052,
     "lat": 52.23703136,
-    "node": "Sr��dmiescie - Bilon+karta",
+    "node": "Sródmiescie - Bilon+karta",
     "structure": "Sródmiescie - Bilon+karta"
   },
   {
@@ -6573,7 +6573,7 @@
     "lng": 21.0355346,
     "lat": 52.23370431,
     "node": "Sródmiescie - Bilon+karta",
-    "structure": "Sr��dmiescie - Bilon+karta"
+    "structure": "Sródmiescie - Bilon+karta"
   },
   {
     "id": "11101415",
@@ -10388,7 +10388,7 @@
     "location": "ul. S. Batorego 35",
     "lng": 21.00908475,
     "lat": 52.21081404,
-    "node": "Mokot��w - Bilon+karta",
+    "node": "Mokotów - Bilon+karta",
     "structure": "Mokotów - Bilon+karta"
   },
   {
@@ -11665,7 +11665,7 @@
   },
   {
     "id": "15040618",
-    "location": "ul. J. Dąbrowskiego 118",
+    "location": "ul. J. D��browskiego 118",
     "lng": 21.002757826,
     "lat": 52.1991851970001,
     "node": "Mokotów - Karta",
