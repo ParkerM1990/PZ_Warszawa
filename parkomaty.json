@@ -4613,7 +4613,7 @@
     "lng": 21.02137715,
     "lat": 52.23240039,
     "node": "Sródmiescie - Karta",
-    "structure": "Sródmiescie - Karta"
+    "structure": "Sr��dmiescie - Karta"
   },
   {
     "id": "11101106",
@@ -5845,7 +5845,7 @@
     "lng": 21.01885288,
     "lat": 52.2453718,
     "node": "Sródmiescie - Karta",
-    "structure": "Sr��dmiescie - Karta"
+    "structure": "Sródmiescie - Karta"
   },
   {
     "id": "11100536",
@@ -6833,7 +6833,7 @@
   },
   {
     "id": "11101225",
-    "location": "ul. ��urawia 36",
+    "location": "ul. Żurawia 36",
     "lng": 21.01373248,
     "lat": 52.22816929,
     "node": "Ochota - Bilon+karta",
@@ -14772,7 +14772,7 @@
     "location": "ul. Kazimierzowska 60",
     "lng": 21.01405078,
     "lat": 52.20536509,
-    "node": "Mokotów - Karta",
+    "node": "Mokot��w - Karta",
     "structure": "Mokotów - Karta"
   },
   {
@@ -15372,7 +15372,7 @@
     "location": "ul. Puławska 87/89",
     "lng": 21.02397756,
     "lat": 52.20054551,
-    "node": "Mokot��w - Bilon+karta",
+    "node": "Mokotów - Bilon+karta",
     "structure": "Mokotów - Bilon+karta"
   },
   {
