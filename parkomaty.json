@@ -4861,7 +4861,7 @@
     "lng": 21.01901458,
     "lat": 52.23577838,
     "node": "Sródmiescie - Karta",
-    "structure": "Sr��dmiescie - Karta"
+    "structure": "Sródmiescie - Karta"
   },
   {
     "id": "11100612",
@@ -5244,7 +5244,7 @@
     "location": "ul. Boczna 1",
     "lng": 21.01622431,
     "lat": 52.24625319,
-    "node": "Sr��dmiescie - Karta",
+    "node": "Sródmiescie - Karta",
     "structure": "Sródmiescie - Karta"
   },
   {
@@ -6321,7 +6321,7 @@
   },
   {
     "id": "11100717",
-    "location": "ul. ��więtokrzyska",
+    "location": "ul. Świ��tokrzyska",
     "lng": 21.0055983,
     "lat": 52.23447623,
     "node": "Ochota - Karta",
@@ -17633,7 +17633,7 @@
   },
   {
     "id": "16050504",
-    "location": "ul. Szczę��liwicka 41",
+    "location": "ul. Szczęśliwicka 41",
     "lng": 20.96733153,
     "lat": 52.21259599,
     "node": "Ochota - Karta",
