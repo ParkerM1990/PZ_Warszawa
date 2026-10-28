@@ -4861,7 +4861,7 @@
     "lng": 21.01901458,
     "lat": 52.23577838,
     "node": "Sródmiescie - Karta",
-    "structure": "Sródmiescie - Karta"
+    "structure": "Sr��dmiescie - Karta"
   },
   {
     "id": "11100612",
@@ -5244,7 +5244,7 @@
     "location": "ul. Boczna 1",
     "lng": 21.01622431,
     "lat": 52.24625319,
-    "node": "Sródmiescie - Karta",
+    "node": "Sr��dmiescie - Karta",
     "structure": "Sródmiescie - Karta"
   },
   {
@@ -6321,7 +6321,7 @@
   },
   {
     "id": "11100717",
-    "location": "ul. Świętokrzyska",
+    "location": "ul. ��więtokrzyska",
     "lng": 21.0055983,
     "lat": 52.23447623,
     "node": "Ochota - Karta",
@@ -16665,7 +16665,7 @@
   },
   {
     "id": "16050265",
-    "location": "ul. Gr��jecka 79",
+    "location": "ul. Grójecka 79",
     "lng": 20.97775935,
     "lat": 52.21207041,
     "node": "Ochota - Bilon+karta",
@@ -17633,7 +17633,7 @@
   },
   {
     "id": "16050504",
-    "location": "ul. Szczęśliwicka 41",
+    "location": "ul. Szczę��liwicka 41",
     "lng": 20.96733153,
     "lat": 52.21259599,
     "node": "Ochota - Karta",
@@ -17749,7 +17749,7 @@
     "lng": 21.0140756120001,
     "lat": 52.1981704790001,
     "node": "Mokotów - Bilon+karta",
-    "structure": "Mokot��w - Bilon+karta"
+    "structure": "Mokotów - Bilon+karta"
   },
   {
     "id": "15040449",
