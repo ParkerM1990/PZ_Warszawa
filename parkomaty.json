@@ -6076,7 +6076,7 @@
     "location": "ul. L. Kruczkowskiego 12B",
     "lng": 21.02839299,
     "lat": 52.23579489,
-    "node": "Sródmiescie - Karta",
+    "node": "Sr��dmiescie - Karta",
     "structure": "Sródmiescie - Karta"
   },
   {
@@ -7821,7 +7821,7 @@
     "lng": 21.03496291,
     "lat": 52.23103646,
     "node": "Sródmiescie - Bilon+karta",
-    "structure": "Sródmiescie - Bilon+karta"
+    "structure": "Sr��dmiescie - Bilon+karta"
   },
   {
     "id": "11101828",
@@ -8205,7 +8205,7 @@
     "lng": 21.02288422,
     "lat": 52.23239571,
     "node": "Sródmiescie - Bilon+karta",
-    "structure": "Sródmiescie - Bilon+karta"
+    "structure": "Sr��dmiescie - Bilon+karta"
   },
   {
     "id": "11101735",
@@ -9380,7 +9380,7 @@
     "location": "ul. A. Naruszewicza 10",
     "lng": 21.0221687260001,
     "lat": 52.191678698,
-    "node": "Mokotów - Bilon+karta",
+    "node": "Mokot��w - Bilon+karta",
     "structure": "Mokotów - Bilon+karta"
   },
   {
@@ -9908,7 +9908,7 @@
     "location": "ul. A. Naruszewicza 6",
     "lng": 21.0232317470001,
     "lat": 52.191872974,
-    "node": "Mokotów - Karta",
+    "node": "Mokot��w - Karta",
     "structure": "Mokotów - Karta"
   },
   {
@@ -10388,7 +10388,7 @@
     "location": "ul. S. Batorego 35",
     "lng": 21.00908475,
     "lat": 52.21081404,
-    "node": "Mokot��w - Bilon+karta",
+    "node": "Mokotów - Bilon+karta",
     "structure": "Mokotów - Bilon+karta"
   },
   {
@@ -14773,7 +14773,7 @@
     "lng": 21.01405078,
     "lat": 52.20536509,
     "node": "Mokotów - Karta",
-    "structure": "Mokot��w - Karta"
+    "structure": "Mokotów - Karta"
   },
   {
     "id": "15040236",
@@ -17145,7 +17145,7 @@
   },
   {
     "id": "17170217",
-    "location": "ul. Żytnia 42",
+    "location": "ul. ��ytnia 42",
     "lng": 20.97329601,
     "lat": 52.23922868,
     "node": "Wola - Bilon+karta",
