@@ -7821,7 +7821,7 @@
     "lng": 21.03496291,
     "lat": 52.23103646,
     "node": "Sródmiescie - Bilon+karta",
-    "structure": "Sr��dmiescie - Bilon+karta"
+    "structure": "Sródmiescie - Bilon+karta"
   },
   {
     "id": "11101828",
@@ -8205,7 +8205,7 @@
     "lng": 21.02288422,
     "lat": 52.23239571,
     "node": "Sródmiescie - Bilon+karta",
-    "structure": "Sr��dmiescie - Bilon+karta"
+    "structure": "Sródmiescie - Bilon+karta"
   },
   {
     "id": "11101735",
@@ -9380,7 +9380,7 @@
     "location": "ul. A. Naruszewicza 10",
     "lng": 21.0221687260001,
     "lat": 52.191678698,
-    "node": "Mokot��w - Bilon+karta",
+    "node": "Mokotów - Bilon+karta",
     "structure": "Mokotów - Bilon+karta"
   },
   {
@@ -9908,7 +9908,7 @@
     "location": "ul. A. Naruszewicza 6",
     "lng": 21.0232317470001,
     "lat": 52.191872974,
-    "node": "Mokot��w - Karta",
+    "node": "Mokotów - Karta",
     "structure": "Mokotów - Karta"
   },
   {
@@ -10388,7 +10388,7 @@
     "location": "ul. S. Batorego 35",
     "lng": 21.00908475,
     "lat": 52.21081404,
-    "node": "Mokotów - Bilon+karta",
+    "node": "Mokot��w - Bilon+karta",
     "structure": "Mokotów - Bilon+karta"
   },
   {
@@ -17145,7 +17145,7 @@
   },
   {
     "id": "17170217",
-    "location": "ul. ��ytnia 42",
+    "location": "ul. Żytnia 42",
     "lng": 20.97329601,
     "lat": 52.23922868,
     "node": "Wola - Bilon+karta",
