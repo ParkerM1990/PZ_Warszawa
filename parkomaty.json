@@ -4985,7 +4985,7 @@
   },
   {
     "id": "11100802",
-    "location": "ul. Pasaż Niżyńskiego",
+    "location": "ul. Pasaż Niży��skiego",
     "lng": 21.01428038,
     "lat": 52.24008385,
     "node": "Ochota - Karta",
@@ -6068,7 +6068,7 @@
     "location": "ul. Leszczyńska 1",
     "lng": 21.02499022,
     "lat": 52.24039305,
-    "node": "Sr��dmiescie - Bilon+karta",
+    "node": "Sródmiescie - Bilon+karta",
     "structure": "Sródmiescie - Bilon+karta"
   },
   {
@@ -15481,7 +15481,7 @@
   },
   {
     "id": "16050135",
-    "location": "ul. Szczęśliwicka 4",
+    "location": "ul. Szcz��śliwicka 4",
     "lng": 20.97399967,
     "lat": 52.219782,
     "node": "Ochota - Karta",
